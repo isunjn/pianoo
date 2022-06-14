@@ -1,11 +1,16 @@
-import logo from "~/assets/svg/logo.svg";
+import { Outlet } from "react-router-dom";
+import Header from "~/components/Header";
+import Footer from "~/components/Footer";
 
 function App() {
   return (
-    <div className="mx-auto w-fit text-blue-400">
-      <img src={logo} alt="logo" className="w-6 inline-block" />
-      pianoo
-    </div>
+    <>
+      <Header />
+      <main>
+        <Outlet />
+      </main>
+      <Footer />
+    </>
   );
 }
 
