@@ -16,6 +16,7 @@ specifiers:
   react-dom: ^18.1.0
   react-router-dom: '6'
   tailwindcss: ^3.1.2
+  tone: ^14.7.77
   typescript: ^4.7.3
   vite: ^2.9.12
 
@@ -23,6 +24,7 @@ dependencies:
   react: 18.1.0
   react-dom: 18.1.0_react@18.1.0
   react-router-dom: 6.3.0_ef5jwxihqo6n7gxfmzogljlgcm
+  tone: 14.7.77
 
 devDependencies:
   '@types/node': 17.0.42
@@ -683,6 +685,14 @@ packages:
       es-abstract: 1.20.1
       es-shim-unscopables: 1.0.0
     dev: true
+
+  /automation-events/4.0.19:
+    resolution: {integrity: sha512-e8ALmWdXSkDAtDVkmqLcCDMfMMvHcPTwsg+1GsxEO8+Cyg7FQs7F3VKifzdRTADVU6S1aqlPzDE3+KLFsH0sxA==}
+    engines: {node: '>=12.20.1'}
+    dependencies:
+      '@babel/runtime': 7.18.3
+      tslib: 2.4.0
+    dev: false
 
   /autoprefixer/10.4.7_postcss@8.4.14:
     resolution: {integrity: sha512-ypHju4Y2Oav95SipEcCcI5J7CGPuvz8oat7sUtYj3ClK44bldfvtvcxK6IEK++7rqB7YchDGzweZIBG+SD0ZAA==}
@@ -2197,6 +2207,14 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
+  /standardized-audio-context/25.3.28:
+    resolution: {integrity: sha512-w3TIDQ2z5iA76A3qFjL/knf45BAwHYAqQmDNlDrlE2El89kFKv43TjiN94N0joiMr7G3CRmO1bOuQ7wopDon9g==}
+    dependencies:
+      '@babel/runtime': 7.18.3
+      automation-events: 4.0.19
+      tslib: 2.4.0
+    dev: false
+
   /string.prototype.matchall/4.0.7:
     resolution: {integrity: sha512-f48okCX7JiwVi1NXCVWcFnZgADDC/n2vePlQ/KUCNqCikLLilQvwjMO8+BHVKvgzH0JB0J9LEPgxOGT02RoETg==}
     dependencies:
@@ -2304,9 +2322,20 @@ packages:
       is-number: 7.0.0
     dev: true
 
+  /tone/14.7.77:
+    resolution: {integrity: sha512-tCfK73IkLHyzoKUvGq47gyDyxiKLFvKiVCOobynGgBB9Dl0NkxTM2p+eRJXyCYrjJwy9Y0XCMqD3uOYsYt2Fdg==}
+    dependencies:
+      standardized-audio-context: 25.3.28
+      tslib: 2.4.0
+    dev: false
+
   /tslib/1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
     dev: true
+
+  /tslib/2.4.0:
+    resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==}
+    dev: false
 
   /tsutils/3.21.0_typescript@4.7.3:
     resolution: {integrity: sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==}
