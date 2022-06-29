@@ -14,6 +14,7 @@ specifiers:
   postcss: ^8.4.14
   react: ^18.1.0
   react-dom: ^18.1.0
+  react-icons: ^4.4.0
   react-router-dom: '6'
   tailwindcss: ^3.1.2
   tone: ^14.7.77
@@ -23,6 +24,7 @@ specifiers:
 dependencies:
   react: 18.1.0
   react-dom: 18.1.0_react@18.1.0
+  react-icons: 4.4.0_react@18.1.0
   react-router-dom: 6.3.0_ef5jwxihqo6n7gxfmzogljlgcm
   tone: 14.7.77
 
@@ -2037,6 +2039,14 @@ packages:
       loose-envify: 1.4.0
       react: 18.1.0
       scheduler: 0.22.0
+    dev: false
+
+  /react-icons/4.4.0_react@18.1.0:
+    resolution: {integrity: sha512-fSbvHeVYo/B5/L4VhB7sBA1i2tS8MkT0Hb9t2H1AVPkwGfVHLJCqyr2Py9dKMxsyM63Eng1GkdZfbWj+Fmv8Rg==}
+    peerDependencies:
+      react: '*'
+    dependencies:
+      react: 18.1.0
     dev: false
 
   /react-is/16.13.1:
