@@ -1,66 +1,81 @@
 import { useState, useEffect } from "react";
 import * as Tone from "tone";
 import PlayerControl from "~/components/PlayerControl";
-import Keyboard from "~/components/Keyboard";
+import PlayerSheet from "~/components/PlayerSheet";
+import PlayerVisual from "~/components/PlayerVisual";
 import standardKeymap from "~/config/keymap/standard";
 import PIANO_ACOUSTIC from "~/assets/sample/piano-acoustic";
 
+export type PlayerState = "idle" | "playing" | "paused" | "autoplaying";
+
 function Player() {
   const [ready, setReady] = useState(false);
-  const [sampler, setSampler] = useState<Tone.Sampler>();
+  const [state, setState] = useState<PlayerState>("idle");
+  const [instrument, setInstrument] = useState<Tone.Sampler | null>(null);
   const [keymap, setKeymap] = useState<Map<string, string>>(standardKeymap);
 
-  // start Tone/AudioContext
+  // initialize instrument
+  useEffect(() => {
+    const instrument = new Tone.Sampler({
+      urls: PIANO_ACOUSTIC,
+      onload: () => setInstrument(instrument),
+    }).toDestination();
+  }, []);
+  
+  // start Tone/AudioContext on click or press
   useEffect(() => {
     async function startAudio() {
+      document.removeEventListener("click", startAudio);
       document.removeEventListener("keydown", startAudio);
-      await Tone.start();
-      setReady(true);
+      Tone.start()
+        .then(() => setReady(true))
+        .catch(() => {
+          // TODO: notification
+          alert("Failed to start audio context, try refresh the page.");
+        });
     }
     document.addEventListener("keydown", startAudio);
+    document.addEventListener("click", startAudio);
+    return () => {
+      document.removeEventListener("click", startAudio);
+      document.removeEventListener("keydown", startAudio);
+    };
   }, []);
 
-  // initialize sampler
+  // add/remove keydown handler, sync with instrument and keymap
   useEffect(() => {
-    if (!ready) return;
-    const sampler = new Tone.Sampler({
-      urls: PIANO_ACOUSTIC,
-      onload: () => setSampler(sampler),
-    }).toDestination();
-  }, [ready]);
-
-  // add/remove keydown handler, sync with sampler and keymap
-  useEffect(() => {
-    if (!sampler) return;
-    const keydownHandler = buildKeydownHandler(sampler, keymap);
+    if (!ready || !instrument) return;
+    const keydownHandler = buildKeydownHandler(instrument, keymap);
     document.addEventListener("keydown", keydownHandler);
     return () => document.removeEventListener("keydown", keydownHandler);
-  }, [sampler, keymap]);
+  }, [ready, instrument, keymap]);
 
-  if (!ready) {
-    return <div>Press any key to start...</div>;
+  function handleStateChange(newState: PlayerState) {
+    if (newState == state) return;
+    setState(newState);
   }
 
-  if (!sampler) {
-    return <div>Loading...</div>;
+  if (!instrument) {
+    return <div className="w-fit mx-auto">Loading...</div>;
   }
 
   return (
-    <div>
-      main player section todo!
-      <PlayerControl />
-      <Keyboard />
+    <div className="mx-auto w-3/4 select-none">
+      <PlayerControl state={state} changeState={handleStateChange} />
+      <PlayerSheet state={state} />
+      <PlayerVisual />
     </div>
   );
 }
 
-function buildKeydownHandler(sampler: Tone.Sampler, keymap: Map<string, string>) {
+function buildKeydownHandler(instrument: Tone.Sampler, keymap: Map<string, string>) {
   return (event: KeyboardEvent) => {
+    if (event.repeat) return;
     const note = keymap.get(event.key);
     if (note) {
-      sampler.triggerAttackRelease(note, "4n");
+      instrument.triggerAttack(note);
     }
-  }
+  };
 }
 
 export default Player;
