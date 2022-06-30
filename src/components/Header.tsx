@@ -1,32 +1,34 @@
 import { Link } from "react-router-dom";
-// import logo from "~/assets/svg/logo.svg";
 import { TbPlaylist, TbMusic, TbCrosshair, TbHelp, TbUserCircle } from "react-icons/tb";
+import type { IconBaseProps } from "react-icons";
+import type { ComponentType } from "react";
 
 function Header() {
   return (
     <header className="flex justify-between items-center py-2">
-      <Link className="text-xl" to="/">
-        Pianoo
-        {/* <img src={logo} alt="logo" className="w-6"/> */}
-      </Link>
+      <Link className="text-xl" to="/"> Pianoo </Link>
       <nav className="flex gap-1 items-center">
-        <Link className="flex gap-1.5 items-center px-4 py-1 hover:bg-[#495755]/20 rounded" to="/">
-          <TbMusic className="text-lg" /> Play
-        </Link>
-        <Link className="flex gap-1.5 items-center px-4 py-1 hover:bg-[#495755]/20 rounded" to="/scores">
-          <TbPlaylist className="text-lg" /> Scores
-        </Link>
-        <Link className="flex gap-1.5 items-center px-4 py-1 hover:bg-[#495755]/20 rounded" to="/compose">
-          <TbCrosshair className="text-lg" /> Compose
-        </Link>
-        <Link className="flex gap-1.5 items-center px-4 py-1 hover:bg-[#495755]/20 rounded" to="/help">
-          <TbHelp className="text-lg" /> Help
-        </Link>
-        <Link className="flex gap-1.5 items-center px-4 py-1 hover:bg-[#495755]/20 rounded" to="/account">
-          <TbUserCircle className="text-lg" /> Account
-        </Link>
+        <TabBtn to="/" name="Play" Icon={TbMusic} />
+        <TabBtn to="/scores" name="Scores" Icon={TbPlaylist} />
+        <TabBtn to="/compose" name="Compose" Icon={TbCrosshair} />
+        <TabBtn to="/help" name="Help" Icon={TbHelp} />
+        <TabBtn to="/account" name="Account" Icon={TbUserCircle} />
       </nav>
     </header>
+  );
+}
+
+interface TabBtnProps {
+  to: string;
+  name: string;
+  Icon: ComponentType<IconBaseProps>;
+}
+
+function TabBtn({ to, name, Icon }: TabBtnProps) {
+  return (
+    <Link className="flex gap-1.5 items-center px-4 py-1 hover:bg-[#495755]/20 rounded" to={to}>
+      <Icon className="text-lg" /> {name}
+    </Link>
   );
 }
 
