@@ -18,13 +18,13 @@ function PlayerControl({ state, changeState }: PlayerControlProps) {
       {/* left controls */}
       <div className="flex-1 flex items-center gap-3">
         {
-          state == "idle" ? <button onClick={changeStateTo("autoplaying")} ><TbPlayerPlay /></button> :
-          state == "playing" ? <button onClick={changeStateTo("paused")}><TbPlayerPause /></button> :
-          state == "paused" ? <button onClick={changeStateTo("autoplaying")}><TbPlayerPlay /></button> :
-          <button onClick={changeStateTo("idle")}><TbPlayerStop /></button>
+          state == "ready" ? <button key="autoplay" aria-label="auto play" onClick={changeStateTo("autoplaying")} ><TbPlayerPlay /></button> :
+          state == "playing" ? <button key="pause" aria-label="pause" onClick={changeStateTo("paused")}><TbPlayerPause /></button> :
+          state == "paused" ? <button key="autoplay" aria-label="auto play" onClick={changeStateTo("autoplaying")}><TbPlayerPlay /></button> :
+          <button key="stop" aria-label="stop auto play" onClick={changeStateTo("ready")}><TbPlayerStop /></button>
         }
         {
-          state == "playing" || state == "paused" ? <button onClick={changeStateTo("idle")}><TbRotate /></button> : null
+          state == "playing" || state == "paused" ? <button key="restart" aria-label="restart" onClick={changeStateTo("ready")}><TbRotate /></button> : null
         }
         {
           state == "playing" ? <div className="text-xs">Playing</div> :
