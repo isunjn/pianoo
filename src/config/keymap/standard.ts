@@ -1,4 +1,4 @@
-const standardKeymap = new Map<string, string>()
+const KEYMAP_STANDARD = new Map<string, string>()
   .set("1", "C2")
   .set("2", "D2")
   .set("3", "E2")
@@ -71,4 +71,4 @@ const standardKeymap = new Map<string, string>()
   .set("B", "A#6")
   .set("N", "B#6");
 
-export default standardKeymap;
+export default KEYMAP_STANDARD;

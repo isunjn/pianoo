@@ -3,21 +3,21 @@ import * as Tone from "tone";
 import PlayerControl from "~/components/PlayerControl";
 import PlayerSheet from "~/components/PlayerSheet";
 import PlayerVisual from "~/components/PlayerVisual";
-import standardKeymap from "~/config/keymap/standard";
-import PIANO_ACOUSTIC from "~/assets/sample/piano-acoustic";
+import KEYMAP_STANDARD from "~/config/keymap/standard";
+import INSTRUMENT_PIANO_ACOUSTIC from "~/config/instrument/piano-acoustic";
 
 export type PlayerState = "idle" | "ready" | "playing" | "paused" | "autoplaying";
 
 function Player() {
   const [state, setState] = useState<PlayerState>("idle");
   const [instrument, setInstrument] = useState<Tone.Sampler | null>(null);
-  const [keymap, setKeymap] = useState<Map<string, string>>(standardKeymap);
+  const [keymap, setKeymap] = useState<Map<string, string>>(KEYMAP_STANDARD);
   const visualRef = useRef<{playNote: (note: string) => void}>(null);
 
   // initialize instrument
   useEffect(() => {
     const instrument = new Tone.Sampler({
-      urls: PIANO_ACOUSTIC,
+      urls: INSTRUMENT_PIANO_ACOUSTIC,
       onload: () => {
         setInstrument(instrument);
         setState("ready");
