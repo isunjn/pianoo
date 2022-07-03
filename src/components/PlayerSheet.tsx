@@ -1,18 +1,21 @@
 import { useEffect, useRef } from "react";
 import * as Tone from "tone";
 import type { PlayerState } from "~/components/Player";
+import type { SheetItem } from "~/core/type";
+import { __keymap_standard_reverse__ as KM } from "~/config/keymap/standard";
 
 interface PlayerSheetProps {
   state: PlayerState;
   changeState: (newState: PlayerState) => void;
+  sheetItems: SheetItem[][];
 }
 
-function PlayerSheet({ state, changeState }: PlayerSheetProps) {
+function PlayerSheet({ state, changeState, sheetItems }: PlayerSheetProps) {
   const sheetRef = useRef<HTMLDivElement>(null);
 
   // ready to play, chick or press to start
   useEffect(() => {
-    if (state != "ready" && state != "paused") return;
+    if (!(state == "ready" || state == "paused")) return;
     const sheet = sheetRef.current!;
     async function startToPlay() {
       sheet.removeEventListener("click", startToPlay);
@@ -29,23 +32,26 @@ function PlayerSheet({ state, changeState }: PlayerSheetProps) {
   }, [state, changeState]);
 
   return (
-    <div ref={sheetRef} className="mx-auto h-48 overflow-scroll p-10 pb-16 w-fit border border-yellow-300">
+    <div ref={sheetRef} className="w-full h-48 overflow-x-auto py-10 pb-16 font-mono border border-yellow-300">
+      <div id="sheet" className="w-full text-xl">
       {
         state == "ready" ? <div>Click or press any key to start</div> :
         state == "paused" ? <div>Pasued, click or press any key to resume</div> :
-        <div>
-            w t y tyu ooo uyt<br />
-            w t y tyu oooo uyt<br />
-            o oo p os o u y u<br />
-            ytytytyty tyuio<br />
-            tyuu uuu iuyu <br />
-            tyuu uu ouyt yuu<br />
-            uop ops opu uyu<br />
-            t yyyyy ou yy <br />
-            opss opss<br />
-            ops sdd sas <br />
+        sheetItems.map((row, i) => (
+          <div key={i} className="w-fit mx-auto">
+            {row.map((item, j) => {
+              const durationClass = "d" + item.duration * 100;
+              switch(item.kind) {
+                case "note": return <span key={j} className={durationClass}>{KM.get(item.note)}</span>;
+                case "chord": return <span key={j} className={durationClass}>[{item.notes.map(n => KM.get(n)).join('')}]</span>;
+                case "rest": return <span key={j} className={durationClass}> </span>;
+                default: throw new Error("unknown item kind");
+              }
+            })}
           </div>
+        ))
       }
+      </div>
     </div>
   );
 }

@@ -7,3 +7,16 @@
     background: #7b9c98;
   }
 }
+
+#sheet .d150 {
+  padding-right: 1.5ch;
+}
+
+#sheet .d100 {
+  padding-right: 1ch;
+}
+
+#sheet .d50 {
+  padding-right: 0.5ch;
+}
+
