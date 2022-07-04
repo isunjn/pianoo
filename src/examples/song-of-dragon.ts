@@ -1,4 +1,4 @@
-import { MusicScore } from "~/core/type";
+import { MusicScore } from "~/core/types";
 
 // TODO
 const SongOfDragon: MusicScore = {

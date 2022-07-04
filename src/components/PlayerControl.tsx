@@ -1,7 +1,7 @@
 import { TbAdjustments, TbKeyboard, TbMaximize, TbPlayerPause, TbPlayerPlay, TbPlayerStop, TbRotate } from "react-icons/tb";
 import { RiMusicLine, RiRecordCircleLine, RiSettings3Line } from "react-icons/ri";
 import type { PlayerState } from "~/components/Player";
-import type { MusicScore } from "~/core/type";
+import type { MusicScore } from "~/core/types";
 
 interface PlayerControlProps {
   state: PlayerState;

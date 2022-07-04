@@ -1,4 +1,4 @@
-import { MusicScore } from "~/core/type";
+import { MusicScore } from "~/core/types";
 
 const CastleInTheSky: MusicScore = {
   id: 1,

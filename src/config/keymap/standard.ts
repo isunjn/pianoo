@@ -1,4 +1,6 @@
-const KEYMAP_STANDARD = new Map<string, string>()
+import type Keymap from "./type";
+
+const keyToNote = new Map<string, string>()
   .set("1", "C2")
   .set("2", "D2")
   .set("3", "E2")
@@ -71,10 +73,7 @@ const KEYMAP_STANDARD = new Map<string, string>()
   .set("B", "A#6")
   .set("N", "B#6");
 
-export default KEYMAP_STANDARD;
-
-
-export const __keymap_standard_reverse__ = new Map<string, string>()
+const noteToKey = new Map<string, string>()
   .set("C2", "1")
   .set("D2", "2")
   .set("E2", "3")
@@ -147,3 +146,14 @@ export const __keymap_standard_reverse__ = new Map<string, string>()
   .set("A#6", "B")
   .set("B#6", "N");
 
+const KEYMAP_STANDARD: Keymap = {
+  getKey(note: string): string | undefined {
+    return noteToKey.get(note);
+  },
+  getNote(key: string): string | undefined {
+    return keyToNote.get(key);
+  }
+}
+
+
+export default KEYMAP_STANDARD;

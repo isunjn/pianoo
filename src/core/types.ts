@@ -11,21 +11,23 @@ export interface MusicScore {
   /* TODO: more fields */
 }
 
-export type SheetItem = Note | Chord | Rest;
-
 interface Note {
   kind: "note";
   note: string;
-  duration: number;
+  quarter: number;
 }
 
 interface Chord {
   kind: "chord";
   notes: string[];
-  duration: number;
+  quarter: number;
 }
 
 interface Rest {
   kind: "rest";
-  duration: number;
+  quarter: number;
 }
+
+type SheetItem = Note | Chord | Rest;
+
+export type SheetItems = SheetItem[][]; // rows -> row -> item

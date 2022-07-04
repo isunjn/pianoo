@@ -1,53 +1,45 @@
-import { useState, useEffect, useRef } from "react";
-import * as Tone from "tone";
+import { useState, useEffect, useContext, useRef } from "react";
 import PlayerControl from "~/components/PlayerControl";
 import PlayerSheet from "~/components/PlayerSheet";
 import PlayerVisual from "~/components/PlayerVisual";
-import KEYMAP_STANDARD from "~/config/keymap/standard";
-import INSTRUMENT_PIANO_ACOUSTIC from "~/config/instrument/piano-acoustic";
+import InstrumentContext from "~/contexts/instrument";
+import KeymapContext from "~/contexts/keymap";
 import parse from "~/core/parser";
-import type { MusicScore, SheetItem } from "~/core/type";
+import type { MusicScore, SheetItems } from "~/core/types";
 
 export type PlayerState = "idle" | "ready" | "playing" | "paused" | "autoplaying";
 
 function Player() {
+  const instrument = useContext(InstrumentContext);
+  const keymap = useContext(KeymapContext);
+
   const [state, setState] = useState<PlayerState>("idle");
-  const [instrument, setInstrument] = useState<Tone.Sampler | null>(null);
-  const [keymap, setKeymap] = useState<Map<string, string>>(KEYMAP_STANDARD);
   const [score, setScore] = useState<MusicScore | null>(null);
-  const [sheetItems, setSheetItems] = useState<SheetItem[][]>([]);
+  const [sheetItems, setSheetItems] = useState<SheetItems>([]);
+
   const visualRef = useRef<{playNote: (note: string) => void}>(null);
 
-  // initialize instrument & load music score
+  // load music score & get ready when instrument and score are all loaded
   useEffect(() => {
-    const loadInstrument: Promise<Tone.Sampler> = new Promise(resolve => {
-      const instrument = new Tone.Sampler({
-        urls: INSTRUMENT_PIANO_ACOUSTIC,
-        onload: () => resolve(instrument),
-      }).toDestination();
-    });
-
-    // TODO: load from backend api
-    const loadScore: Promise<[MusicScore, SheetItem[][]]> = import("~/examples/castle-in-the-sky")
-      .then(mod => [mod.default, parse(mod.default)]);
-
-    Promise.all([loadInstrument, loadScore])
-      .then(([instrument, [score, sheetItems]]) => {
-        setInstrument(instrument);
-        setScore(score);
-        setSheetItems(sheetItems);
-        setState("ready");
+    if (state != "idle") return;
+    if (!score) {
+      // TODO: load the last song user played, should load from backend api
+      import("~/examples/castle-in-the-sky").then(({ default: exampleScore }) => {
+        setScore(exampleScore);
+        setSheetItems(parse(exampleScore));
       });// TODO: error handling
-  }, []);
+    }
+    if (instrument && score) setState("ready");
+  }, [state, instrument, score]);
   
   // add/remove keydown handler, sync with instrument and keymap
   useEffect(() => {
-    if (state != "playing" || !instrument) return;
+    if (state != "playing") return;
     const keydownHandler = (event: KeyboardEvent) => {
       if (event.repeat) return;
-      const note = keymap.get(event.key);
+      const note = keymap.getNote(event.key);
       if (note) {
-        instrument.triggerAttack(note);
+        instrument!.triggerAttack(note);
         visualRef.current?.playNote(note);
       }
     }
