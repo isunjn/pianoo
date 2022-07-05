@@ -75,10 +75,12 @@ function Player() {
 
     function goNext(correct: boolean) {
       const { done, next } = sheet.current!.move(correct);
-      if (done)
+      if (done) {
         setState("done");
-      else
+      } else {
         expected.current = next;
+        pressing.current = {};
+      }
     }
 
     document.addEventListener("keydown", trackPressingDown, { capture: true });
