@@ -25,12 +25,12 @@ const Sheet = forwardRef(
 
     // the sequence of note/chord to play
     const seq: NoteOrChord[] = sheetItems.flat().filter(item => item.kind != "rest") as NoteOrChord[];
-    // get the expected key of the every note/chord ahead of time
+    // get the expected key of every note/chord ahead of time
     const expectedKeys: ExpectedKey[] = seq.map(item => {
       switch (item.kind) {
         case "note": return keymap.getKey(item.note)!;
         case "chord": return item.notes.map(n => keymap.getKey(n)!);
-        default: throw panic("unexpected sheet item kind");
+        default: throw panic("unreachable");
       }
     });
     // the index of the next note/chord to play
@@ -48,7 +48,7 @@ const Sheet = forwardRef(
         start(): ExpectedKey {
           const span = spanMap.get(seq[activeIdx])!; // should be the first note/chord
           span.classList.add("active");
-          return expectedKeys[0];
+          return expectedKeys[activeIdx];
         },
         // move to next note/chord
         move(correct: boolean): { done: false, next: ExpectedKey } | { done: true, next: null } {
@@ -115,7 +115,7 @@ const Sheet = forwardRef(
                   case "rest": // &nbsp; (non breaking sapce) is exactly what we want
                     return <span key={j} className={cls}>&nbsp;</span>;
                   default:
-                    throw panic("unexpected sheet item kind");
+                    throw panic("unreachable");
                 }
               })}
             </div>

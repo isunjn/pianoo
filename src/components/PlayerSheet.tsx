@@ -42,7 +42,7 @@ const PlayerSheet = forwardRef(
         <Sheet sheetItems={sheetItems} ref={ref} />
         {(state == "ready" || state == "paused") &&
           <div className="absolute top-10 left-0 w-full h-52 flex items-center justify-center
-           bg-[#7b9c98]/30 backdrop-blur-sm pointer-events-none">
+                        bg-[#7b9c98]/30 backdrop-blur-sm pointer-events-none">
             {state == "ready" ? "Click or press any key to start" : "Pasued, click or press any key to resume"}
           </div>
         }
