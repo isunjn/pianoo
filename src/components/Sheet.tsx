@@ -46,10 +46,10 @@ const Sheet = forwardRef(
         return expectedKeys[0];
       },
       // move to next note/chord
-      move(correctness: boolean): { done: false, next: ExpectedKey } | { done: true, next: null } {
+      move(correct: boolean): { done: false, next: ExpectedKey } | { done: true, next: null } {
         const span = spanMap.get(seq[activeIdx])!;
         span.classList.remove("active");
-        span.classList.add(correctness ? "correct" : "incorrect");
+        span.classList.add(correct ? "correct" : "incorrect");
         if (activeIdx == seq.length - 1) {
           return { done: true, next: null };
         } else {

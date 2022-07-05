@@ -73,8 +73,8 @@ function Player() {
       }
     }
 
-    function goNext(correctness: boolean) {
-      const { done, next } = sheet.current!.move(correctness);
+    function goNext(correct: boolean) {
+      const { done, next } = sheet.current!.move(correct);
       if (done)
         setState("done");
       else
