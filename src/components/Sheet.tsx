@@ -38,38 +38,46 @@ const Sheet = forwardRef(
     // note/chord -> span element node, use ref callback to set
     const spanMap = new Map<NoteOrChord, HTMLSpanElement>();
 
-    useImperativeHandle(ref, () => ({
-      // start playing from the first note/chord
-      start(): ExpectedKey {
-        spanMap.get(seq[0])!.classList.add("active"); // at least one note/chord
-        // TODO: scroll to the view
-        return expectedKeys[0];
-      },
-      // move to next note/chord
-      move(correct: boolean): { done: false, next: ExpectedKey } | { done: true, next: null } {
-        const span = spanMap.get(seq[activeIdx])!;
-        span.classList.remove("active");
-        span.classList.add(correct ? "correct" : "incorrect");
-        if (activeIdx == seq.length - 1) {
-          return { done: true, next: null };
-        } else {
-          const nextIdx = ++activeIdx;
-          spanMap.get(seq[nextIdx])!.classList.add("active");
-          // TODO: scroll to the view
-          return { done: false, next: expectedKeys[nextIdx] };
-        }
-      },
-      // reset, clear all notes/chords colored
-      reset() {
-        seq.forEach(noteOrChord => {
-          const span = spanMap.get(noteOrChord)!;
+    useImperativeHandle(ref, () => {
+      // build the scroll function based on browser support of scrollIntoViewOptions
+      const scroll = "scrollBehavior" in document.documentElement.style 
+        ? (span: HTMLSpanElement) => span.scrollIntoView({ behavior: "smooth", block: "center" })
+        : (span: HTMLSpanElement) => span.scrollIntoView(true); // fallback
+      return {
+        // start playing from the first note/chord
+        start(): ExpectedKey {
+          const span = spanMap.get(seq[activeIdx])!; // should be the first note/chord
+          span.classList.add("active");
+          return expectedKeys[0];
+        },
+        // move to next note/chord
+        move(correct: boolean): { done: false, next: ExpectedKey } | { done: true, next: null } {
+          const span = spanMap.get(seq[activeIdx])!;
           span.classList.remove("active");
-          span.classList.remove("correct");
-          span.classList.remove("incorrect");
-        });
-        activeIdx = 0;
-      }
-    }));
+          span.classList.add(correct ? "correct" : "incorrect");
+          if (activeIdx == seq.length - 1) {
+            return { done: true, next: null };
+          } else {
+            const nextIdx = ++activeIdx;
+            const nextSpan = spanMap.get(seq[nextIdx])!;
+            nextSpan.classList.add("active");
+            scroll(nextSpan);
+            return { done: false, next: expectedKeys[nextIdx] };
+          }
+        },
+        // reset, clear all notes/chords colored
+        reset() {
+          seq.forEach(noteOrChord => {
+            const span = spanMap.get(noteOrChord)!;
+            span.classList.remove("active");
+            span.classList.remove("correct");
+            span.classList.remove("incorrect");
+          });
+          activeIdx = 0;
+          scroll(spanMap.get(seq[0])!);
+        },
+      };
+    });
 
     function buildItemRefCallback(item: NoteOrChord) {
       return (node: HTMLSpanElement | null) => {
@@ -82,11 +90,11 @@ const Sheet = forwardRef(
     }
 
     return (
-      <div id="sheet" className="w-full py-8">
+      <div id="sheet" className="w-full py-10">
         {
           // it's ok to use index as key here, as the sheet only render once, UI is updated imperatively
           sheetItems.map((row, i) => (
-            <div key={i} className="w-fit mx-auto h-8 flex items-center">
+            <div key={i} className="w-fit mx-auto h-10 flex items-center">
               {row.map((item, j) => {
                 const cls = "--" + (item.quarter * 1000); // duration class, different margin-right will be applied
                 switch (item.kind) {

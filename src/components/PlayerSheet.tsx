@@ -38,10 +38,10 @@ const PlayerSheet = forwardRef(
 
     // TODO: handle overflow-x
     return (
-      <div ref={sheetContainerRef} className="w-full h-48 font-mono text-xl scrollbar-hidden">
+      <div ref={sheetContainerRef} className="w-full h-52 font-mono text-xl scrollbar-hidden">
         <Sheet sheetItems={sheetItems} ref={ref} />
         {(state == "ready" || state == "paused") &&
-          <div className="absolute top-10 left-0 w-full h-48 flex items-center justify-center
+          <div className="absolute top-10 left-0 w-full h-52 flex items-center justify-center
            bg-[#7b9c98]/30 backdrop-blur-sm pointer-events-none">
             {state == "ready" ? "Click or press any key to start" : "Pasued, click or press any key to resume"}
           </div>
