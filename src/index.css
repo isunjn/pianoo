@@ -2,21 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    background: #7b9c98;
-  }
+#sheet .--250 {
+  margin-right: 0.25ch;
 }
 
-#sheet .d150 {
-  padding-right: 1.5ch;
+#sheet .--500 {
+  margin-right: 0.5ch;
 }
 
-#sheet .d100 {
-  padding-right: 1ch;
+#sheet .--750 {
+  margin-right: 0.75ch;
 }
 
-#sheet .d50 {
-  padding-right: 0.5ch;
+#sheet .--875 {
+  margin-right: 0.875ch;
 }
 
+#sheet .--1000 {
+  margin-right: 1ch;
+}
+
+#sheet .--1500 {
+  margin-right: 1.5ch;
+}
+
+#sheet .--1750 {
+  margin-right: 1.75ch;
+}
+
+#sheet .--2000 {
+  margin-right: 2ch;
+}
+
+#sheet .--3000 {
+  margin-right: 3ch;
+}
+
+#sheet .--3500 {
+  margin-right: 3.5ch;
+}
+
+#sheet .--4000 {
+  margin-right: 4ch;
+}
+
+#sheet .--6000 {
+  margin-right: 6ch;
+}
+
+#sheet .--7000 {
+  margin-right: 7ch;
+}
+
+#sheet .active {
+  background-color: #22222250;
+}
+
+#sheet .correct {
+  color: #dff0d8;
+}
+
+#sheet .incorrect {
+  color: #f2dede;
+}
+
+#sheet span {
+  padding: 1px 2px 2px 2px;
+  border-radius: 0.25rem; /* 4px */
+}

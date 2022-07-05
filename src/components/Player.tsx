@@ -5,9 +5,10 @@ import PlayerVisual from "~/components/PlayerVisual";
 import InstrumentContext from "~/contexts/instrument";
 import KeymapContext from "~/contexts/keymap";
 import parse from "~/core/parser";
-import type { MusicScore, SheetItems } from "~/core/types";
+import type { MusicScore, SheetItems, ExpectedKey } from "~/core/types";
+import type { SheetImperativeHandleAPI } from "~/components/Sheet";
 
-export type PlayerState = "idle" | "ready" | "playing" | "paused" | "autoplaying";
+export type PlayerState = "idle" | "ready" | "playing" | "paused" | "done" | "autoplaying";
 
 function Player() {
   const instrument = useContext(InstrumentContext);
@@ -17,7 +18,10 @@ function Player() {
   const [score, setScore] = useState<MusicScore | null>(null);
   const [sheetItems, setSheetItems] = useState<SheetItems>([]);
 
-  const visualRef = useRef<{playNote: (note: string) => void}>(null);
+  const sheet = useRef<SheetImperativeHandleAPI>(null);
+  const visualizer = useRef<{ playNote: (note: string) => void }>(null);
+  const expected = useRef<ExpectedKey | null>(null);
+  const pressing = useRef<Record<string, boolean>>({});
 
   // load music score & get ready when instrument and score are all loaded
   useEffect(() => {
@@ -31,21 +35,69 @@ function Player() {
     }
     if (instrument && score) setState("ready");
   }, [state, instrument, score]);
-  
-  // add/remove keydown handler, sync with instrument and keymap
+
+  // side effects to take when start/resume playing
   useEffect(() => {
     if (state != "playing") return;
-    const keydownHandler = (event: KeyboardEvent) => {
+
+    // prepare for playing first note/chord
+    if (expected.current == null) {
+      const firstExpectedKey = sheet.current!.start();
+      expected.current = firstExpectedKey;
+    }
+
+    function trackPressingDown(event: KeyboardEvent) {
+      pressing.current[event.key] = true;
+    }
+
+    function trackPressingUp(event: KeyboardEvent) {
+      pressing.current[event.key] = false;
+    }
+
+    // play music note & update sheet & update visualizer
+    function keydownHandler(event: KeyboardEvent) {
       if (event.repeat) return;
       const note = keymap.getNote(event.key);
-      if (note) {
-        instrument!.triggerAttack(note);
-        visualRef.current?.playNote(note);
+      if (!note) return;
+      instrument!.triggerAttack(note);
+      visualizer.current!.playNote(note);
+      const _expected = expected.current!;
+      const _pressing = pressing.current;
+      if (Array.isArray(_expected)) { // expect a chord
+        if (_expected.every(k => _pressing[k]))
+          goNext(true);
+        else if (!_expected.find(k => k == event.key)) // a wrong note
+          goNext(false);
+      } else { // expect a note
+        goNext(_pressing[_expected]);
       }
     }
+
+    function goNext(correctness: boolean) {
+      const { done, next } = sheet.current!.move(correctness);
+      if (done)
+        setState("done");
+      else
+        expected.current = next;
+    }
+
+    document.addEventListener("keydown", trackPressingDown, { capture: true });
+    document.addEventListener("keyup", trackPressingUp, { capture: true });
     document.addEventListener("keydown", keydownHandler);
-    return () => document.removeEventListener("keydown", keydownHandler);
+    return () => {
+      document.removeEventListener("keydown", trackPressingDown, { capture: true });
+      document.removeEventListener("keyup", trackPressingUp, { capture: true });
+      document.removeEventListener("keydown", keydownHandler);
+    }
   }, [state, instrument, keymap]);
+
+  // clear sheet when restarted
+  useEffect(() => {
+    if (state == "ready" && expected.current != null) {
+      expected.current = null;
+      sheet.current!.reset();
+    }
+  }, [state]);
 
   function handleStateChange(newState: PlayerState) {
     if (newState != state) setState(newState);
@@ -58,8 +110,8 @@ function Player() {
   return (
     <div className="mx-auto w-3/4 select-none">
       <PlayerControl state={state} changeState={handleStateChange} score={score!} />
-      <PlayerSheet state={state} changeState={handleStateChange} sheetItems={sheetItems} />
-      <PlayerVisual ref={visualRef} />
+      <PlayerSheet state={state} changeState={handleStateChange} sheetItems={sheetItems} ref={sheet} />
+      <PlayerVisual ref={visualizer} />
     </div>
   );
 }

@@ -31,3 +31,7 @@ interface Rest {
 type SheetItem = Note | Chord | Rest;
 
 export type SheetItems = SheetItem[][]; // rows -> row -> item
+
+export type NoteOrChord = Note | Chord;
+
+export type ExpectedKey = string | string[]; // note key or chord keys
