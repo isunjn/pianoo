@@ -1,6 +1,7 @@
 import React, { useContext, forwardRef, useImperativeHandle, type Ref } from "react";
 import KeymapContext from "~/contexts/keymap";
 import type { SheetItems, NoteOrChord, ExpectedKey } from "~/core/types";
+import panic from "~/utils/panic";
 
 export interface SheetImperativeHandleAPI {
   start: () => ExpectedKey;
@@ -29,7 +30,7 @@ const Sheet = forwardRef(
       switch (item.kind) {
         case "note": return keymap.getKey(item.note)!;
         case "chord": return item.notes.map(n => keymap.getKey(n)!);
-        default: throw new Error("panic: unreachable");
+        default: throw panic("unexpected sheet item kind");
       }
     });
     // the index of the next note/chord to play
@@ -106,7 +107,7 @@ const Sheet = forwardRef(
                   case "rest": // &nbsp; (non breaking sapce) is exactly what we want
                     return <span key={j} className={cls}>&nbsp;</span>;
                   default:
-                    throw new Error("unknown sheet item kind");
+                    throw panic("unexpected sheet item kind");
                 }
               })}
             </div>
