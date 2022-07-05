@@ -16,7 +16,7 @@ function PlayerControl({ state, changeState, score }: PlayerControlProps) {
   }
 
   return (
-    <div className="flex justify-between items-center text-xl py-1.5 border-b-2 border-[#eaf1f3]/25">
+    <div className="h-10 flex justify-between items-center text-xl border-b-2 border-[#eaf1f3]/25">
       {/* left controls */}
       <div className="flex-1 flex items-center gap-3">
         {/* TODO: disable buttons if score is null */}

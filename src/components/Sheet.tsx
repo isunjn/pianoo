@@ -82,11 +82,11 @@ const Sheet = forwardRef(
     }
 
     return (
-      <div id="sheet" className="w-full" >
+      <div id="sheet" className="w-full py-8">
         {
           // it's ok to use index as key here, as the sheet only render once, UI is updated imperatively
           sheetItems.map((row, i) => (
-            <div key={i} className="w-fit mx-auto">
+            <div key={i} className="w-fit mx-auto h-8 flex items-center">
               {row.map((item, j) => {
                 const cls = "--" + (item.quarter * 1000); // duration class, different margin-right will be applied
                 switch (item.kind) {

@@ -108,7 +108,7 @@ function Player() {
   }
 
   return (
-    <div className="mx-auto w-3/4 select-none">
+    <div className="mx-auto w-3/4 select-none relative">
       <PlayerControl state={state} changeState={handleStateChange} score={score!} />
       <PlayerSheet state={state} changeState={handleStateChange} sheetItems={sheetItems} ref={sheet} />
       <PlayerVisual ref={visualizer} />
