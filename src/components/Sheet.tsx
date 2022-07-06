@@ -49,6 +49,7 @@ const Sheet = forwardRef(
         start(): ExpectedKey {
           const span = spanMap.get(seq[activeIdx])!; // should be the first note/chord
           span.classList.add("active");
+          scroll(span);
           return expectedKeys[activeIdx];
         },
         // move to next note/chord

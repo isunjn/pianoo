@@ -6,7 +6,7 @@ import PlayerHint from "~/components/PlayerHint";
 import InstrumentContext from "~/contexts/instrument";
 import KeymapContext from "~/contexts/keymap";
 import parse from "~/core/parser";
-import type { MusicScore, SheetItems, ExpectedKey } from "~/core/types";
+import type { MusicScore, SheetItems, SheetItem, ExpectedKey } from "~/core/types";
 import type { SheetImperativeHandleAPI } from "~/components/Sheet";
 
 export type PlayerState = 
@@ -15,7 +15,7 @@ export type PlayerState =
   | "playing"
   | "paused"
   | "done"
-  | "autoplaying" // TODO: implement
+  | "autoplaying"
   | "practicing";
 
 function Player() {
@@ -113,11 +113,35 @@ function Player() {
 
   // clear sheet when restarted
   useEffect(() => {
-    if (state == "ready" && expected.current != null) {
-      expected.current = null;
-      sheet.current!.reset();
-    }
+    if (state != "ready") return;
+    sheet.current!.reset();
+    expected.current = null;
+    pressing.current = {};
   }, [state]);
+
+  // auto play, didn't use tone.js's time keeper because we also need to update sheet UI
+  useEffect(() => {
+    if (state != "autoplaying") return;
+    sheet.current!.start();
+    const msPerQuarter = 60 * 1000 / 88; // TODO: bpm
+    const seq = sheetItems.flat(); // sequence of sheet items, including rest symbols
+    let idx = 0; // the active item index
+    let timeoutId = (function play(item: SheetItem, after: number) { // play item after a delay
+      return setTimeout(() => {
+        const toplay = item.kind == "note" ? item.note : item.kind == "chord" ? item.notes : undefined;
+        if (toplay) {
+          instrument!.triggerAttack(toplay);
+          sheet.current!.move(true);
+        }
+        if (++idx == seq.length) { // done
+          setState("ready");
+        } else {
+          timeoutId = play(seq[idx], item.quarter * msPerQuarter);
+        }
+      }, after);
+    })(seq[0], 0); // initial delay is 0
+    return () => clearTimeout(timeoutId);
+  }, [state, instrument, sheetItems]);
 
   // FIXME: scrollIntoView() doesn't work on keyboard event 🥲, uncomment this when manual scroll function is written
   // // if play is done, user can press space to restart

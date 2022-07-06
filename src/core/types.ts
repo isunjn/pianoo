@@ -28,7 +28,7 @@ interface Rest {
   quarter: number;
 }
 
-type SheetItem = Note | Chord | Rest;
+export type SheetItem = Note | Chord | Rest;
 
 export type SheetItems = SheetItem[][]; // rows -> row -> item
 
