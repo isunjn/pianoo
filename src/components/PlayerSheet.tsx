@@ -42,7 +42,7 @@ const PlayerSheet = forwardRef(
       <div ref={sheetContainerRef} className="w-full h-52 font-mono text-xl scrollbar-hidden group">
         <Sheet sheetItems={sheetItems} ref={ref} />
         {(state == "ready" || state == "paused") &&
-          <div className="absolute top-10 left-0 w-full h-52 flex items-center justify-center
+          <div className="absolute top-20 left-0 w-full h-52 flex items-center justify-center
                         bg-[#7b9c98]/30 backdrop-blur-sm pointer-events-none">
             <div className="flex items-center gap-4 group-hover:scale-[1.025] transition-transform ease-in">
               {state == "ready" ? "Click or press any key to start" : "Pasued, click or press any key to resume"} 

@@ -39,6 +39,7 @@ const Sheet = forwardRef(
     const spanMap = new Map<NoteOrChord, HTMLSpanElement>();
 
     useImperativeHandle(ref, () => {
+      // FIXME: write our own scroll function, scrollIntoView got some bugs
       // build the scroll function based on browser support of scrollIntoViewOptions
       const scroll = "scrollBehavior" in document.documentElement.style 
         ? (span: HTMLSpanElement) => span.scrollIntoView({ behavior: "smooth", block: "center" })

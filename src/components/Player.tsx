@@ -1,7 +1,8 @@
 import { useState, useEffect, useContext, useRef } from "react";
 import PlayerControl from "~/components/PlayerControl";
 import PlayerSheet from "~/components/PlayerSheet";
-import PlayerVisual from "~/components/PlayerVisual";
+import PlayerScoreMeta from "~/components/PlayerScoreMeta";
+import PlayerHint from "~/components/PlayerHint";
 import InstrumentContext from "~/contexts/instrument";
 import KeymapContext from "~/contexts/keymap";
 import parse from "~/core/parser";
@@ -26,7 +27,6 @@ function Player() {
   const [sheetItems, setSheetItems] = useState<SheetItems>([]);
 
   const sheet = useRef<SheetImperativeHandleAPI>(null);
-  const visualizer = useRef<{ playNote: (note: string) => void }>(null);
   const expected = useRef<ExpectedKey | null>(null);
   const pressing = useRef<Record<string, boolean>>({});
 
@@ -67,7 +67,6 @@ function Player() {
       const note = keymap.getNote(event.key);
       if (!note) return;
       instrument!.triggerAttack(note);
-      visualizer.current!.playNote(note);
       const _expected = expected.current!;
       const _pressing = pressing.current;
       if (Array.isArray(_expected)) { // expect a chord
@@ -108,6 +107,19 @@ function Player() {
     }
   }, [state]);
 
+  // FIXME: scrollIntoView() doesn't work on keyboard event 🥲, uncomment this when manual scroll function is written
+  // // if play is done, user can press space to restart
+  // useEffect(() => {
+  //   if (state != "done") return;
+  //   function keydownHandler(event: KeyboardEvent) {
+  //     if (event.key != " ") return;
+  //     setState("ready");
+  //     document.removeEventListener("keydown", keydownHandler);
+  //   }
+  //   document.addEventListener("keydown", keydownHandler);
+  //   return () => document.removeEventListener("keydown", keydownHandler);
+  // }, [state]);
+
   function handleStateChange(newState: PlayerState) {
     if (newState != state) setState(newState);
   }
@@ -120,7 +132,8 @@ function Player() {
     <div className="mx-auto w-3/4 select-none relative">
       <PlayerControl state={state} changeState={handleStateChange} score={score!} />
       <PlayerSheet state={state} changeState={handleStateChange} sheetItems={sheetItems} ref={sheet} />
-      <PlayerVisual ref={visualizer} />
+      {/* <PlayerHint state={state} /> */}
+      <PlayerScoreMeta score={score!} />
     </div>
   );
 }
