@@ -16,7 +16,7 @@ export type PlayerState =
   | "paused"
   | "done"
   | "autoplaying" // TODO: implement
-  | "practicing"; // TODO: implement
+  | "practicing";
 
 function Player() {
   const instrument = useContext(InstrumentContext);
@@ -61,7 +61,7 @@ function Player() {
       pressing.current[event.key] = false;
     }
 
-    // play music note & update sheet & update visualizer
+    // play music note & update sheet
     function keydownHandler(event: KeyboardEvent) {
       if (event.repeat) return;
       const note = keymap.getNote(event.key);
@@ -97,6 +97,18 @@ function Player() {
       document.removeEventListener("keyup", trackPressingUp, { capture: true });
       document.removeEventListener("keydown", keydownHandler);
     }
+  }, [state, instrument, keymap]);
+
+  // practice mode, just play music note, do not move sheet
+  useEffect(() => {
+    if (state != "practicing") return;
+    function keydownHandler(event: KeyboardEvent) {
+      if (event.repeat) return;
+      const note = keymap.getNote(event.key);
+      if (note) instrument!.triggerAttack(note);
+    }
+    document.addEventListener("keydown", keydownHandler);
+    return () => document.removeEventListener("keydown", keydownHandler);
   }, [state, instrument, keymap]);
 
   // clear sheet when restarted

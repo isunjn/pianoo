@@ -1,4 +1,4 @@
-import { TbAdjustments, TbKeyboard, TbMaximize, TbPlayerPause, TbPlayerStop, TbRotate, TbTree } from "react-icons/tb";
+import { TbAdjustments, TbKeyboard, TbMaximize, TbPlayerPause, TbPlayerStop, TbRotate, TbFlag3 } from "react-icons/tb";
 import { RiMusicLine, RiRecordCircleLine, RiSettings3Line } from "react-icons/ri";
 import type { PlayerState } from "~/components/Player";
 import type { MusicScore } from "~/core/types";
@@ -21,7 +21,7 @@ function PlayerControl({ state, changeState, score }: PlayerControlProps) {
       case "ready": 
         return (<>
           <button  key="autoplay" aria-label="Auto Play" onClick={changeStateTo("autoplaying")}><RiMusicLine /></button>
-          <button key="practice" aria-label="Practice Mode" onClick={changeStateTo("practicing")}><TbTree /></button>
+          <button key="practice" aria-label="Practice Mode" onClick={changeStateTo("practicing")}><TbFlag3 /></button>
         </>);
       case "playing":
         return (<>
