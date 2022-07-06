@@ -8,7 +8,14 @@ import parse from "~/core/parser";
 import type { MusicScore, SheetItems, ExpectedKey } from "~/core/types";
 import type { SheetImperativeHandleAPI } from "~/components/Sheet";
 
-export type PlayerState = "idle" | "ready" | "playing" | "paused" | "done" | "autoplaying";
+export type PlayerState = 
+  | "idle"
+  | "ready"
+  | "playing"
+  | "paused"
+  | "done"
+  | "autoplaying" // TODO: implement
+  | "practicing"; // TODO: implement
 
 function Player() {
   const instrument = useContext(InstrumentContext);

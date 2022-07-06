@@ -1,7 +1,8 @@
-import { TbAdjustments, TbKeyboard, TbMaximize, TbPlayerPause, TbPlayerPlay, TbPlayerStop, TbRotate } from "react-icons/tb";
+import { TbAdjustments, TbKeyboard, TbMaximize, TbPlayerPause, TbPlayerStop, TbRotate, TbTree } from "react-icons/tb";
 import { RiMusicLine, RiRecordCircleLine, RiSettings3Line } from "react-icons/ri";
 import type { PlayerState } from "~/components/Player";
 import type { MusicScore } from "~/core/types";
+import panic from "~/utils/panic";
 
 interface PlayerControlProps {
   state: PlayerState;
@@ -15,34 +16,55 @@ function PlayerControl({ state, changeState, score }: PlayerControlProps) {
     return () => changeState(newState);
   }
 
+  const leftControls = () => {
+    switch (state) {
+      case "ready": 
+        return (<>
+          <button  key="autoplay" aria-label="Auto Play" onClick={changeStateTo("autoplaying")}><RiMusicLine /></button>
+          <button key="practice" aria-label="Practice Mode" onClick={changeStateTo("practicing")}><TbTree /></button>
+        </>);
+      case "playing":
+        return (<>
+          <button key="restart" aria-label="Restart" onClick={changeStateTo("ready")}><TbRotate /></button>
+          <button key="pause" aria-label="Pause" onClick={changeStateTo("paused")}><TbPlayerPause /></button>
+          <div className="text-xs">Playing</div> {/* TODO: show time spent */}
+        </>);
+      case "paused":
+        return (<>
+          <button key="restart" aria-label="Restart" onClick={changeStateTo("ready")}><TbRotate /></button>
+          <div className="text-xs">Paused</div>
+        </>);
+      case "done": 
+        return (<>
+          <button key="restart" aria-label="Restart" onClick={changeStateTo("ready")}><TbRotate /></button>
+          <div className="text-xs">End of play</div>
+        </>);
+      case "autoplaying":
+        return (<>
+          <button key="stop" aria-label="Stop" onClick={changeStateTo("ready")}><TbPlayerStop /></button>
+          <div className="text-xs">Auto playing</div>
+        </>);
+      case "practicing":
+        return (<>
+          <button key="stop" aria-label="Stop" onClick={changeStateTo("ready")}><TbPlayerStop /></button>
+          <div className="text-xs">Practicing</div>
+        </>);
+      default: 
+        throw panic("unreachable");
+    }
+  };
+
   return (
     <div className="h-10 flex justify-between items-center text-xl border-b-2 border-[#eaf1f3]/25">
       {/* left controls */}
-      <div className="flex-1 flex items-center gap-3">
-        {/* TODO: disable buttons if score is null */}
-        {
-          state == "ready" ? <button key="autoplay" aria-label="auto play" onClick={changeStateTo("autoplaying")} ><TbPlayerPlay /></button> :
-          state == "playing" ? <button key="pause" aria-label="pause" onClick={changeStateTo("paused")}><TbPlayerPause /></button> :
-          state == "paused" ? <button key="autoplay" aria-label="auto play" onClick={changeStateTo("autoplaying")}><TbPlayerPlay /></button> :
-          <button key="stop" aria-label="stop auto play" onClick={changeStateTo("ready")}><TbPlayerStop /></button>
-        }
-        {
-          state == "playing" || state == "paused" ? <button key="restart" aria-label="restart" onClick={changeStateTo("ready")}><TbRotate /></button> : null
-        }
-        {
-          state == "playing" ? <div className="text-xs">Playing</div> :
-          state == "paused" ? <div className="text-xs">Paused</div> :
-          state == "autoplaying" ? <div className="text-xs">Auto playing</div> :
-          null
-        }
-      </div>
+      <div className="flex-1 flex items-center gap-3">{leftControls()}</div>
       {/* song name */}
       <div className="flex-1 flex-grow-[2] text-center px-2 py-1 hover:bg-[#495755]/20 rounded text-sm">
         {score.name}
       </div>
       {/* right controls */}
       <div className="flex-1 flex justify-end gap-3 items-center">
-        <button><RiMusicLine /></button> {/* display note name or piano keyboard */}
+        {/* <button><RiMusicLine /></button>  */}{/* display note name or piano keyboard */}
         <button><TbAdjustments /></button> {/* BPM volume transpose sustain  */}
         <button><RiRecordCircleLine /></button> {/* record */}
         <button><TbMaximize /></button> {/* focus mode */}
