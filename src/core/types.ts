@@ -1,14 +1,19 @@
 export interface MusicScore {
   id: number;
   name: string;
-  keySignature: string;
-  timeSignature: string;
-  bpm: number;
+  keysign: string; // such as "C" => Natural C Major, "Cm" => Natural C Minor 
+  timesign: [number, number]; // 2/4, 3/4, 4/4, etc.
+  tempo: number; // beats per minute (BPM)
   content: string;
-  difficulty: 1 | 2 | 3 | 4 | 5;
-  original: string;
-  composer: string;
-  /* TODO: more fields */
+  // difficulty: 1 | 2 | 3 | 4 | 5;
+  // likes: number;
+  // dislikes: number;
+  // length: number; // target time length in seconds
+  // original: string;
+  // artist: string;
+  // composer: string;
+  // genre: string;
+  // country: string;
 }
 
 interface Note {
