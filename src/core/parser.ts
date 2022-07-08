@@ -25,10 +25,7 @@ function parse(score: MusicScore, keysign?: string): SheetItems {
     if (err instanceof NooteSyntaxError) {
       throw panic("syntax error with this score: " + err.message);
     }
-  }
-
-  console.log(items);
-  
+  }  
   return items;
 }
 
@@ -78,8 +75,8 @@ function getNote(noteMatch: RegExpMatchArray, mode: Mode): string {
   const octave = 
     noteMatch[2] == "++" ? 6 :
     noteMatch[2] == "+" ? 5 :
-    noteMatch[2] == "--" ? 3 :
-    noteMatch[2] == "-" ? 2 :
+    noteMatch[2] == "--" ? 2 :
+    noteMatch[2] == "-" ? 3 :
     4;
   const num = parseInt(noteMatch[3]); // 1 2 3 4 5 6 7
   const pitch = mode.pitch[num][acci];
