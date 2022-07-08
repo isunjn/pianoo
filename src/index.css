@@ -14,19 +14,19 @@
 }
 
 #sheet .--250 {
-  margin-right: 0.25ch;
+  transform: scaleX(0.5);
 }
 
 #sheet .--500 {
-  margin-right: 0.5ch;
+  margin-right: 0ch;
 }
 
 #sheet .--750 {
-  margin-right: 0.75ch;
+  margin-right: 0.25ch;
 }
 
 #sheet .--875 {
-  margin-right: 0.875ch;
+  margin-right: 0.75ch;
 }
 
 #sheet .--1000 {
@@ -34,35 +34,35 @@
 }
 
 #sheet .--1500 {
-  margin-right: 1.5ch;
-}
-
-#sheet .--1750 {
-  margin-right: 1.75ch;
-}
-
-#sheet .--2000 {
   margin-right: 2ch;
 }
 
-#sheet .--3000 {
+#sheet .--1750 {
+  margin-right: 2.5ch;
+}
+
+#sheet .--2000 {
   margin-right: 3ch;
 }
 
+#sheet .--3000 {
+  margin-right: 5ch;
+}
+
 #sheet .--3500 {
-  margin-right: 3.5ch;
-}
-
-#sheet .--4000 {
-  margin-right: 4ch;
-}
-
-#sheet .--6000 {
   margin-right: 6ch;
 }
 
-#sheet .--7000 {
+#sheet .--4000 {
   margin-right: 7ch;
+}
+
+#sheet .--6000 {
+  margin-right: 11ch;
+}
+
+#sheet .--7000 {
+  margin-right: 13ch;
 }
 
 #sheet .active {
