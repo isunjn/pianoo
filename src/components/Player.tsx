@@ -35,7 +35,8 @@ function Player() {
     if (state != "idle") return;
     if (!score) {
       // TODO: load the last song user played, should load from backend api
-      import("~/examples/castle-in-the-sky").then(({ default: exampleScore }) => {
+      import("~/examples").then(mod => {
+        const exampleScore = mod.example003 as MusicScore;
         setScore(exampleScore);
         setSheetItems(parse(exampleScore));
       });// TODO: error handling
@@ -123,7 +124,7 @@ function Player() {
   useEffect(() => {
     if (state != "autoplaying") return;
     sheet.current!.start();
-    const msPerQuarter = 60 * 1000 / 88; // TODO: bpm
+    const msPerQuarter = 60 * 1000 / score!.tempo;
     const seq = sheetItems.flat(); // sequence of sheet items, including rest symbols
     let idx = 0; // the active item index
     let timeoutId = (function play(item: SheetItem, after: number) { // play item after a delay
@@ -141,7 +142,7 @@ function Player() {
       }, after);
     })(seq[0], 0); // initial delay is 0
     return () => clearTimeout(timeoutId);
-  }, [state, instrument, sheetItems]);
+  }, [state, instrument, sheetItems, score]);
 
   // FIXME: scrollIntoView() doesn't work on keyboard event 🥲, uncomment this when manual scroll function is written
   // // if play is done, user can press space to restart

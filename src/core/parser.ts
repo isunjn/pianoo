@@ -1,5 +1,5 @@
 import type { MusicScore, SheetItems, SheetItem } from "~/core/types";
-import { modes, type Mode } from "~/core/mode";
+import modeMap, { type Mode } from "~/core/mode";
 import panic from "~/utils/panic";
 
 class NooteSyntaxError extends SyntaxError {
@@ -14,7 +14,8 @@ const REGEXP_CHORD = /^\[([#b+-1234567&]+)\]([-_.]*)$/;
 
 function parse(score: MusicScore, keysign?: string): SheetItems {
   const items: SheetItems = [];
-  const mode = modes.get(keysign ?? score.keysign);
+  const mode = modeMap.get(keysign ?? score.keysign);
+  if (!mode) throw panic("invalid keysign: " + keysign);
   try {
     score.content.split("@@@").forEach(row => {
       items.push(
@@ -67,19 +68,15 @@ function parseNoote(noote: string, mode: Mode): SheetItem {
 }
 
 function getNote(noteMatch: RegExpMatchArray, mode: Mode): string {
-  // acci => accidental index
-  const acci = 
-    noteMatch[1] == "b" ? 2 :
-    noteMatch[1] == "#" ? 1 :
-    0;
+  const accidental = noteMatch[1] as "#" | "b" | undefined;
   const octave = 
     noteMatch[2] == "++" ? 6 :
     noteMatch[2] == "+" ? 5 :
     noteMatch[2] == "--" ? 2 :
     noteMatch[2] == "-" ? 3 :
     4;
-  const num = parseInt(noteMatch[3]); // 1 2 3 4 5 6 7
-  const pitch = mode.pitch[num][acci];
+  const solfaNumber = parseInt(noteMatch[3]); // 1 2 3 4 5 6 7
+  const pitch = mode.getPitch(solfaNumber, accidental);
   return `${pitch}${octave}`;
 }
 
