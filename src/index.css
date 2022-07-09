@@ -14,7 +14,7 @@
 }
 
 #sheet .--250 {
-  transform: scaleX(0.5);
+  margin-right: -0.5ch;
 }
 
 #sheet .--500 {
