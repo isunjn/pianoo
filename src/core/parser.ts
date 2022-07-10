@@ -1,5 +1,5 @@
-import type { MusicScore, SheetItems, SheetItem } from "~/core/types";
-import modeMap, { type Mode } from "~/core/mode";
+import type { MusicScore, SheetItems, SheetItem, Tonality, TonalityKind } from "~/core/types";
+import tonalityMap from "~/core/tonality";
 import panic from "~/utils/panic";
 
 class NooteSyntaxError extends SyntaxError {
@@ -12,14 +12,15 @@ const REGEXP_REST = /^0(_{0,2})$/;
 const REGEXP_NOTE = /^(#|b)?(\+\+|\+|--|-)?([1-7])([-_.]*)$/;
 const REGEXP_CHORD = /^\[([#b+-1234567&]+)\]([-_.]*)$/;
 
-function parse(score: MusicScore, keysign?: string): SheetItems {
+function parse(score: MusicScore, tonalityKind?: TonalityKind): SheetItems {
+  const targetTonalityKind = tonalityKind ?? score.tonality;
+  const tonality = tonalityMap.get(targetTonalityKind);
+  if (!tonality) throw panic("invalid tonality kind: " + targetTonalityKind);
   const items: SheetItems = [];
-  const mode = modeMap.get(keysign ?? score.keysign);
-  if (!mode) throw panic("invalid keysign: " + keysign);
   try {
     score.content.split("@@@").forEach(row => {
       items.push(
-        row.match(/\S+/g)?.filter(str => str != "|").map(noote => parseNoote(noote, mode)) ?? []
+        row.match(/\S+/g)?.filter(str => str != "|").map(noote => parseNoote(noote, tonality)) ?? []
       );
     });
   } catch (err) {
@@ -30,7 +31,7 @@ function parse(score: MusicScore, keysign?: string): SheetItems {
   return items;
 }
 
-function parseNoote(noote: string, mode: Mode): SheetItem {
+function parseNoote(noote: string, tonality: Tonality): SheetItem {
   let match;
   // rest
   match = noote.match(REGEXP_REST);
@@ -44,7 +45,7 @@ function parseNoote(noote: string, mode: Mode): SheetItem {
   // note
   match = noote.match(REGEXP_NOTE);
   if (match) {
-    const note = getNote(match, mode);
+    const note = getNote(match, tonality);
     const quarter = getQuarter(match[4], noote);
     return { kind: "note", note, quarter };
   }
@@ -55,7 +56,7 @@ function parseNoote(noote: string, mode: Mode): SheetItem {
     match[1].split("&").forEach(nooteInChord => {
       const noteMatch = nooteInChord.match(REGEXP_NOTE);
       if (noteMatch) {
-        notes.push(getNote(noteMatch, mode));
+        notes.push(getNote(noteMatch, tonality));
       } else {
         throw new NooteSyntaxError("invalid note in chord: " + noote);
       }
@@ -67,7 +68,7 @@ function parseNoote(noote: string, mode: Mode): SheetItem {
   throw new NooteSyntaxError("invalid note: " + noote);
 }
 
-function getNote(noteMatch: RegExpMatchArray, mode: Mode): string {
+function getNote(noteMatch: RegExpMatchArray, tonality: Tonality): string {
   const accidental = noteMatch[1] as "#" | "b" | undefined;
   const octave = 
     noteMatch[2] == "++" ? 6 :
@@ -75,8 +76,8 @@ function getNote(noteMatch: RegExpMatchArray, mode: Mode): string {
     noteMatch[2] == "--" ? 2 :
     noteMatch[2] == "-" ? 3 :
     4;
-  const solfaNumber = parseInt(noteMatch[3]); // 1 2 3 4 5 6 7
-  const pitch = mode.getPitch(solfaNumber, accidental);
+  const solfaNum = parseInt(noteMatch[3]); // 1 2 3 4 5 6 7
+  const pitch = tonality.getPitch(solfaNum, accidental);
   return `${pitch}${octave}`;
 }
 

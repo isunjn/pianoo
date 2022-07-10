@@ -1,7 +1,14 @@
+export type Mode = "major" | "minor";
+export type Pitch = "C" | "C#" | "D" | "D#" | "E" | "F" | "F#" | "G" | "G#" | "A" | "A#" | "B";
+export type TonalityKind =
+  | "C" | "G" | "D" | "A" | "E" | "B" | "F#" | "C#" | "F" | "Bb" | "Eb" | "Ab" | "Db" | "Gb" | "Cb"
+  | "Am" | "Em" | "Bm" | "F#m" | "C#m" | "G#m" | "D#m" | "A#m" | "Dm" | "Gm" | "Cm" | "Fm" | "Bbm" | "Ebm" | "Abm";
+export type { Tonality } from "./tonality";
+
 export interface MusicScore {
   id: number;
   name: string;
-  keysign: string; // such as "C" => Natural C Major, "Cm" => Natural C Minor 
+  tonality: TonalityKind; // such as "C" => Natural C Major, "Cm" => Natural C Minor 
   timesign: [number, number]; // 2/4, 3/4, 4/4, etc.
   tempo: number; // beats per minute (BPM)
   content: string;
@@ -34,9 +41,6 @@ interface Rest {
 }
 
 export type SheetItem = Note | Chord | Rest;
-
 export type SheetItems = SheetItem[][]; // rows -> row -> item
-
 export type NoteOrChord = Note | Chord;
-
 export type ExpectedKey = string | string[]; // note key or chord keys
