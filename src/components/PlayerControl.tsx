@@ -1,19 +1,27 @@
 import { TbAdjustments, TbKeyboard, TbMaximize, TbPlayerPause, TbPlayerStop, TbRotate, TbFlag3, TbVinyl } from "react-icons/tb";
 import { RiMusicLine, RiRecordCircleLine, RiSettings3Line } from "react-icons/ri";
-import type { PlayerState } from "~/components/Player";
+import type { PlayerState, PlayerPopuping } from "~/components/Player";
 import type { MusicScore } from "~/core/types";
 import panic from "~/utils/panic";
 
 interface PlayerControlProps {
   state: PlayerState;
   changeState: (newState: PlayerState) => void;
+  togglePopuping: (popuping: PlayerPopuping) => void;
   score: MusicScore;
 }
 
-function PlayerControl({ state, changeState, score }: PlayerControlProps) {
+function PlayerControl({ state, changeState, togglePopuping, score }: PlayerControlProps) {
 
   function changeStateTo(newState: PlayerState) {
     return () => changeState(newState);
+  }
+
+  function changePopupingTo(newPopuping: PlayerPopuping) {
+    return (event: React.MouseEvent) => {
+      event.stopPropagation();
+      togglePopuping(newPopuping);
+    }
   }
 
   const leftControls = () => {
@@ -59,17 +67,16 @@ function PlayerControl({ state, changeState, score }: PlayerControlProps) {
       {/* left controls */}
       <div className="flex-1 flex items-center gap-3">{leftControls()}</div>
       {/* song name */}
-      <div className="flex-1 flex-grow-[2] text-center px-2 py-1 hover:bg-[#495755]/20 rounded text-base">
+      <div className="flex-1 flex-grow-[2] text-center px-2 py-1 hover:bg-[#495755]/20 rounded text-base cursor-pointer"
+        onClick={changePopupingTo("chooser")} >
         {score.name}
       </div>
       {/* right controls */}
       <div className="flex-1 flex justify-end gap-3 items-center">
-        {/* <button><RiMusicLine /></button>  */}{/* display note name or piano keyboard */}
-        <button><TbAdjustments /></button> {/* BPM volume transpose sustain  */}
-        <button><RiRecordCircleLine /></button> {/* record */}
-        <button><TbMaximize /></button> {/* focus mode */}
-        <button><RiSettings3Line /></button> {/* settings */}
-        {/* <button><TbKeyboard /></button> */}
+        <button onClick={changePopupingTo("adjustments")}><TbAdjustments /></button>
+        <button><RiRecordCircleLine /></button>
+        <button><TbMaximize /></button>
+        <button><RiSettings3Line /></button>
       </div>
     </div>
   );
