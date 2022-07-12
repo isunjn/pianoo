@@ -1,5 +1,5 @@
-import React, { useContext, forwardRef, useImperativeHandle, type Ref } from "react";
-import KeymapContext from "~/contexts/keymap";
+import React, { forwardRef, useImperativeHandle, type Ref } from "react";
+import type Keymap from "~/config/keymap/type";
 import type { SheetItems, NoteOrChord, ExpectedKey } from "~/core/types";
 import panic from "~/utils/panic";
 
@@ -11,15 +11,14 @@ export interface SheetImperativeHandleAPI {
 
 interface SheetProps {
   sheetItems: SheetItems;
+  keymap: Keymap;
 }
 
 const Sheet = forwardRef(
   function Sheet(
-    { sheetItems }: SheetProps,
+    { sheetItems, keymap }: SheetProps,
     ref: Ref<SheetImperativeHandleAPI>
   ) {
-    const keymap = useContext(KeymapContext);
-    
     /* Sheet component only render once, it's UI is updated imperativly */
     /* Here we use local variable from first render to store state that used in imperative code */
 

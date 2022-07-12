@@ -18,10 +18,7 @@ function PlayerControl({ state, changeState, togglePopuping, score }: PlayerCont
   }
 
   function changePopupingTo(newPopuping: PlayerPopuping) {
-    return (event: React.MouseEvent) => {
-      event.stopPropagation();
-      togglePopuping(newPopuping);
-    }
+    return () => togglePopuping(newPopuping);
   }
 
   const leftControls = () => {
@@ -76,7 +73,7 @@ function PlayerControl({ state, changeState, togglePopuping, score }: PlayerCont
         <button onClick={changePopupingTo("adjustments")}><TbAdjustments /></button>
         <button><RiRecordCircleLine /></button>
         <button><TbMaximize /></button>
-        <button><RiSettings3Line /></button>
+        <button onClick={changePopupingTo("settings")}><RiSettings3Line /></button>
       </div>
     </div>
   );

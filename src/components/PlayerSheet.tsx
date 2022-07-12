@@ -5,16 +5,18 @@ import Sheet from "~/components/Sheet";
 import type { PlayerState } from "~/components/Player";
 import type { SheetImperativeHandleAPI } from "~/components/Sheet";
 import type { SheetItems } from "~/core/types";
+import type Keymap from "~/config/keymap/type";
 
 interface PlayerSheetProps {
   state: PlayerState;
   changeState: (newState: PlayerState) => void;
   sheetItems: SheetItems;
+  keymap: Keymap;
 }
 
 const PlayerSheet = forwardRef(
   function PlayerSheet(
-    { state, changeState, sheetItems }: PlayerSheetProps,
+    { state, changeState, sheetItems, keymap }: PlayerSheetProps,
     ref: Ref<SheetImperativeHandleAPI>
   ) {
     const sheetContainerRef = useRef<HTMLDivElement>(null);
@@ -40,7 +42,7 @@ const PlayerSheet = forwardRef(
     // TODO: handle overflow-x
     return (
       <div ref={sheetContainerRef} className="w-full h-52 font-mono text-xl scrollbar-hidden group">
-        <Sheet sheetItems={sheetItems} ref={ref} />
+        <Sheet sheetItems={sheetItems} keymap={keymap} ref={ref} />
         {(state == "ready" || state == "paused") &&
           <div className="absolute top-20 left-0 w-full h-52 flex items-center justify-center
                         bg-[#7b9c98]/30 backdrop-blur-sm pointer-events-none">

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import PlayerControl from "~/components/PlayerControl";
 import PlayerSheet from "~/components/PlayerSheet";
 import PlayerScoreMeta from "~/components/PlayerScoreMeta";
@@ -7,10 +7,11 @@ import PopupChooser from "~/components/PopupChooser";
 import PopupAdjustments from "~/components/PopupAdjustments";
 import PopupRecoder from "~/components/PopupRecorder";
 import PopupSettings from "~/components/PopupSettings";
-import InstrumentContext from "~/contexts/instrument";
-import KeymapContext from "~/contexts/keymap";
+import { useInstrument } from "~/components/App";
+import KEYMAP_STANDARD from "~/config/keymap/standard";
 import parse from "~/core/parser";
 import { score001 } from "~/examples";
+import type Keymap from "~/config/keymap/type";
 import type { SheetImperativeHandleAPI } from "~/components/Sheet";
 import type {
   MusicScore, 
@@ -39,13 +40,13 @@ export type PlayerPopuping =
 const defaultScore = score001 as MusicScore; // type assertion
 
 function Player() {
-  const instrument = useContext(InstrumentContext);
-  const keymap = useContext(KeymapContext);
+  const { instrument } = useInstrument();
+  const [keymap, setKeymap] = useState<Keymap>(KEYMAP_STANDARD);
 
   const [state, setState] = useState<PlayerState>("idle");
   const [popuping, setPopuping] = useState<PlayerPopuping>("none");
   const [score, setScore] = useState<MusicScore>(defaultScore);
-  const [sheetItems, setSheetItems] = useState<SheetItems>(parse(defaultScore));
+  const [sheetItems, setSheetItems] = useState<SheetItems>(() => parse(defaultScore));
   const [volume, setVolume] = useState<number>(50); // 0 ~ 100
   const [tempo, setTempo] = useState<number>(defaultScore.tempo);
   const [tonality, setTonality] = useState<TonalityKind>(defaultScore.tonality);
@@ -182,6 +183,14 @@ function Player() {
   //   return () => document.removeEventListener("keydown", keydownHandler);
   // }, [state]);
 
+  function handleKeymapChange(newKeymap: Keymap) {
+    if (newKeymap != keymap) {
+      setKeymap(newKeymap);
+      setSheetItems(parse(score, tonality));
+      setState("ready");
+    }
+  }
+
   function handleStateChange(newState: PlayerState) {
     if (newState != state) setState(newState);
   }
@@ -215,7 +224,7 @@ function Player() {
   function handleTonalityChange(newTonalityKind: TonalityKind) {
     if (newTonalityKind != tonality) {
       setTonality(newTonalityKind);
-      setSheetItems(parse(score!, newTonalityKind));
+      setSheetItems(parse(score, newTonalityKind));
       setState("ready");
     }
   }
@@ -236,6 +245,7 @@ function Player() {
         state={state}
         changeState={handleStateChange}
         sheetItems={sheetItems}
+        keymap={keymap}
         ref={sheet}
       />
       {/* <PlayerHint state={state} /> */}
@@ -247,18 +257,22 @@ function Player() {
       {
         popuping == "chooser" ?
           <PopupChooser changeScore={handleScoreChange} /> :
-          popuping == "adjustments" ?
-            <PopupAdjustments
-              volume={volume}
-              tempo={tempo}
-              tonality={tonality}
-              changeVolume={handleVolumeChange}
-              changeTempo={handleTempoChange}
-              changeTonality={handleTonalityChange}
-            /> :
-            popuping == "recorder" ? <PopupRecoder /> :
-              popuping == "settings" ? <PopupSettings /> :
-                null
+        popuping == "adjustments" ?
+          <PopupAdjustments
+            volume={volume}
+            tempo={tempo}
+            tonality={tonality}
+            changeVolume={handleVolumeChange}
+            changeTempo={handleTempoChange}
+            changeTonality={handleTonalityChange}
+          /> :
+        popuping == "recorder" ? 
+          <PopupRecoder /> :
+        popuping == "settings" ? 
+          <PopupSettings 
+            keymap={keymap}
+            changeKeymap={handleKeymapChange} /> :
+        null
       }
       {/* a click outside of the popup will close it */}
       {
