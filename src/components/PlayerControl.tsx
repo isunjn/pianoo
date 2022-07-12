@@ -60,7 +60,7 @@ function PlayerControl({ state, changeState, togglePopuping, score }: PlayerCont
   };
 
   return (
-    <div className="h-10 mb-10 flex justify-between items-center text-xl font-mono border-b-2 border-[#eaf1f3]/25">
+    <div className="h-10 mb-10 flex justify-between items-center text-xl font-mono border-b-2 border-[#eaf1f3]/25 zen-hoverable">
       {/* left controls */}
       <div className="flex-1 flex items-center gap-3">{leftControls()}</div>
       {/* song name */}
@@ -72,11 +72,21 @@ function PlayerControl({ state, changeState, togglePopuping, score }: PlayerCont
       <div className="flex-1 flex justify-end gap-3 items-center">
         <button onClick={changePopupingTo("adjustments")}><TbAdjustments /></button>
         <button><RiRecordCircleLine /></button>
-        <button><TbMaximize /></button>
+        <button onClick={toggleZenMode}><TbMaximize /></button> 
         <button onClick={changePopupingTo("settings")}><RiSettings3Line /></button>
       </div>
     </div>
   );
+}
+
+function toggleZenMode() {
+  if (document.body.classList.contains("zen-mode")) {
+    if (document.fullscreenElement) document.exitFullscreen();
+    document.body.classList.remove("zen-mode");
+  } else {
+    document.documentElement.requestFullscreen();
+    document.body.classList.add("zen-mode");
+  }
 }
 
 export default PlayerControl;

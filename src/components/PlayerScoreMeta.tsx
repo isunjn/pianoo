@@ -9,7 +9,7 @@ interface PlayerScoreMetaProps {
 
 function PlayerScoreMeta({ score, tempo, tonality }: PlayerScoreMetaProps) {
   return (
-    <div className="h-44 flex items-center font-mono text-[#495755]/75">
+    <div className="h-44 flex items-center font-mono text-[#495755]/75 zen-hoverable">
       <div className="flex-1 text-center">
         {
           tonality == score.tonality ? tonalityMap.get(score.tonality)!.display :

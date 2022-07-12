@@ -5,7 +5,7 @@ import type { ComponentType } from "react";
 
 function Header() {
   return (
-    <header className="flex justify-between items-center py-2">
+    <header className="flex justify-between items-center py-2 zen-invisible">
       <Link className="text-xl" to="/"> Pianoo </Link>
       <nav className="flex gap-1 items-center">
         <TabBtn to="/" name="Play" Icon={TbMusic} />

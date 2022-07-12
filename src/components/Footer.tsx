@@ -5,7 +5,7 @@ import type { ComponentType } from "react";
 
 function Footer() {
   return (
-    <footer className="flex justify-between text-sm">
+    <footer className="flex justify-between text-sm zen-invisible">
       <div className="flex items-center">
         <FooterLink href="#" name="GitHub" Icon={TbBrandGithub} />
         <FooterLink href="#" name="Twitter" Icon={TbBrandTwitter} />

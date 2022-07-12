@@ -82,3 +82,16 @@
   padding: 1px 1.5px 2.5px;
   border-radius: 0.25rem; /* 4px */
 }
+
+body.zen-mode .zen-invisible {
+  opacity: 0;
+}
+
+body.zen-mode .zen-hoverable {
+  @apply transition-opacity;
+  opacity: 0;
+}
+
+body.zen-mode .zen-hoverable:hover {
+  opacity: 1;
+}
