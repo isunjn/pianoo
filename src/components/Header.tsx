@@ -6,7 +6,10 @@ import type { ComponentType } from "react";
 function Header() {
   return (
     <header className="flex justify-between items-center py-2 zen-invisible">
-      <Link className="text-xl" to="/"> Pianoo </Link>
+      <Link to="/" className="text-xl focus-visible:outline-2 focus-visible:outline
+        focus-visible:outline-[#eaf1f3] focus-visible:outline-offset-2">
+        Pianoo
+      </Link>
       <nav className="flex gap-1 items-center">
         <TabBtn to="/" name="Play" Icon={TbMusic} />
         <TabBtn to="/scores" name="Scores" Icon={TbPlaylist} />
@@ -26,7 +29,9 @@ interface TabBtnProps {
 
 function TabBtn({ to, name, Icon }: TabBtnProps) {
   return (
-    <Link className="flex gap-1.5 items-center px-4 py-1 hover:bg-[#495755]/20 rounded" to={to}>
+    <Link to={to} className="flex gap-1.5 items-center px-4 py-1 rounded
+      hover:bg-[#495755]/20 focus-visible:outline-2 focus-visible:outline
+      focus-visible:outline-[#eaf1f3] focus-visible:outline-offset-2">
       <Icon className="text-lg" /> {name}
     </Link>
   );

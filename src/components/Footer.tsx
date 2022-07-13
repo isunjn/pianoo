@@ -14,13 +14,19 @@ function Footer() {
         <FooterLink href="#" name="Contact" Icon={TbMail} />
       </div>
       <div className="flex items-center">
-        <button className="flex gap-1.5 items-center px-2 py-0.5 hover:bg-[#495755]/20 rounded">
+        <button className="flex gap-1.5 items-center px-2 py-0.5 rounded
+          hover:bg-[#495755]/20 focus-visible:outline-2 focus-visible:outline
+          focus-visible:outline-[#eaf1f3] focus-visible:outline-offset-2">
           <TbLanguageHiragana className="text-base" />English
         </button>
-        <button className="flex gap-1.5 items-center px-2 py-0.5 hover:bg-[#495755]/20 rounded">
+        <button className="flex gap-1.5 items-center px-2 py-0.5 rounded
+          hover:bg-[#495755]/20 focus-visible:outline-2 focus-visible:outline
+          focus-visible:outline-[#eaf1f3] focus-visible:outline-offset-2">
           <TbPalette className="text-base" />Orange
         </button>
-        <Link className="flex gap-1.5 items-center px-2 py-0.5 hover:bg-[#495755]/20 rounded" to="/about">
+        <Link to="/about" className="flex gap-1.5 items-center px-2 py-0.5 rounded
+          hover:bg-[#495755]/20 focus-visible:outline-2 focus-visible:outline
+          focus-visible:outline-[#eaf1f3] focus-visible:outline-offset-2" >
           <TbGitMerge className="text-base" />v0.1.0
         </Link>
       </div>
@@ -36,7 +42,9 @@ interface FooterLinkProps {
 
 function FooterLink({ href, name, Icon }: FooterLinkProps) {
   return (
-    <a className="flex gap-1.5 items-center px-2 py-0.5 hover:bg-[#495755]/20 rounded" href={href}>
+    <a href={href} className="flex gap-1.5 items-center px-2 py-0.5 rounded
+    hover:bg-[#495755]/20 focus-visible:outline-2 focus-visible:outline
+    focus-visible:outline-[#eaf1f3] focus-visible:outline-offset-2">
       <Icon className="text-base" /> {name}
     </a>
   );
