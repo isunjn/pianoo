@@ -1,5 +1,7 @@
-import { TbAdjustments, TbKeyboard, TbMaximize, TbPlayerPause, TbPlayerStop, TbRotate, TbFlag3, TbVinyl } from "react-icons/tb";
+import { TbAdjustments, TbMaximize, TbPlayerPause, TbPlayerStop, TbRotate, TbVinyl } from "react-icons/tb";
 import { RiMusicLine, RiRecordCircleLine, RiSettings3Line } from "react-icons/ri";
+import type { IconBaseProps } from "react-icons";
+import type { ComponentType } from "react";
 import type { PlayerState, PlayerPopuping } from "~/components/Player";
 import type { MusicScore } from "~/core/types";
 import panic from "~/utils/panic";
@@ -25,58 +27,95 @@ function PlayerControl({ state, changeState, togglePopuping, score }: PlayerCont
     switch (state) {
       case "ready": 
         return (<>
-          <button  key="autoplay" aria-label="Auto Play" onClick={changeStateTo("autoplaying")}><TbVinyl /></button>
-          <button key="practice" aria-label="Practice Mode" onClick={changeStateTo("practicing")}><RiMusicLine /></button>
+          <ControlBtn tooltip="Auto Play" onClick={changeStateTo("autoplaying")} Icon={TbVinyl} />
+          <ControlBtn tooltip="Practice Mode" onClick={changeStateTo("practicing")} Icon={RiMusicLine} />
         </>);
       case "playing":
         return (<>
-          <button key="restart" aria-label="Restart" onClick={changeStateTo("ready")}><TbRotate /></button>
-          <button key="pause" aria-label="Pause" onClick={changeStateTo("paused")}><TbPlayerPause /></button>
-          <div className="text-base text-[#495755]/75">Playing</div> {/* TODO: show time spent */}
+          <ControlBtn tooltip="Restart" onClick={changeStateTo("ready")} Icon={TbRotate} />
+          <ControlBtn tooltip="Pause" onClick={changeStateTo("paused")} Icon={TbPlayerPause} />
+          <ControlHint hint="Playing" />
         </>);
       case "paused":
         return (<>
-          <button key="restart" aria-label="Restart" onClick={changeStateTo("ready")}><TbRotate /></button>
-          <div className="text-base text-[#495755]/75">Paused</div>
+          <ControlBtn tooltip="Restart" onClick={changeStateTo("ready")} Icon={TbRotate} />
+          <ControlHint hint="Paused" />
         </>);
       case "done": 
         return (<>
-          <button key="restart" aria-label="Restart" onClick={changeStateTo("ready")}><TbRotate /></button>
-          <div className="text-base text-[#495755]/75">End of play</div>
+          <ControlBtn tooltip="Restart" onClick={changeStateTo("ready")} Icon={TbRotate} />
+          <ControlHint hint="End of play" />
         </>);
       case "autoplaying":
         return (<>
-          <button key="stop" aria-label="Stop" onClick={changeStateTo("ready")}><TbPlayerStop /></button>
-          <div className="text-base text-[#495755]/75">Auto playing</div>
+          <ControlBtn tooltip="Stop" onClick={changeStateTo("ready")} Icon={TbPlayerStop} />
+          <ControlHint hint="Auto playing" />
         </>);
       case "practicing":
         return (<>
-          <button key="stop" aria-label="Stop" onClick={changeStateTo("ready")}><TbPlayerStop /></button>
-          <div className="text-base text-[#495755]/75">Practicing</div>
+          <ControlBtn tooltip="Stop" onClick={changeStateTo("ready")} Icon={TbPlayerStop} />
+          <ControlHint hint="Practicing" />
         </>);
-      default: 
+      default:
         throw panic("unreachable");
     }
   };
 
   return (
-    <div className="h-10 mb-10 flex justify-between items-center text-xl font-mono border-b-2 border-[#eaf1f3]/25 zen-hoverable">
-      {/* left controls */}
+    <div className="h-10 mb-10 flex justify-between items-center 
+      text-xl font-mono border-b-2 border-[#eaf1f3]/25 zen-hoverable">
+      
       <div className="flex-1 flex items-center gap-3">{leftControls()}</div>
-      {/* song name */}
-      <div className="flex-1 flex-grow-[2] text-center px-2 py-1 hover:bg-[#495755]/20 rounded text-base cursor-pointer"
-        onClick={changePopupingTo("chooser")} >
+      
+      <button onClick={changePopupingTo("chooser")}
+        className="flex-1 flex-grow-[2] text-center px-2 py-1 rounded text-base
+        hover:bg-[#495755]/20 focus-visible:outline-2 focus-visible:outline 
+        focus-visible:outline-[#eaf1f3] focus-visible:outline-offset-2">
         {score.name}
-      </div>
-      {/* right controls */}
+      </button>
+      
       <div className="flex-1 flex justify-end gap-3 items-center">
-        <button onClick={changePopupingTo("adjustments")}><TbAdjustments /></button>
-        <button><RiRecordCircleLine /></button>
-        <button onClick={toggleZenMode}><TbMaximize /></button> 
-        <button onClick={changePopupingTo("settings")}><RiSettings3Line /></button>
+        <ControlBtn tooltip="Adjust" onClick={changePopupingTo("adjustments")} Icon={TbAdjustments} />
+        {/* <ControlBtn tooltip="Record" onClick={() => undefined} Icon={RiRecordCircleLine} /> */}
+        <ControlBtn tooltip="Settings" onClick={changePopupingTo("settings")} Icon={RiSettings3Line} />
+        <ControlBtn tooltip="Zen Mode" onClick={toggleZenMode} Icon={TbMaximize} />
+      </div>
+    
+    </div>
+  );
+}
+
+interface ControlBtnProps {
+  tooltip: string;
+  onClick: () => void;
+  Icon: ComponentType<IconBaseProps>;
+}
+
+function ControlBtn({ tooltip, onClick, Icon }: ControlBtnProps) {
+  function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
+    onClick();
+    e.currentTarget.blur();
+  }
+  return (
+    <div className="relative group rounded h-6">
+      <button key={tooltip} aria-label={tooltip} onClick={handleClick}
+        className="peer focus-visible:outline-2 focus-visible:outline 
+          focus-visible:outline-[#eaf1f3] focus-visible:outline-offset-2">
+        <Icon />
+      </button>
+      <div className="absolute -top-9 -translate-x-1/2 left-1/2 
+        invisible group-hover:visible peer-focus-visible:visible
+        w-max text-base bg-[#495755]/50 text-[#eaf1f3] px-2.5 py-px rounded
+        after:absolute after:top-full after:left-1/2 after:border-4 after:-ml-1
+        after:border-transparent after:border-t-[#495755]/50">
+        {tooltip}
       </div>
     </div>
   );
+}
+
+function ControlHint({ hint }: { hint: string }) {
+  return <div className="text-base leading-none text-[#495755]/75">{hint}</div>;
 }
 
 function toggleZenMode() {
