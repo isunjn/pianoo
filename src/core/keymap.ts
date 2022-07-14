@@ -53,7 +53,7 @@ class Keymap {
     this.buildKeyToNote();
   }
 
-  public getKey(note: Pick<ParsedNote, "solfaNum" | "octave" | "accidental">): Key {
+  public getKey(note: Omit<ParsedNote, "kind" | "quarter">): Key {
     const { solfaNum, octave, accidental } = note;
     const keyIdx = this.tonality.getNormalizedIdx(solfaNum, accidental);
     return this.keys.get(octave)![keyIdx];

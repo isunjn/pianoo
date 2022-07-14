@@ -1,4 +1,4 @@
-import type { MusicScore } from "~/core/parser";
+import type { ParsedMusicScore } from "~/core/parser";
 import Keymap from "~/core/keymap";
 import panic from "~/utils/panic";
 
@@ -23,7 +23,7 @@ interface SheetItemRest {
   quarter: number;
 }
 
-export function getSheetItems(score: MusicScore, keymap: Keymap): SheetItems {
+export function getSheetItems(score: ParsedMusicScore, keymap: Keymap): SheetItems {
   return score.parsed.map(row => row.map(item => {
     switch (item.kind) {
       case "note": {

@@ -1,7 +1,7 @@
 import type { TonalityKind } from "~/core/tonality";
 import panic from "~/utils/panic";
 
-export interface UnparsedMusicScore {
+export interface MusicScore {
   id: number;
   name: string;
   tonality: TonalityKind; // such as "1 = C" => Natural C Major
@@ -19,7 +19,7 @@ export interface UnparsedMusicScore {
   // country: string;
 }
 
-export interface MusicScore extends UnparsedMusicScore {
+export interface ParsedMusicScore extends MusicScore {
   parsed: ParsedItems;
 }
 
@@ -37,7 +37,7 @@ export interface ParsedNote {
 
 interface ParsedChord {
   kind: "chord";
-  notes: Pick<ParsedNote, "solfaNum" | "octave" | "accidental">[];
+  notes: Omit<ParsedNote, "kind" | "quarter">[];
   quarter: number;
 }
 
@@ -54,99 +54,118 @@ export type Accidental = "#" | "b" | undefined;
 
 //-----------------------------------------------------------------------------
 
-class NooteSyntaxError extends SyntaxError {
-  constructor(message: string) {
-    super(message);
-  }
-}
+const REGEXP_NOTE = /^(#|b)?(\+\+|\+|--|-)?([1-7])$/;
+const REGEXP_QUARTER = /^(-{1,7}|_|__)?(.|..)?$/;
 
-const REGEXP_REST = /^0(_{0,2})$/;
-const REGEXP_NOTE = /^(#|b)?(\+\+|\+|--|-)?([1-7])([-_.]*)$/;
-const REGEXP_CHORD = /^\[([#b+-1234567&]+)\]([-_.]*)$/;
-
-function parse(score: UnparsedMusicScore): MusicScore {
-  const items: ParsedItems = [];
+function parse(score: MusicScore): ParsedMusicScore {
   try {
-    score.content.split("@@@").forEach(row => {
-      items.push(
-        row.match(/\S+/g)?.filter(str => str != "|").map(noote => parseNoote(noote)) ?? []
-      );
-    });
+    const parsedItems = score.content.split("@@@").map(row => 
+      row.match(/\S+/g)?.filter(s => s != "|").map(s => parseItem(s)) ?? []
+    );
+    return { ...score, parsed: parsedItems };
   } catch (err) {
-    if (err instanceof NooteSyntaxError) {
-      throw panic("syntax error with this score: " + err.message);
+    if (err instanceof SyntaxError) {
+      throw panic("Syntax error: " + err.message);
+    } else {
+      throw err;
     }
   }
-  return { ...score, parsed: items };
 }
 
-function parseNoote(noote: string): ParsedItem {
-  let match;
+function parseItem(str: string): ParsedItem {
   // rest
-  match = noote.match(REGEXP_REST);
-  if (match) {
-    const quarter =
-      match[1].length == 2 ? 0.25 :
-        match[1].length == 1 ? 0.5 :
-          1;
+  if (str.startsWith("0")) {
+    const quarter = parseQuarter(str.slice(1));
     return { kind: "rest", quarter };
   }
-  // note
-  match = noote.match(REGEXP_NOTE);
-  if (match) {
-    const [solfaNum, octave, accidental] = getNote(match);
-    const quarter = getQuarter(match[4], noote);
-    return { kind: "note", solfaNum, octave, accidental, quarter };
-  }
+
   // chord
-  match = noote.match(REGEXP_CHORD);
-  if (match) {
-    const notes: Omit<ParsedNote, "quarter" | "kind">[] = [];
-    match[1].split("&").forEach(nooteInChord => {
-      const noteMatch = nooteInChord.match(REGEXP_NOTE);
-      if (noteMatch) {
-        const [solfaNum, octave, accidental] = getNote(noteMatch);
-        notes.push({ solfaNum, octave, accidental });
-      } else {
-        throw new NooteSyntaxError("invalid note in chord: " + noote);
-      }
-    });
-    const quarter = getQuarter(match[2], noote);
+  if (str.startsWith("[")) {
+    const rightSquareIdx = str.indexOf("]");
+    if (rightSquareIdx == -1) {
+      throw new SyntaxError(`Invalid chord: \`${str}\`, missing \`]\``);
+    }
+    const noteStrs = str.slice(1, rightSquareIdx).split("&");
+    if (noteStrs.length == 1) {
+      throw new SyntaxError(
+        `Invalid chord: \`${str}\`, at least two notes in \`[]\``
+      );
+    }
+    if (noteStrs.some(s => s == "")) {
+      throw new SyntaxError(
+        `Invalid chord: \`${str}\`, empty string around \`&\``
+      );
+    }
+    const notes = noteStrs.map(s => parseNote(s));
+    const quarter = parseQuarter(str.slice(rightSquareIdx + 1));
     return { kind: "chord", notes, quarter };
   }
-  // unmatched
-  throw new NooteSyntaxError("invalid note: " + noote);
-}
-
-function getNote(noteMatch: RegExpMatchArray): [SolfaNum, Octave, Accidental] {
-  const accidental = noteMatch[1] as Accidental;
-  const octave =
-    noteMatch[2] == "++" ? 6 :
-      noteMatch[2] == "+" ? 5 :
-        noteMatch[2] == "--" ? 2 :
-          noteMatch[2] == "-" ? 3 :
-            4;
-  const solfaNum = parseInt(noteMatch[3]) as SolfaNum;
-  return [solfaNum, octave, accidental];
-}
-
-function getQuarter(quarterLengthStr: string, noote: string): number {
-  switch (quarterLengthStr) {
-    case "": return 1;
-    case "_": return 0.5;
-    case "-": return 2;
-    case "--": return 3;
-    case "---": return 4;
-    case "__": return 0.25;
-    case "_.": return 0.75;
-    case "_..": return 0.875;
-    case ".": return 1.5;
-    case "..": return 1.75;
-    case "--_": return 3.5;
-    case "-----": return 6;
-    case "------": return 7;
-    default: throw new NooteSyntaxError("invalid quarter syntax: " + noote);
+  
+  // note
+  const solfaNumIdx = str.search(/[1-7]/);
+  if (solfaNumIdx == -1) {
+    throw new SyntaxError(`Invalid note: \`${str}\`, missing solfa number`);
   }
+  const note = parseNote(str.slice(0, solfaNumIdx + 1));
+  const quarter = parseQuarter(str.slice(solfaNumIdx + 1));
+  return { kind: "note", ...note, quarter };
+}
+
+function parseNote(str: string): Omit<ParsedNote, "kind" | "quarter"> {
+  const match = str.match(REGEXP_NOTE);
+  if (!match) {
+    throw new SyntaxError(`Invalid note: \`${str}\``);
+  }
+  const accidental = match[1] as Accidental;
+  const octave =
+    match[2] == "++" ? 6 :
+      match[2] == "+" ? 5 :
+        match[2] == "--" ? 2 :
+          match[2] == "-" ? 3 :
+            4;
+  const solfaNum = parseInt(match[3]) as SolfaNum;
+  return { solfaNum, octave, accidental };
+}
+
+function parseQuarter(str: string): number {
+  if (str.startsWith("(") && str.endsWith(")")) {
+    const quarterStrs = str.slice(1, -1).split("&");
+    if (quarterStrs.length == 1) {
+      throw new SyntaxError(
+        `Invalid quarter: \`${str}\`, at least two quarter part in \`()\``
+      );
+    }
+    if (quarterStrs.some(s => s == "")) {
+      throw new SyntaxError(
+        `Invalid quarter: \`${str}\`, empty string around \`&\``
+      );
+    }
+    return quarterStrs.map(s => parseOneQuarter(s, true)).reduce((a, b) => a + b);
+  }
+  return parseOneQuarter(str, false);
+}
+
+function parseOneQuarter(str: string, inParen: boolean): number {
+  if (inParen && str == "~") return 1;
+  const match = str.match(REGEXP_QUARTER);
+  if (!match) {
+    throw new SyntaxError(`Invalid quarter: \`${str}\``);
+  }
+  let quarter = 
+    match[1] == undefined ? 1 :
+      match[1] == "_" ? 0.5 :
+        match[1] == "__" ? 0.25 :
+          match[1].length + 1;
+  if (match[2]) {
+    if (match[1] != undefined && match[1] != "_") {
+      throw new SyntaxError(
+        `Invalid quarter: \`${str}\`,  \`.\` can't be put after \`-\` or \`__\``
+      );
+    }
+    const factor = match[2] == "." ? 0.5 : 0.75;
+    quarter += (quarter * factor);
+  }
+  return quarter;
 }
 
 export default parse;
