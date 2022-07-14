@@ -1,6 +1,58 @@
-import type { MusicScore, SheetItems, SheetItem, Tonality, TonalityKind } from "~/core/types";
-import tonalityMap from "~/core/tonality";
+import type { TonalityKind } from "~/core/tonality";
 import panic from "~/utils/panic";
+
+export interface UnparsedMusicScore {
+  id: number;
+  name: string;
+  tonality: TonalityKind; // such as "1 = C" => Natural C Major
+  timesign: [number, number]; // 2/4, 3/4, 4/4, etc.
+  tempo: number; // beats per minute (BPM)
+  content: string;
+  // difficulty: 1 | 2 | 3 | 4 | 5;
+  // likes: number;
+  // dislikes: number;
+  // length: number; // target time length in seconds
+  // original: string;
+  // artist: string;
+  // composer: string;
+  // genre: string;
+  // country: string;
+}
+
+export interface MusicScore extends UnparsedMusicScore {
+  parsed: ParsedItems;
+}
+
+type ParsedItems = ParsedItem[][];
+
+type ParsedItem = ParsedNote | ParsedChord | ParsedRest;
+
+export interface ParsedNote {
+  kind: "note";
+  solfaNum: SolfaNum;
+  octave: Octave;
+  accidental: Accidental;
+  quarter: number;
+}
+
+interface ParsedChord {
+  kind: "chord";
+  notes: Pick<ParsedNote, "solfaNum" | "octave" | "accidental">[];
+  quarter: number;
+}
+
+interface ParsedRest {
+  kind: "rest";
+  quarter: number;
+}
+
+export type SolfaNum = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+export type Octave = 2 | 3 | 4 | 5 | 6;
+
+export type Accidental = "#" | "b" | undefined;
+
+//-----------------------------------------------------------------------------
 
 class NooteSyntaxError extends SyntaxError {
   constructor(message: string) {
@@ -12,51 +64,49 @@ const REGEXP_REST = /^0(_{0,2})$/;
 const REGEXP_NOTE = /^(#|b)?(\+\+|\+|--|-)?([1-7])([-_.]*)$/;
 const REGEXP_CHORD = /^\[([#b+-1234567&]+)\]([-_.]*)$/;
 
-function parse(score: MusicScore, tonalityKind?: TonalityKind): SheetItems {
-  const targetTonalityKind = tonalityKind ?? score.tonality;
-  const tonality = tonalityMap.get(targetTonalityKind);
-  if (!tonality) throw panic("invalid tonality kind: " + targetTonalityKind);
-  const items: SheetItems = [];
+function parse(score: UnparsedMusicScore): MusicScore {
+  const items: ParsedItems = [];
   try {
     score.content.split("@@@").forEach(row => {
       items.push(
-        row.match(/\S+/g)?.filter(str => str != "|").map(noote => parseNoote(noote, tonality)) ?? []
+        row.match(/\S+/g)?.filter(str => str != "|").map(noote => parseNoote(noote)) ?? []
       );
     });
   } catch (err) {
     if (err instanceof NooteSyntaxError) {
       throw panic("syntax error with this score: " + err.message);
     }
-  }  
-  return items;
+  }
+  return { ...score, parsed: items };
 }
 
-function parseNoote(noote: string, tonality: Tonality): SheetItem {
+function parseNoote(noote: string): ParsedItem {
   let match;
   // rest
   match = noote.match(REGEXP_REST);
   if (match) {
-    const quarter = 
+    const quarter =
       match[1].length == 2 ? 0.25 :
-      match[1].length == 1 ? 0.5 :
-      1;
+        match[1].length == 1 ? 0.5 :
+          1;
     return { kind: "rest", quarter };
   }
   // note
   match = noote.match(REGEXP_NOTE);
   if (match) {
-    const note = getNote(match, tonality);
+    const [solfaNum, octave, accidental] = getNote(match);
     const quarter = getQuarter(match[4], noote);
-    return { kind: "note", note, quarter };
+    return { kind: "note", solfaNum, octave, accidental, quarter };
   }
   // chord
   match = noote.match(REGEXP_CHORD);
   if (match) {
-    const notes: string[] = [];
+    const notes: Omit<ParsedNote, "quarter" | "kind">[] = [];
     match[1].split("&").forEach(nooteInChord => {
       const noteMatch = nooteInChord.match(REGEXP_NOTE);
       if (noteMatch) {
-        notes.push(getNote(noteMatch, tonality));
+        const [solfaNum, octave, accidental] = getNote(noteMatch);
+        notes.push({ solfaNum, octave, accidental });
       } else {
         throw new NooteSyntaxError("invalid note in chord: " + noote);
       }
@@ -68,17 +118,16 @@ function parseNoote(noote: string, tonality: Tonality): SheetItem {
   throw new NooteSyntaxError("invalid note: " + noote);
 }
 
-function getNote(noteMatch: RegExpMatchArray, tonality: Tonality): string {
-  const accidental = noteMatch[1] as "#" | "b" | undefined;
-  const octave = 
+function getNote(noteMatch: RegExpMatchArray): [SolfaNum, Octave, Accidental] {
+  const accidental = noteMatch[1] as Accidental;
+  const octave =
     noteMatch[2] == "++" ? 6 :
-    noteMatch[2] == "+" ? 5 :
-    noteMatch[2] == "--" ? 2 :
-    noteMatch[2] == "-" ? 3 :
-    4;
-  const solfaNum = parseInt(noteMatch[3]); // 1 2 3 4 5 6 7
-  const pitch = tonality.getPitch(solfaNum, accidental);
-  return `${pitch}${octave}`;
+      noteMatch[2] == "+" ? 5 :
+        noteMatch[2] == "--" ? 2 :
+          noteMatch[2] == "-" ? 3 :
+            4;
+  const solfaNum = parseInt(noteMatch[3]) as SolfaNum;
+  return [solfaNum, octave, accidental];
 }
 
 function getQuarter(quarterLengthStr: string, noote: string): number {
