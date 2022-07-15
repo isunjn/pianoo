@@ -1,29 +1,33 @@
-import KEYMAP_STANDARD from "~/config/keymap/standard";
-import KEYMAP_VIRTUALPIANO from "~/config/keymap/virtualpiano";
-import type Keymap from "~/config/keymap/type";
+import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
+import player from "~/core/player";
+import type { KeymapKind } from "~/config/keymap";
 
-interface PopupSettingsProps {
-  keymap: Keymap;
-  changeKeymap: (keymap: Keymap) => void;
-}
+function PopupSettings() {
+  const { keymap } = usePlayer();
+  const dispatch = usePlayerDispatch();
 
-function PopupSettings({ keymap, changeKeymap }: PopupSettingsProps) {
+  function handleKeymapChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const newKeymap = e.target.value as KeymapKind;
+    if (newKeymap != keymap) {
+      const sheetItems = player.setKeymap(newKeymap);
+      dispatch({ type: "set_keymap", keymap: newKeymap, sheetItems });
+    }
+  }
+
   return (
     <div className="absolute z-50 top-10 right-0 w-72 px-4 py-6 space-y-8
       backdrop-blur bg-[#495755]/20 text-[#eaf1f3] rounded shadow-lg">
-
       <div>
         <label htmlFor="keymap" className="w-full flex items-center justify-between">
           Keymap: 
-          <select id="keymap" value={keymap == KEYMAP_STANDARD ? "Standard" : "Virtual Piano"} 
-            onChange={(e) => changeKeymap(e.target.value == "Standard" ? KEYMAP_STANDARD : KEYMAP_VIRTUALPIANO)}
+          <select id="keymap" onChange={handleKeymapChange}
+            value={keymap == "standard" ? "Standard" : "Virtual Piano"} 
             className="bg-[#495755]/20 rounded px-4 py-1.5">
-            <option value="Standard">Standard</option>
-            <option value="Virtual Piano">Virtual Piano</option>
+            <option value="standard">Standard</option>
+            <option value="virtualpiano">Virtual Piano</option>
           </select>
         </label>
       </div>
-    
     </div>
   );
 }

@@ -1,19 +1,20 @@
 import type { Octave, ParsedNote } from "~/core/parser";
 import type { TonalityKind, Tonality } from "~/core/tonality";
-import { tonalityMap } from "~/core/tonality";
+import tonalities from "~/core/tonality";
 
 type Key = string;
 type NoteName = string;
 export type KeymapKeys = Map<Octave, Key[]>;
+export type KeymapKind = "standard" | "virtualpiano";
 
 class Keymap {
-  private tonality: Tonality;
-  private keys: KeymapKeys; // point to majorKeys or minorKeys
+  private tonality: Tonality | null;
+  private keys: KeymapKeys | null; // point to majorKeys or minorKeys
   private readonly majorKeys: KeymapKeys;
   private readonly minorKeys: KeymapKeys;
   private readonly keyToNote: Map<Key, NoteName>;
 
-  constructor(allKeys: KeymapKeys, tonalityKind: TonalityKind) {
+  constructor(allKeys: KeymapKeys) {
     // allKeys contains 14 keys per octave
     this.majorKeys = new Map();
     this.minorKeys = new Map();
@@ -29,24 +30,24 @@ class Keymap {
       minorKeyRow.splice(9, 1);
       this.minorKeys.set(octave, minorKeyRow);
     });
-    this.tonality = tonalityMap.get(tonalityKind)!;
-    this.keys = this.tonality.mode == "major" ? this.majorKeys : this.minorKeys;
+    this.tonality = null;
+    this.keys = null;
     this.keyToNote = new Map();
-    this.buildKeyToNote();
   }
 
   private buildKeyToNote() {
-    this.keys.forEach((keyRow, octave) => {
+    this.keys!.forEach((keyRow, octave) => {
       keyRow.forEach((key, keyIdx) => {
-        const pitch = this.tonality.getPitch(keyIdx);
+        const pitch = this.tonality!.getPitch(keyIdx);
         const note = `${pitch}${octave}`;
         this.keyToNote.set(key, note);
       });
     });
   }
 
+  // transpose() will be called before other methods
   public transpose(tonalityKind: TonalityKind) {
-    const tonality = tonalityMap.get(tonalityKind)!;
+    const tonality = tonalities.get(tonalityKind)!;
     this.tonality = tonality;
     this.keys = tonality.mode == "major" ? this.majorKeys : this.minorKeys;
     this.keyToNote.clear();
@@ -55,8 +56,8 @@ class Keymap {
 
   public getKey(note: Omit<ParsedNote, "kind" | "quarter">): Key {
     const { solfaNum, octave, accidental } = note;
-    const keyIdx = this.tonality.getNormalizedIdx(solfaNum, accidental);
-    return this.keys.get(octave)![keyIdx];
+    const keyIdx = this.tonality!.getNormalizedIdx(solfaNum, accidental);
+    return this.keys!.get(octave)![keyIdx];
   }
 
   public getNote(key: Key): NoteName | undefined {

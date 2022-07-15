@@ -54,14 +54,15 @@ export type Accidental = "#" | "b" | undefined;
 
 //-----------------------------------------------------------------------------
 
-const REGEXP_NOTE = /^(#|b)?(\+\+|\+|--|-)?([1-7])$/;
-const REGEXP_QUARTER = /^(-{1,7}|_|__)?(.|..)?$/;
+const REGEXP_NOTE = /^(#|b)??(\+{1,2}|-{1,2})??([1-7])$/;
+const REGEXP_QUARTER = /^(-{1,7}|_{1,2})??(\.{1,2})??$/;
 
 function parse(score: MusicScore): ParsedMusicScore {
   try {
     const parsedItems = score.content.split("@@@").map(row => 
       row.match(/\S+/g)?.filter(s => s != "|").map(s => parseItem(s)) ?? []
     );
+    console.log(parsedItems);
     return { ...score, parsed: parsedItems };
   } catch (err) {
     if (err instanceof SyntaxError) {

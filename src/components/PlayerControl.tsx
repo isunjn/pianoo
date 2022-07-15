@@ -1,59 +1,79 @@
-import { TbAdjustments, TbMaximize, TbPlayerPause, TbPlayerStop, TbRotate, TbVinyl } from "react-icons/tb";
-import { RiMusicLine, RiRecordCircleLine, RiSettings3Line } from "react-icons/ri";
-import type { IconBaseProps } from "react-icons";
-import type { ComponentType } from "react";
-import type { PlayerState, PlayerPopuping } from "~/components/Player";
-import type { MusicScore } from "~/core/types";
+import {
+  TbAdjustments,
+  TbMaximize,
+  TbPlayerPause,
+  TbPlayerStop,
+  TbRotate,
+  TbVinyl,
+} from "react-icons/tb";
+import {
+  RiMusicLine,
+  RiSettings3Line,
+  RiRecordCircleLine,
+} from "react-icons/ri";
+import type { IconType } from "react-icons";
+import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
 import panic from "~/utils/panic";
 
-interface PlayerControlProps {
-  state: PlayerState;
-  changeState: (newState: PlayerState) => void;
-  togglePopuping: (popuping: PlayerPopuping) => void;
-  score: MusicScore;
-}
-
-function PlayerControl({ state, changeState, togglePopuping, score }: PlayerControlProps) {
-
-  function changeStateTo(newState: PlayerState) {
-    return () => changeState(newState);
-  }
-
-  function changePopupingTo(newPopuping: PlayerPopuping) {
-    return () => togglePopuping(newPopuping);
-  }
+function PlayerControl() {
+  const { status, score } = usePlayer();
+  const dispatch = usePlayerDispatch();
 
   const leftControls = () => {
-    switch (state) {
-      case "ready": 
+    switch (status) {
+      case "ready":
         return (<>
-          <ControlBtn tooltip="Auto Play" onClick={changeStateTo("autoplaying")} Icon={TbVinyl} />
-          <ControlBtn tooltip="Practice Mode" onClick={changeStateTo("practicing")} Icon={RiMusicLine} />
+          <ControlBtn
+            tooltip="Auto Play"
+            Icon={TbVinyl}
+            onClick={() => dispatch({ type: "auto_play" })} />
+          <ControlBtn
+            tooltip="Practice Mode"
+            Icon={RiMusicLine}
+            onClick={() => dispatch({ type: "practice" })} />
         </>);
       case "playing":
         return (<>
-          <ControlBtn tooltip="Restart" onClick={changeStateTo("ready")} Icon={TbRotate} />
-          <ControlBtn tooltip="Pause" onClick={changeStateTo("paused")} Icon={TbPlayerPause} />
+          <ControlBtn
+            tooltip="Restart"
+            Icon={TbRotate}
+            onClick={() => dispatch({ type: "reset" })} />
+          <ControlBtn
+            tooltip="Pause"
+            Icon={TbPlayerPause}
+            onClick={() => dispatch({ type: "pause" })} />
           <ControlHint hint="Playing" />
         </>);
       case "paused":
         return (<>
-          <ControlBtn tooltip="Restart" onClick={changeStateTo("ready")} Icon={TbRotate} />
+          <ControlBtn
+            tooltip="Restart"
+            Icon={TbRotate}
+            onClick={() => dispatch({ type: "reset" })} />
           <ControlHint hint="Paused" />
         </>);
-      case "done": 
+      case "done":
         return (<>
-          <ControlBtn tooltip="Restart" onClick={changeStateTo("ready")} Icon={TbRotate} />
+          <ControlBtn
+            tooltip="Restart"
+            Icon={TbRotate}
+            onClick={() => dispatch({ type: "reset" })} />
           <ControlHint hint="End of play" />
         </>);
       case "autoplaying":
         return (<>
-          <ControlBtn tooltip="Stop" onClick={changeStateTo("ready")} Icon={TbPlayerStop} />
+          <ControlBtn
+            tooltip="Stop"
+            Icon={TbPlayerStop}
+            onClick={() => dispatch({ type: "reset" })} />
           <ControlHint hint="Auto playing" />
         </>);
       case "practicing":
         return (<>
-          <ControlBtn tooltip="Stop" onClick={changeStateTo("ready")} Icon={TbPlayerStop} />
+          <ControlBtn
+            tooltip="Stop"
+            Icon={TbPlayerStop}
+            onClick={() => dispatch({ type: "reset" })} />
           <ControlHint hint="Practicing" />
         </>);
       default:
@@ -61,34 +81,53 @@ function PlayerControl({ state, changeState, togglePopuping, score }: PlayerCont
     }
   };
 
+  const rightControls = () => {
+    return (<>
+      <ControlBtn
+        tooltip="Adjust"
+        Icon={TbAdjustments}
+        onClick={() => dispatch({ type: "open_adjustments" })} />
+      <ControlBtn
+        tooltip="Record"
+        Icon={RiRecordCircleLine}
+        onClick={() => dispatch({ type: "open_recorder" })} />
+      <ControlBtn
+        tooltip="Settings"
+        Icon={RiSettings3Line}
+        onClick={() => dispatch({ type: "open_settings" })} />
+      <ControlBtn
+        tooltip="Zen Mode"
+        Icon={TbMaximize}
+        onClick={toggleZenMode} />
+    </>);
+  }
+
+
   return (
     <div className="h-10 mb-10 flex justify-between items-center 
       text-xl font-mono border-b-2 border-[#eaf1f3]/25 zen-hoverable">
-      
+
       <div className="flex-1 flex items-center gap-3">{leftControls()}</div>
-      
-      <button onClick={changePopupingTo("chooser")}
+
+      <button onClick={() => dispatch({ type: "open_chooser" })}
         className="flex-1 flex-grow-[2] text-center px-2 py-1 rounded text-base
         hover:bg-[#495755]/20 focus-visible:outline-2 focus-visible:outline 
         focus-visible:outline-[#eaf1f3] focus-visible:outline-offset-2">
         {score.name}
       </button>
-      
+
       <div className="flex-1 flex justify-end gap-3 items-center">
-        <ControlBtn tooltip="Adjust" onClick={changePopupingTo("adjustments")} Icon={TbAdjustments} />
-        {/* <ControlBtn tooltip="Record" onClick={() => undefined} Icon={RiRecordCircleLine} /> */}
-        <ControlBtn tooltip="Settings" onClick={changePopupingTo("settings")} Icon={RiSettings3Line} />
-        <ControlBtn tooltip="Zen Mode" onClick={toggleZenMode} Icon={TbMaximize} />
+        {rightControls()}
       </div>
-    
+
     </div>
   );
 }
 
 interface ControlBtnProps {
   tooltip: string;
+  Icon: IconType;
   onClick: () => void;
-  Icon: ComponentType<IconBaseProps>;
 }
 
 function ControlBtn({ tooltip, onClick, Icon }: ControlBtnProps) {
@@ -115,7 +154,11 @@ function ControlBtn({ tooltip, onClick, Icon }: ControlBtnProps) {
 }
 
 function ControlHint({ hint }: { hint: string }) {
-  return <div className="text-base leading-none text-[#495755]/75">{hint}</div>;
+  return (
+    <div className="text-base leading-none text-[#495755]/75">
+      {hint}
+    </div>
+  );
 }
 
 function toggleZenMode() {

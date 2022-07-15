@@ -1,21 +1,16 @@
-import type { MusicScore, TonalityKind } from "~/core/types";
-import tonalityMap from "~/core/tonality";
+import { usePlayer } from "~/contexts/PlayerContext";
 
-interface PlayerScoreMetaProps {
-  score: MusicScore;
-  tempo: number;
-  tonality: TonalityKind;
-}
+function PlayerScoreMeta() {
+  const { score, tonality, tempo } = usePlayer();
 
-function PlayerScoreMeta({ score, tempo, tonality }: PlayerScoreMetaProps) {
   return (
     <div className="h-44 flex items-center font-mono text-[#495755]/75 zen-hoverable">
       <div className="flex-1 text-center">
         {
-          tonality == score.tonality ? tonalityMap.get(score.tonality)!.display :
+          tonality == score.tonality ? score.tonality :
           <>
-            <span className="line-through mr-8">{tonalityMap.get(score.tonality)!.display}</span>
-            <span>{tonalityMap.get(tonality)!.display}</span>
+            <span className="line-through mr-8">{score.tonality}</span>
+            <span>{tonality}</span>
           </>
         }
       </div>

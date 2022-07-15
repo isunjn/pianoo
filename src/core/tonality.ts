@@ -1,8 +1,52 @@
 import type { Accidental, SolfaNum } from "~/core/parser";
 
-export type TonalityKind = string;
 type Mode = "major" | "minor";
-type Pitch = string;
+
+type Pitch =
+  | "C" 
+  | "C#" 
+  | "D" 
+  | "D#" 
+  | "E" 
+  | "F" 
+  | "F#" 
+  | "G" 
+  | "G#" 
+  | "A" 
+  | "A#" 
+  | "B";
+
+export type TonalityKind =
+  | "1 = C"
+  | "1 = G"
+  | "1 = D"
+  | "1 = A"
+  | "1 = E"
+  | "1 = B"
+  | "1 = #F"
+  | "1 = #C"
+  | "1 = F"
+  | "1 = bB"
+  | "1 = bE"
+  | "1 = bA"
+  | "1 = bD"
+  | "1 = bG"
+  | "1 = bC"
+  | "6 = A"
+  | "6 = E"
+  | "6 = B"
+  | "6 = #F"
+  | "6 = #C"
+  | "6 = #G"
+  | "6 = #D"
+  | "6 = #A"
+  | "6 = D"
+  | "6 = G"
+  | "6 = C"
+  | "6 = F"
+  | "6 = bB"
+  | "6 = bE"
+  | "6 = bA";
 
 const CHROMATIC_CIRCLE: Pitch[] = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 const CIRCLE_LEN = 12;
@@ -41,7 +85,7 @@ class Tonality {
   }
 }
 
-export const tonalityMap = new Map<TonalityKind, Tonality>()
+const tonalityMap = new Map<TonalityKind, Tonality>()
   .set("1 = C", new Tonality("major", "C"))
   .set("1 = G", new Tonality("major", "G"))
   .set("1 = D", new Tonality("major", "D"))
@@ -73,4 +117,15 @@ export const tonalityMap = new Map<TonalityKind, Tonality>()
   .set("6 = bE", new Tonality("minor", "D#"))
   .set("6 = bA", new Tonality("minor", "G#"));
 
+const tonalities = {
+  get(tonality: TonalityKind): Tonality {
+    return tonalityMap.get(tonality)!;
+  },
+  kinds(): TonalityKind[] {
+    return Array.from(tonalityMap.keys());
+  }
+}
+
 export type { Tonality };
+
+export default tonalities;

@@ -60,7 +60,7 @@ import Gs4 from '~/assets/sample/piano-acoustic/Gs4.mp3';
 import Gs5 from '~/assets/sample/piano-acoustic/Gs5.mp3';
 import Gs6 from '~/assets/sample/piano-acoustic/Gs6.mp3';
 
-const INSTRUMENT_PIANO_ACOUSTIC = {
+export const INSTRUMENT_PIANO_ACOUSTIC = {
   "A2": A2,
   "A3": A3,
   "A4": A4,
@@ -123,5 +123,3 @@ const INSTRUMENT_PIANO_ACOUSTIC = {
   "G#5": Gs5,
   "G#6": Gs6,
 };
-
-export default INSTRUMENT_PIANO_ACOUSTIC;

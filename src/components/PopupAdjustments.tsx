@@ -1,24 +1,29 @@
-import type { TonalityKind } from "~/core/types";
-import tonalityMap from "~/core/tonality";
+import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
+import player from "~/core/player";
+import tonalities from "~/core/tonality";
+import type { TonalityKind } from "~/core/tonality";
 
-interface PopupAdjustmentsProps {
-  volume: number;
-  tempo: number;
-  tonality: TonalityKind;
-  changeVolume: (volume: number) => void;
-  changeTempo: (tempo: number) => void;
-  changeTonality: (tonality: TonalityKind) => void;
-}
+function PopupAdjustments() {
+  const { volume, tempo, tonality } = usePlayer();
+  const dispatch = usePlayerDispatch();
 
-function PopupAdjustments(props: PopupAdjustmentsProps) {
-  const { 
-    volume,
-    tempo,
-    tonality,
-    changeVolume,
-    changeTempo,
-    changeTonality
-  } = props;
+  function handleVolumeChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const volume = parseInt(e.target.value);
+    player.setVolume(volume);
+    dispatch({ type: "set_volume", volume });
+  }
+
+  function handleTempoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const tempo = parseInt(e.target.value);
+    player.setTempo(tempo);
+    dispatch({ type: "set_tempo", tempo });
+  }
+
+  function handleTonalityChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const tonality = e.target.value as TonalityKind;
+    const sheetItems = player.transpose(tonality);
+    dispatch({ type: "set_tonality", tonality, sheetItems });
+  }
 
   // TODO: use custom component
   return (
@@ -30,7 +35,7 @@ function PopupAdjustments(props: PopupAdjustmentsProps) {
           Volume: <div>{volume} %</div>
         </label>
         <input type="range" id="volume" min="0" max="100" className="w-full"
-          value={volume} onChange={(e) => changeVolume(Number(e.target.value))}/>
+          value={volume} onChange={handleVolumeChange}/>
       </div>
 
       <div>
@@ -38,17 +43,17 @@ function PopupAdjustments(props: PopupAdjustmentsProps) {
           Tempo: <div>{tempo} BPM</div>
         </label>
         <input type="range" id="tempo" min="40" max="220" className="w-full"
-          value={tempo} onChange={(e) => changeTempo(Number(e.target.value))}/>
+          value={tempo} onChange={handleTempoChange}/>
       </div>
       
       <div>
         <label htmlFor="tonality" className="w-full flex items-center justify-between">
           Tonality: 
           <select id="tonality" value={tonality} 
-            onChange={(e) => changeTonality(e.target.value as TonalityKind)}
+            onChange={handleTonalityChange}
             className="bg-[#495755]/20 rounded px-4 py-1.5">
-            {[...tonalityMap.entries()].map(([kind, tonality]) => 
-              <option key={kind} value={kind}>{tonality.display}</option>)}
+            {tonalities.kinds().map(kind => 
+              <option key={kind} value={kind}>{kind}</option>)}
           </select>
         </label>
       </div>

@@ -1,68 +1,200 @@
-import { useEffect, useRef, forwardRef, type Ref } from "react";
+import { useEffect, useRef } from "react";
 import { HiCursorClick } from "react-icons/hi";
-import * as Tone from "tone";
-import Sheet from "~/components/Sheet";
-import type { PlayerState } from "~/components/Player";
-import type { SheetImperativeHandleAPI } from "~/components/Sheet";
-import type { SheetItems } from "~/core/types";
-import type Keymap from "~/config/keymap/type";
+import { start as startTone } from "tone";
+import player from "~/core/player";
+import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
+import Sheet, { type SheetImperativeHandleAPI } from "~/components/Sheet";
+import type { SheetItem } from "~/core/player";
+import panic from "~/utils/panic";
 
-interface PlayerSheetProps {
-  state: PlayerState;
-  changeState: (newState: PlayerState) => void;
-  sheetItems: SheetItems;
-  keymap: Keymap;
+function PlayerSheet() {
+  const { status, sheetItems } = usePlayer();
+  const dispatch = usePlayerDispatch();
+
+  const sheetContainer = useRef<HTMLDivElement>(null);
+  const sheet = useRef<SheetImperativeHandleAPI>(null);
+  const pressing = useRef<Record<string, boolean>>({});
+  const idx = useRef<number>(-1);
+
+  // ready to play, chick or press space to start
+  useEffect(() => {
+    if (!(status == "ready" || status == "paused")) return;
+    const _sheetContainer = sheetContainer.current!;
+    async function startToPlay() {
+      _sheetContainer.removeEventListener("click", startToPlay);
+      document.removeEventListener("keydown", keydownHandler);
+      await startTone();
+      dispatch({ type: "play" });
+    }
+    function keydownHandler(e: KeyboardEvent) {
+      if (e.key == " ") { // space key
+        e.preventDefault();
+        startToPlay();
+      }
+    }
+    _sheetContainer.addEventListener("click", startToPlay);
+    document.addEventListener("keydown", keydownHandler);
+    return () => {
+      _sheetContainer.removeEventListener("click", startToPlay);
+      document.removeEventListener("keydown", keydownHandler);
+    };
+  }, [status, dispatch]);
+
+  // FIXME: scrollIntoView() doesn't work correctly 🥲
+  // if play is done, user can press space to restart
+  useEffect(() => {
+    if (status != "done") return;
+    function keydownHandler(e: KeyboardEvent) {
+      if (e.key == " ") {
+        e.preventDefault();
+        dispatch({ type: "reset" });
+        document.removeEventListener("keydown", keydownHandler);
+      }
+    }
+    document.addEventListener("keydown", keydownHandler);
+    return () => document.removeEventListener("keydown", keydownHandler);
+  }, [status, dispatch]);
+
+  // clear sheet when ready/reset/restart
+  useEffect(() => {
+    if (status != "ready") return;
+    pressing.current = {};
+    idx.current = -1;
+    sheet.current!.reset();
+  }, [status]);
+
+  // start/resume playing
+  useEffect(() => {
+    if (status != "playing") return;
+    const seq = player.getSequence();
+    if (idx.current == -1) {
+      let firstNonRest = 0;
+      while (seq[firstNonRest] && seq[firstNonRest].kind == "rest") {
+        firstNonRest++;
+      }
+      sheet.current!.start(firstNonRest);
+      idx.current = firstNonRest;
+    }
+    function trackKeydown(e: KeyboardEvent) {
+      pressing.current[e.key] = true;
+    }
+    function trackKeyup(e: KeyboardEvent) {
+      pressing.current[e.key] = false;
+    }
+    // play music note & update sheet
+    function keydownHandler(e: KeyboardEvent) {
+      if (e.repeat) return;
+      const note = player.getNote(e.key);
+      if (!note) return;
+      player.playNote(note);
+      const _pressing = pressing.current;
+      const expected = seq[idx.current];
+      switch (expected.kind) {
+        case "note":
+          move(_pressing[expected.key]);
+          break;
+        case "chord":
+          if (expected.keys.every(k => _pressing[k])) {
+            move(true);
+          } else if (expected.keys.every(k => k != e.key)) {
+            move(false);
+          }
+          break;
+        default: throw panic("unreachable");
+      }
+    }
+    function move(correct: boolean) {
+      let nextIdx = idx.current + 1;
+      while (seq[nextIdx] && seq[nextIdx].kind == "rest") {
+        nextIdx++;
+      }      
+      sheet.current!.move(correct, idx.current, nextIdx);
+      if (nextIdx == seq.length) {
+        dispatch({ type: "done" });
+      } else {
+        idx.current = nextIdx;
+        pressing.current = {};
+      }
+    }
+    document.addEventListener("keydown", trackKeydown, { capture: true });
+    document.addEventListener("keyup", trackKeyup, { capture: true });
+    document.addEventListener("keydown", keydownHandler);
+    return () => {
+      document.removeEventListener("keydown", trackKeydown, { capture: true });
+      document.removeEventListener("keyup", trackKeyup, { capture: true });
+      document.removeEventListener("keydown", keydownHandler);
+    }
+  }, [status, dispatch]);
+
+  // auto play mode
+  useEffect(() => {
+    if (status != "autoplaying") return;
+    const seq = player.getSequence();
+    if (idx.current == -1) {
+      let firstNonRest = 0;
+      while (seq[firstNonRest] && seq[firstNonRest].kind == "rest") {
+        firstNonRest++;
+      }
+      sheet.current!.start(firstNonRest);
+      idx.current = 0;
+    }
+    // play each item after a delay
+    let timeoutId = (function play(item: SheetItem, after: number) {
+      const msPerQuarter = 60 * 1000 / player.getTempo(); // tempo may change
+      return setTimeout(() => {
+        const note =
+          item.kind == "note" ? player.getNote(item.key)! :
+            item.kind == "chord" ? item.keys.map(k => player.getNote(k)!) :
+              undefined;
+        if (note) {
+          player.playNote(note);
+          let nextNonRest = idx.current + 1;
+          while (seq[nextNonRest] && seq[nextNonRest].kind == "rest") {
+            nextNonRest++;
+          }
+          sheet.current!.move(true, idx.current, nextNonRest);
+        }
+        if (++idx.current == seq.length) { // done
+          dispatch({ type: "reset" });
+        } else {
+          timeoutId = play(seq[idx.current], item.quarter * msPerQuarter);
+        }
+      }, after);
+    })(seq[idx.current], 0);
+    return () => clearTimeout(timeoutId);
+  }, [status, dispatch]);
+
+  // practice mode, just play music note, do not move sheet
+  useEffect(() => {
+    if (status != "practicing") return;
+    function keydownHandler(e: KeyboardEvent) {
+      if (e.repeat) return;
+      const note = player.getNote(e.key);
+      if (note) player.playNote(note);
+    }
+    document.addEventListener("keydown", keydownHandler);
+    return () => document.removeEventListener("keydown", keydownHandler);
+  }, [status]);
+
+  // TODO: handle overflow-x
+  return (
+    <div className="w-full h-52 font-mono text-xl scrollbar-hidden group"
+      ref={sheetContainer}>
+      <Sheet sheetItems={sheetItems} ref={sheet} />
+      <SheetMask />
+    </div>
+  );
 }
 
-const PlayerSheet = forwardRef(
-  function PlayerSheet(
-    { state, changeState, sheetItems, keymap }: PlayerSheetProps,
-    ref: Ref<SheetImperativeHandleAPI>
-  ) {
-    const sheetContainerRef = useRef<HTMLDivElement>(null);
-
-    // ready to play, chick or press to start
-    useEffect(() => {
-      if (!(state == "ready" || state == "paused")) return;
-      const sheetContainer = sheetContainerRef.current!;
-      async function startToPlay() {
-        sheetContainer.removeEventListener("click", startToPlay);
-        document.removeEventListener("keydown", keydownHandler);
-        await Tone.start(); // TODO: error handling
-        changeState("playing");
-      }
-      function keydownHandler(event: KeyboardEvent) {
-        if (event.key == " ") { // space key
-          event.preventDefault();
-          startToPlay();
-        }
-      }
-      sheetContainer.addEventListener("click", startToPlay);
-      document.addEventListener("keydown", keydownHandler);
-      return () => {
-        sheetContainer.removeEventListener("click", startToPlay);
-        document.removeEventListener("keydown", keydownHandler);
-      };
-    }, [state, changeState]);
-
-    // TODO: handle overflow-x
-    return (
-      <div className="w-full h-52 font-mono text-xl scrollbar-hidden group"
-        ref={sheetContainerRef}>
-        <Sheet sheetItems={sheetItems} keymap={keymap} ref={ref} />
-        {(state == "ready" || state == "paused") && <SheetMask state={state} />}
-      </div>
-    );
-  }
-);
-
-function SheetMask({ state }: { state: PlayerState }) {
+function SheetMask() {
+  const { status } = usePlayer();
+  if (!(status == "ready" || status == "paused")) return null;
   return (
     <div className="absolute top-20 left-0 w-full h-52 pointer-events-none
       flex items-center justify-center bg-[#7b9c98]/25 backdrop-blur">
       <div className="flex items-center gap-4 group-hover:scale-[1.025] 
         transition-transform ease-in">
-        {state == "ready"
+        {status == "ready"
           ? "Click or press space to start"
           : "Click or press space to resume"}
         <HiCursorClick />
