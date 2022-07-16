@@ -19,15 +19,15 @@ class Keymap {
     this.majorKeys = new Map();
     this.minorKeys = new Map();
     allKeys.forEach((keyRow, octave) => {
-      // remove 6th and 14th, ( E# and B# in C Major )
+      // remove 6th and 14th
       const majorKeyRow = [...keyRow];
-      majorKeyRow.splice(5, 1);
       majorKeyRow.splice(13, 1);
+      majorKeyRow.splice(5, 1);
       this.majorKeys.set(octave, majorKeyRow);
-      // remove 4th and 10th, ( B# and E# in A Minor )
+      // remove 4th and 10th
       const minorKeyRow = [...keyRow];
-      minorKeyRow.splice(3, 1);
       minorKeyRow.splice(9, 1);
+      minorKeyRow.splice(3, 1);
       this.minorKeys.set(octave, minorKeyRow);
     });
     this.tonality = null;

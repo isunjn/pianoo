@@ -99,6 +99,7 @@ class Player {
     this.keymap = new Keymap(
       keymapKind == "standard" ? KEYMAP_STANDARD : KEYMAP_VIRTUALPIANO
     );
+    this.keymap.transpose(this.score!.tonality);
     this.maintain();
     return this.sheetItems;
   }
