@@ -62,7 +62,6 @@ function parse(score: MusicScore): ParsedMusicScore {
     const parsedItems = score.content.split("@@@").map(row => 
       row.match(/\S+/g)?.filter(s => s != "|").map(s => parseItem(s)) ?? []
     );
-    console.log(parsedItems);
     return { ...score, parsed: parsedItems };
   } catch (err) {
     if (err instanceof SyntaxError) {
