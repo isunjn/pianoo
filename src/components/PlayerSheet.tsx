@@ -40,7 +40,6 @@ function PlayerSheet() {
     };
   }, [status, dispatch]);
 
-  // FIXME: scrollIntoView() doesn't work correctly 🥲
   // if play is done, user can press space to restart
   useEffect(() => {
     if (status != "done") return;

@@ -99,7 +99,7 @@ const Sheet = forwardRef(function Sheet(
 
 // build the scroll function based on browser support of scrollIntoViewOptions
 const scroll = "scrollBehavior" in document.documentElement.style
-  ? (span: HTMLSpanElement) => span.scrollIntoView({ behavior: "smooth", block: "center" })
-  : (span: HTMLSpanElement) => span.scrollIntoView(true); // fallback
+  ? (el: HTMLElement) => el.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" })
+  : (el: HTMLElement) => el.scrollIntoView(true); // fallback
 
 export default React.memo(Sheet);
