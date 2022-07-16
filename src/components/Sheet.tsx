@@ -63,8 +63,9 @@ const Sheet = forwardRef(function Sheet(
           <div key={i} className="w-fit mx-auto h-10 flex items-center">
             {row.map((item, j) => {
               // rythm is visualized by the spacing
-              // 1/16 note has a width of 1ch, 1/4 has 4ch, etc.
-              const style = { marginRight: `${item.quarter * 4 - 1}ch` };
+              // 1/16 note is handled specially to avoid too much overlapping
+              const mr = item.quarter == 0.25 ? -0.6 : (item.quarter * 3 - 1.5);
+              const style = { marginRight: `${mr}ch` };
               switch (item.kind) {
                 case "note":
                   return (
