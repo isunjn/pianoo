@@ -1,0 +1,17 @@
+export const INSTRUMENT_VIOLIN = {
+  "A3": "violin/A3.mp3",
+  "A4": "violin/A4.mp3",
+  "A5": "violin/A5.mp3",
+  "A6": "violin/A6.mp3",
+  "C4": "violin/C4.mp3",
+  "C5": "violin/C5.mp3",
+  "C6": "violin/C6.mp3",
+  "C7": "violin/C7.mp3",
+  "E4": "violin/E4.mp3",
+  "E5": "violin/E5.mp3",
+  "E6": "violin/E6.mp3",
+  "G3": "violin/G3.mp3",
+  "G4": "violin/G4.mp3",
+  "G5": "violin/G5.mp3",
+  "G6": "violin/G6.mp3",
+};

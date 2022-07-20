@@ -6,6 +6,13 @@ import {
 } from "~/config/keymap";
 import {
   INSTRUMENT_PIANO_ACOUSTIC,
+  INSTRUMENT_PIANO_UPRIGHT,
+  INSTRUMENT_GUITAR_ACOUSTIC,
+  INSTRUMENT_GUITAR_ELECTRIC,
+  INSTRUMENT_BASS_ELECTRIC,
+  INSTRUMENT_HARP,
+  INSTRUMENT_CELLO,
+  INSTRUMENT_VIOLIN,
   type InstrumentKind,
 } from "~/config/instrument";
 import Keymap from "~/core/keymap";
@@ -55,15 +62,7 @@ class Player {
 
   public load() {
     if (this.loaded != null) return this.loaded;
-    this.loaded = new Promise<void>((resolve) => {
-      const instrument = new Sampler({
-        urls: INSTRUMENT_PIANO_ACOUSTIC,
-        onload: () => {
-          this.instrument = instrument;
-          resolve();
-        },
-      }).toDestination();
-    });
+    this.loaded = this.setInstrument("piano-acoustic");
     return this.loaded;
   }
 
@@ -80,7 +79,7 @@ class Player {
   }
 
   public playNote(note: string | string[]) {
-    this.instrument!.triggerAttack(note);
+    this.instrument!.triggerAttackRelease(note, 0.5);
   }
 
   public getSequence() {
@@ -92,7 +91,26 @@ class Player {
   }
 
   public setInstrument(instrumentKind: InstrumentKind) {
-    // TODO
+    const urls = 
+      instrumentKind == "piano-acoustic" ? INSTRUMENT_PIANO_ACOUSTIC :
+      instrumentKind == "piano-upright" ? INSTRUMENT_PIANO_UPRIGHT :
+      instrumentKind == "guitar-acoustic" ? INSTRUMENT_GUITAR_ACOUSTIC :
+      instrumentKind == "guitar-electric" ? INSTRUMENT_GUITAR_ELECTRIC :
+      instrumentKind == "bass-electric" ? INSTRUMENT_BASS_ELECTRIC :
+      instrumentKind == "harp" ? INSTRUMENT_HARP :
+      instrumentKind == "cello" ? INSTRUMENT_CELLO :
+      instrumentKind == "violin" ? INSTRUMENT_VIOLIN : undefined;
+      
+    return new Promise<void>((resolve) => {
+      const instrument = new Sampler({
+        urls: urls,
+        baseUrl: "sample/",
+        onload: () => {
+          this.instrument = instrument;
+          resolve();
+        },
+      }).toDestination();
+    });
   }
 
   public setKeymap(keymapKind: KeymapKind): SheetItems {
