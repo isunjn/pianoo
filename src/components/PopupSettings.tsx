@@ -21,7 +21,7 @@ function PopupSettings() {
         <label htmlFor="keymap" className="w-full flex items-center justify-between">
           Keymap: 
           <select id="keymap" onChange={handleKeymapChange}
-            value={keymap == "standard" ? "Standard" : "Virtual Piano"} 
+            value={keymap == "standard" ? "standard" : "virtualpiano"} 
             className="bg-[#495755]/20 rounded px-4 py-1.5">
             <option value="standard">Standard</option>
             <option value="virtualpiano">Virtual Piano</option>
