@@ -36,8 +36,8 @@ function PopupSettings() {
           <select id="keymap" onChange={handleKeymapChange}
             value={keymap} 
             className="bg-[#495755]/20 rounded px-4 py-1.5">
-            <option value="standard">Standard</option>
-            <option value="virtualpiano">Virtual Piano</option>
+            <option className="bg-[#495755]/25" value="standard">Standard</option>
+            <option className="bg-[#495755]/25" value="virtualpiano">Virtual Piano</option>
           </select>
         </label>
       </div>
@@ -48,14 +48,14 @@ function PopupSettings() {
           <select id="instrument" onChange={handleInstrumentChange}
             value={instrument}
             className="bg-[#495755]/20 rounded px-4 py-1.5">
-            <option value="piano-acoustic">Acoustic Piano</option>
-            <option value="piano-upright">Upright Piano</option>
-            <option value="guitar-acoustic">Acoustic Guitar</option>
-            <option value="guitar-electric">Electric Guitar</option>
-            <option value="bass-electric">Electric Bass</option>
-            <option value="harp">Harp</option>
-            <option value="cello">Cello</option>
-            <option value="violin">Violin</option>
+            <option className="bg-[#495755]/25" value="piano-acoustic">Acoustic Piano</option>
+            <option className="bg-[#495755]/25" value="piano-upright">Upright Piano</option>
+            <option className="bg-[#495755]/25" value="guitar-acoustic">Acoustic Guitar</option>
+            <option className="bg-[#495755]/25" value="guitar-electric">Electric Guitar</option>
+            <option className="bg-[#495755]/25" value="bass-electric">Electric Bass</option>
+            <option className="bg-[#495755]/25" value="harp">Harp</option>
+            <option className="bg-[#495755]/25" value="cello">Cello</option>
+            <option className="bg-[#495755]/25" value="violin">Violin</option>
           </select>
         </label>
       </div>

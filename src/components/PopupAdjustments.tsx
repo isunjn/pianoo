@@ -53,7 +53,10 @@ function PopupAdjustments() {
             onChange={handleTonalityChange}
             className="bg-[#495755]/20 rounded px-4 py-1.5">
             {tonalities.kinds().map(kind => 
-              <option key={kind} value={kind}>{kind}</option>)}
+              <option key={kind} value={kind} className="bg-[#495755]/25">
+                {kind}
+              </option>)
+            }
           </select>
         </label>
       </div>
