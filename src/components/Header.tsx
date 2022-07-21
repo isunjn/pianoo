@@ -5,17 +5,22 @@ import type { ComponentType } from "react";
 
 function Header() {
   return (
-    <header className="flex justify-between items-center py-2 zen-invisible">
-      <Link to="/" className="text-xl focus-visible:outline-2 focus-visible:outline
+    <header className="flex justify-between items-end zen-invisible">
+      <Link to="/" className="focus-visible:outline-2 focus-visible:outline
         focus-visible:outline-theme-text focus-visible:outline-offset-2">
-        Pianoo
+        <div className="text-xl mb-1">
+          pianoo
+          <span className="ml-3.5 text-2xl">𝄞</span>
+          <span className="-ml-4">𝄚𝄚𝄚𝄚</span>
+        </div>
+        <div className="text-xs text-theme-hint">music on your keyboard</div>
       </Link>
       <nav className="flex gap-1 items-center">
         <TabBtn to="/" name="Play" Icon={TbMusic} />
-        <TabBtn to="/scores" name="Scores" Icon={TbPlaylist} />
+        {/* <TabBtn to="/scores" name="Scores" Icon={TbPlaylist} /> */}
         <TabBtn to="/compose" name="Compose" Icon={TbCrosshair} />
         <TabBtn to="/help" name="Help" Icon={TbHelp} />
-        <TabBtn to="/account" name="Account" Icon={TbUserCircle} />
+        {/* <TabBtn to="/account" name="Account" Icon={TbUserCircle} /> */}
       </nav>
     </header>
   );

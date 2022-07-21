@@ -14,11 +14,11 @@ function Footer({ theme, setTheme }: FooterPorps) {
   return (
     <footer className="flex justify-between text-sm zen-invisible">
       <div className="flex items-center">
-        <FooterLink href="#" name="GitHub" Icon={TbBrandGithub} />
-        <FooterLink href="#" name="Twitter" Icon={TbBrandTwitter} />
-        <FooterLink href="#" name="Terms" Icon={TbFileText} />
-        <FooterLink href="#" name="Privacy" Icon={TbShieldLock} />
-        <FooterLink href="#" name="Contact" Icon={TbMail} />
+        <FooterLink href="https://github.com/isunjn/pianoo" name="GitHub" Icon={TbBrandGithub} />
+        <FooterLink href="mailto:isunjn@gmail.com" name="Contact" Icon={TbMail} />
+        {/* <FooterLink href="#" name="Twitter" Icon={TbBrandTwitter} /> */}
+        {/* <FooterLink href="#" name="Terms" Icon={TbFileText} /> */}
+        {/* <FooterLink href="#" name="Privacy" Icon={TbShieldLock} /> */}
       </div>
       <div className="flex items-center">
         <button className="flex gap-1.5 items-center px-2 py-0.5 rounded

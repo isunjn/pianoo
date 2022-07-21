@@ -87,10 +87,10 @@ function PlayerControl() {
         tooltip="Adjust"
         Icon={TbAdjustments}
         onClick={() => dispatch({ type: "open_adjustments" })} />
-      <ControlBtn
+      {/* <ControlBtn
         tooltip="Record"
         Icon={RiRecordCircleLine}
-        onClick={() => dispatch({ type: "open_recorder" })} />
+        onClick={() => dispatch({ type: "open_recorder" })} /> */}
       <ControlBtn
         tooltip="Settings"
         Icon={RiSettings3Line}

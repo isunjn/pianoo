@@ -10,7 +10,7 @@ function App() {
 
   return (
     <div data-theme={theme} className="bg-theme-bg">
-      <div className="m-auto px-4 py-6 max-w-5xl h-screen
+      <div className="m-auto px-4 py-6 max-w-6xl h-screen
         flex flex-col justify-between text-theme-text">
         <Header />
         <main className="w-full">
