@@ -190,7 +190,7 @@ function SheetMask() {
   if (!(status == "ready" || status == "paused")) return null;
   return (
     <div className="absolute top-20 left-0 w-full h-52 pointer-events-none
-      flex items-center justify-center bg-[#7b9c98]/25 backdrop-blur">
+      flex items-center justify-center bg-transparent backdrop-blur-md">
       <div className="flex items-center gap-4 group-hover:scale-[1.025] 
         transition-transform ease-in">
         {status == "ready"

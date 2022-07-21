@@ -7,7 +7,7 @@ function Header() {
   return (
     <header className="flex justify-between items-center py-2 zen-invisible">
       <Link to="/" className="text-xl focus-visible:outline-2 focus-visible:outline
-        focus-visible:outline-[#eaf1f3] focus-visible:outline-offset-2">
+        focus-visible:outline-theme-text focus-visible:outline-offset-2">
         Pianoo
       </Link>
       <nav className="flex gap-1 items-center">
@@ -30,8 +30,8 @@ interface TabBtnProps {
 function TabBtn({ to, name, Icon }: TabBtnProps) {
   return (
     <Link to={to} className="flex gap-1.5 items-center px-4 py-1 rounded
-      hover:bg-[#495755]/20 focus-visible:outline-2 focus-visible:outline
-      focus-visible:outline-[#eaf1f3] focus-visible:outline-offset-2">
+      hover:bg-theme-hover focus-visible:outline-2 focus-visible:outline
+      focus-visible:outline-theme-text focus-visible:outline-offset-2">
       <Icon className="text-lg" /> {name}
     </Link>
   );

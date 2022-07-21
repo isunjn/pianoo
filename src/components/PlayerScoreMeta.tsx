@@ -4,7 +4,7 @@ function PlayerScoreMeta() {
   const { score, tonality, tempo } = usePlayer();
 
   return (
-    <div className="h-44 flex items-center font-mono text-[#495755]/75 zen-hoverable">
+    <div className="h-40 flex items-center font-mono text-theme-hint zen-hoverable">
       <div className="flex-1 text-center">
         {
           tonality == score.tonality ? score.tonality :

@@ -105,14 +105,14 @@ function PlayerControl() {
 
   return (
     <div className="h-10 mb-10 flex justify-between items-center 
-      text-xl font-mono border-b-2 border-[#eaf1f3]/25 zen-hoverable">
+      text-xl font-mono border-b-2 border-theme-hover zen-hoverable">
 
       <div className="flex-1 flex items-center gap-3">{leftControls()}</div>
 
       <button onClick={() => dispatch({ type: "open_chooser" })}
         className="flex-1 flex-grow-[2] text-center px-2 py-1 rounded text-base
-        hover:bg-[#495755]/20 focus-visible:outline-2 focus-visible:outline 
-        focus-visible:outline-[#eaf1f3] focus-visible:outline-offset-2">
+        hover:bg-theme-hover focus-visible:outline-2 focus-visible:outline 
+        focus-visible:outline-theme-text focus-visible:outline-offset-2">
         {score.name}
       </button>
 
@@ -139,14 +139,14 @@ function ControlBtn({ tooltip, onClick, Icon }: ControlBtnProps) {
     <div className="relative group rounded h-6">
       <button key={tooltip} aria-label={tooltip} onClick={handleClick}
         className="peer focus-visible:outline-2 focus-visible:outline 
-          focus-visible:outline-[#eaf1f3] focus-visible:outline-offset-2">
+          focus-visible:outline-theme-text focus-visible:outline-offset-2">
         <Icon />
       </button>
       <div className="absolute -top-9 -translate-x-1/2 left-1/2 
         invisible group-hover:visible peer-focus-visible:visible
-        w-max text-base bg-[#495755]/50 text-[#eaf1f3] px-2.5 py-px rounded
+        w-max text-base bg-theme-hover text-theme-text px-2.5 py-px rounded
         after:absolute after:top-full after:left-1/2 after:border-4 after:-ml-1
-        after:border-transparent after:border-t-[#495755]/50">
+        after:border-transparent after:border-t-theme-hover">
         {tooltip}
       </div>
     </div>
@@ -155,7 +155,7 @@ function ControlBtn({ tooltip, onClick, Icon }: ControlBtnProps) {
 
 function ControlHint({ hint }: { hint: string }) {
   return (
-    <div className="text-base leading-none text-[#495755]/75">
+    <div className="text-base leading-none text-theme-hint">
       {hint}
     </div>
   );
