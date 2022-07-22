@@ -1,4 +1,4 @@
-import { Sampler } from "tone";
+import * as Tone from "tone";
 import {
   KEYMAP_STANDARD,
   KEYMAP_VIRTUALPIANO,
@@ -43,7 +43,7 @@ interface SheetItemRest {
 
 class Player {
   private loaded: Promise<void> | null;
-  private instrument: Sampler | null;
+  private instrument: Tone.Sampler | null;
   private keymap: Keymap;
   private score: ParsedMusicScore | null;
   private tempo: number;
@@ -66,6 +66,11 @@ class Player {
     return this.loaded;
   }
 
+  public async start() {
+    await Tone.start();
+    await Tone.loaded();
+  }
+
   public prepare(score: ParsedMusicScore) {
     this.score = score;
     this.keymap.transpose(score.tonality);
@@ -79,7 +84,7 @@ class Player {
   }
 
   public playNote(note: string | string[]) {
-    this.instrument!.triggerAttackRelease(note, 0.5);
+    this.instrument!.triggerAttackRelease(note, 0.75, Tone.context.currentTime);
   }
 
   public getSequence() {
@@ -102,7 +107,7 @@ class Player {
       instrumentKind == "violin" ? INSTRUMENT_VIOLIN : undefined;
       
     return new Promise<void>((resolve) => {
-      const instrument = new Sampler({
+      const instrument = new Tone.Sampler({
         urls: urls,
         baseUrl: "sample/",
         onload: () => {

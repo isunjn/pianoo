@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { HiCursorClick } from "react-icons/hi";
-import { start as startTone } from "tone";
 import player from "~/core/player";
 import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
 import Sheet, { type SheetImperativeHandleAPI } from "~/components/Sheet";
@@ -23,7 +22,7 @@ function PlayerSheet() {
     async function startToPlay() {
       _sheetContainer.removeEventListener("click", startToPlay);
       document.removeEventListener("keydown", keydownHandler);
-      await startTone();
+      await player.start();
       dispatch({ type: "play" });
     }
     function keydownHandler(e: KeyboardEvent) {
@@ -128,38 +127,43 @@ function PlayerSheet() {
   // auto play mode
   useEffect(() => {
     if (status != "autoplaying") return;
-    const seq = player.getSequence();
-    if (idx.current == -1) {
-      let firstNonRest = 0;
-      while (seq[firstNonRest] && seq[firstNonRest].kind == "rest") {
-        firstNonRest++;
+    let timeoutId: ReturnType<typeof setTimeout>;
+    async function autoPlay() {
+      await player.start();
+      const seq = player.getSequence();
+      if (idx.current == -1) {
+        let firstNonRest = 0;
+        while (seq[firstNonRest] && seq[firstNonRest].kind == "rest") {
+          firstNonRest++;
+        }
+        sheet.current!.start(firstNonRest);
+        idx.current = 0;
       }
-      sheet.current!.start(firstNonRest);
-      idx.current = 0;
-    }
-    // play each item after a delay
-    let timeoutId = (function play(item: SheetItem, after: number) {
-      const msPerQuarter = 60 * 1000 / player.getTempo(); // tempo may change
-      return setTimeout(() => {
-        const note =
-          item.kind == "note" ? player.getNote(item.key)! :
-            item.kind == "chord" ? item.keys.map(k => player.getNote(k)!) :
-              undefined;
-        if (note) {
-          player.playNote(note);
-          let nextNonRest = idx.current + 1;
-          while (seq[nextNonRest] && seq[nextNonRest].kind == "rest") {
-            nextNonRest++;
+      // play each item after a delay
+      timeoutId = (function play(item: SheetItem, after: number) {
+        const msPerQuarter = 60 * 1000 / player.getTempo(); // tempo may change
+        return setTimeout(() => {
+          const note =
+            item.kind == "note" ? player.getNote(item.key)! :
+              item.kind == "chord" ? item.keys.map(k => player.getNote(k)!) :
+                undefined;
+          if (note) {
+            player.playNote(note);
+            let nextNonRest = idx.current + 1;
+            while (seq[nextNonRest] && seq[nextNonRest].kind == "rest") {
+              nextNonRest++;
+            }
+            sheet.current!.move(true, idx.current, nextNonRest);
           }
-          sheet.current!.move(true, idx.current, nextNonRest);
-        }
-        if (++idx.current == seq.length) { // done
-          dispatch({ type: "reset" });
-        } else {
-          timeoutId = play(seq[idx.current], item.quarter * msPerQuarter);
-        }
-      }, after);
-    })(seq[idx.current], 0);
+          if (++idx.current == seq.length) { // done
+            dispatch({ type: "reset" });
+          } else {
+            timeoutId = play(seq[idx.current], item.quarter * msPerQuarter);
+          }
+        }, after);
+      })(seq[idx.current], 0);
+    }
+    autoPlay();
     return () => clearTimeout(timeoutId);
   }, [status, dispatch]);
 
@@ -190,7 +194,7 @@ function SheetMask() {
   if (!(status == "ready" || status == "paused")) return null;
   return (
     <div className="absolute top-20 left-0 w-full h-52 pointer-events-none
-      flex items-center justify-center bg-transparent backdrop-blur-md">
+      flex items-center justify-center bg-transparent backdrop-blur-lg">
       <div className="flex items-center gap-4 group-hover:scale-[1.025] 
         transition-transform ease-in">
         {status == "ready"
