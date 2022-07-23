@@ -75,10 +75,9 @@ const Sheet = forwardRef(function Sheet(
                   );
                 case "chord":
                   return (
-                    <span key={j} style={style}>
-                      [<span ref={itemRefCallback}>
-                        {item.keys.join("")}
-                      </span>]
+                    <span key={j} style={style} ref={itemRefCallback}
+                      className="underline underline-offset-4">
+                      {item.keys.join("")}
                     </span>
                   );
                 case "rest": // &nbsp; is exactly what we want
