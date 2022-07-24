@@ -9,8 +9,12 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "i18next": "^21.8.14",
+    "i18next-browser-languagedetector": "^6.1.4",
+    "i18next-http-backend": "^1.4.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
+    "react-i18next": "^11.18.1",
     "react-icons": "^4.4.0",
     "react-router-dom": "6",
     "tone": "^14.7.77"
@@ -27,6 +31,7 @@
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "^4.5.0",
     "postcss": "^8.4.14",
+    "rollup-plugin-visualizer": "^5.7.1",
     "tailwindcss": "^3.1.2",
     "typescript": "^4.7.3",
     "vite": "^2.9.12"

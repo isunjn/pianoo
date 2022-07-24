@@ -4,6 +4,7 @@ import PlayerSheet from "~/components/PlayerSheet";
 import PlayerScoreMeta from "~/components/PlayerScoreMeta";
 import PlayerHint from "~/components/PlayerHint";
 import PlayerPopup from "~/components/PlayerPopup";
+import Loading from "~/components/Loading";
 import player from "~/core/player";
 import { PlayerProvider, usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
 
@@ -17,7 +18,7 @@ function Player() {
   }, [dispatch]);
 
   if (status == "idle") {
-    return <div className="w-fit mx-auto">loading...</div>;
+    return <Loading />;
   }
 
   return (

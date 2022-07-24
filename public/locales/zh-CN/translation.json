@@ -1,0 +1,63 @@
+{
+  "loading": "正在加载...",
+  "header": {
+    "play": "弹奏",
+    "compose": "作曲",
+    "help": "帮助"
+  },
+  "footer": {
+    "contact": "邮件联系"
+  },
+  "play": {
+    "hint": {
+      "start": "点击或按空格键开始",
+      "resume": "点击或按空格键继续",
+      "restart": "按空格键重新开始"
+    },
+    "btn": {
+      "autoPlay": "自动弹奏",
+      "practiceMode": "练习模式",
+      "pause": "暂停",
+      "stop": "停止",
+      "restart": "重新开始",
+      "adjust": "调整",
+      "settings": "设置",
+      "zenMode": "专注模式",
+      "hint": {
+        "playing": "正在弹奏",
+        "paused": "已暂停",
+        "autoPlaying": "正在自动弹奏",
+        "practicing": "正在练习",
+        "endOfPlay": "弹奏结束"
+      }
+    },
+    "tab": {
+      "exampleScores": "样例乐谱",
+      "recentlyPlayed": "最近弹奏",
+      "justPlay": "任意弹奏",
+      "fromFile": "加载文件"
+    },
+    "adjust": {
+      "volume": "音量",
+      "tempo": "速度",
+      "tonality": "调性"
+    },
+    "settings": {
+      "keymap": "键位",
+      "instrument": "乐器"
+    },
+    "keymap": {
+      "standard": "标准"
+    },
+    "instrument": {
+      "acousticPiano": "原声钢琴",
+      "uprightPiano": "立式钢琴",
+      "acousticGuitar": "原声吉他",
+      "electricGuitar": "电子吉他",
+      "electricBass": "电子贝斯",
+      "harp": "竖琴",
+      "cello": "大提琴",
+      "violin": "小提琴"
+    }
+  }
+}

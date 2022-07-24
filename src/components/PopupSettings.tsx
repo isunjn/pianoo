@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
 import player from "~/core/player";
 import type { KeymapKind } from "~/config/keymap";
@@ -7,6 +8,7 @@ import { InstrumentKind } from "~/config/instrument";
 function PopupSettings() {
   const { keymap, instrument } = usePlayer();
   const dispatch = usePlayerDispatch();
+  const { t } = useTranslation();
 
   function handleKeymapChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const newKeymap = e.target.value as KeymapKind;
@@ -32,30 +34,30 @@ function PopupSettings() {
       
       <div>
         <label htmlFor="keymap" className="w-full flex items-center justify-between">
-          Keymap: 
+          {t("play.settings.keymap")}: 
           <select id="keymap" onChange={handleKeymapChange}
             value={keymap} 
             className="bg-theme-hover rounded px-4 py-1.5">
-            <option className="bg-theme-hover text-theme-text" value="standard">Standard</option>
-            <option className="bg-theme-hover text-theme-text" value="virtualpiano">Virtual Piano</option>
+            <option className="bg-theme-hover text-theme-text" value="standard">{t("play.keymap.standard")}</option>
+            <option className="bg-theme-hover text-theme-text" value="virtualpiano">VirtualPiano</option>
           </select>
         </label>
       </div>
 
       <div>
         <label htmlFor="instrument" className="w-full flex items-center justify-between">
-          Instrument: 
+          {t("play.settings.instrument")}: 
           <select id="instrument" onChange={handleInstrumentChange}
             value={instrument}
             className="bg-theme-hover rounded px-4 py-1.5">
-            <option className="bg-theme-hover text-theme-text" value="piano-acoustic">Acoustic Piano</option>
-            <option className="bg-theme-hover text-theme-text" value="piano-upright">Upright Piano</option>
-            <option className="bg-theme-hover text-theme-text" value="guitar-acoustic">Acoustic Guitar</option>
-            <option className="bg-theme-hover text-theme-text" value="guitar-electric">Electric Guitar</option>
-            <option className="bg-theme-hover text-theme-text" value="bass-electric">Electric Bass</option>
-            <option className="bg-theme-hover text-theme-text" value="harp">Harp</option>
-            <option className="bg-theme-hover text-theme-text" value="cello">Cello</option>
-            <option className="bg-theme-hover text-theme-text" value="violin">Violin</option>
+            <option className="bg-theme-hover text-theme-text" value="piano-acoustic">{t("play.instrument.acousticPiano")}</option>
+            <option className="bg-theme-hover text-theme-text" value="piano-upright">{t("play.instrument.uprightPiano")}</option>
+            <option className="bg-theme-hover text-theme-text" value="guitar-acoustic">{t("play.instrument.acousticGuitar")}</option>
+            <option className="bg-theme-hover text-theme-text" value="guitar-electric">{t("play.instrument.electricGuitar")}</option>
+            <option className="bg-theme-hover text-theme-text" value="bass-electric">{t("play.instrument.electricBass")}</option>
+            <option className="bg-theme-hover text-theme-text" value="harp">{t("play.instrument.harp")}</option>
+            <option className="bg-theme-hover text-theme-text" value="cello">{t("play.instrument.cello")}</option>
+            <option className="bg-theme-hover text-theme-text" value="violin">{t("play.instrument.violin")}</option>
           </select>
         </label>
       </div>

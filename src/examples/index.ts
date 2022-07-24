@@ -11,3 +11,7 @@ export { default as score008 } from "./008.json";
 export { default as score009 } from "./009.json";
 export { default as score010 } from "./010.json";
 export { default as score011 } from "./011.json";
+export { default as score012 } from "./012.json";
+export { default as score013 } from "./013.json";
+export { default as score014 } from "./014.json";
+export { default as score015 } from "./015.json";

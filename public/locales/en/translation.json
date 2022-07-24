@@ -1,0 +1,63 @@
+{
+  "loading": "loading...",
+  "header": {
+    "play": "Play",
+    "compose": "Compose",
+    "help": "Help"
+  },
+  "footer": {
+    "contact": "Contact"
+  },
+  "play": {
+    "hint": {
+      "start": "Click or press space to start",
+      "resume": "Click or press space to resume",
+      "restart": "Press space to restart"
+    },
+    "btn": {
+      "autoPlay": "Auto Play",
+      "practiceMode": "Practice Mode",
+      "pause": "Pause",
+      "stop": "Stop",
+      "restart": "Restart",
+      "adjust": "Adjust",
+      "settings": "Settings",
+      "zenMode": "Zen Mode",
+      "hint": {
+        "playing": "Playing",
+        "paused": "Paused",
+        "autoPlaying": "Auto Playing",
+        "practicing": "Practicing",
+        "endOfPlay": "End of Play"
+      }
+    },
+    "tab": {
+      "exampleScores": "Example Scores",
+      "recentlyPlayed": "Recently Played",
+      "justPlay": "Just Play",
+      "fromFile": "From File"
+    },
+    "adjust": {
+      "volume": "Volume",
+      "tempo": "Tempo",
+      "tonality": "Tonality"
+    },
+    "settings": {
+      "keymap": "Keymap",
+      "instrument": "Instrument"
+    },
+    "keymap": {
+      "standard": "Standard"
+    },
+    "instrument": {
+      "acousticPiano": "Acoustic Piano",
+      "uprightPiano": "Upright Piano",
+      "acousticGuitar": "Acoustic Guitar",
+      "electricGuitar": "Electric Guitar",
+      "electricBass": "Electric Bass",
+      "harp": "Harp",
+      "cello": "Cello",
+      "violin": "Violin"
+    }
+  }
+}

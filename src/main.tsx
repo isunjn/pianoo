@@ -11,6 +11,7 @@ import ScoreList from "~/components/ScoreList";
 import NotFound from "~/components/NotFound";
 
 import "./index.css";
+import "./i18n";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

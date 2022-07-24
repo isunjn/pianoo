@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   TbAdjustments,
   TbMaximize,
@@ -18,63 +19,64 @@ import panic from "~/utils/panic";
 function PlayerControl() {
   const { status, score } = usePlayer();
   const dispatch = usePlayerDispatch();
+  const { t } = useTranslation();
 
   const leftControls = () => {
     switch (status) {
       case "ready":
         return (<>
           <ControlBtn
-            tooltip="Auto Play"
+            tooltip={t("play.btn.autoPlay")}
             Icon={TbVinyl}
             onClick={() => dispatch({ type: "auto_play" })} />
           <ControlBtn
-            tooltip="Practice Mode"
+            tooltip={t("play.btn.practiceMode")}
             Icon={RiMusicLine}
             onClick={() => dispatch({ type: "practice" })} />
         </>);
       case "playing":
         return (<>
           <ControlBtn
-            tooltip="Restart"
+            tooltip={t("play.btn.restart")}
             Icon={TbRotate}
             onClick={() => dispatch({ type: "reset" })} />
           <ControlBtn
-            tooltip="Pause"
+            tooltip={t("play.btn.pause")}
             Icon={TbPlayerPause}
             onClick={() => dispatch({ type: "pause" })} />
-          <ControlHint hint="Playing" />
+          <ControlHint hint={t("play.btn.hint.playing")} />
         </>);
       case "paused":
         return (<>
           <ControlBtn
-            tooltip="Restart"
+            tooltip={t("play.btn.restart")}
             Icon={TbRotate}
             onClick={() => dispatch({ type: "reset" })} />
-          <ControlHint hint="Paused" />
+          <ControlHint hint={t("play.btn.hint.paused")} />
         </>);
       case "done":
         return (<>
           <ControlBtn
-            tooltip="Restart"
+            tooltip={t("play.btn.restart")}
             Icon={TbRotate}
             onClick={() => dispatch({ type: "reset" })} />
-          <ControlHint hint="End of play" />
+          <ControlHint hint={t("play.btn.hint.endOfPlay")} />
         </>);
       case "autoplaying":
         return (<>
           <ControlBtn
-            tooltip="Stop"
+            tooltip={t("play.btn.stop")}
             Icon={TbPlayerStop}
             onClick={() => dispatch({ type: "reset" })} />
-          <ControlHint hint="Auto playing" />
+          <ControlHint hint={t("play.btn.hint.autoPlaying")} />
         </>);
       case "practicing":
         return (<>
           <ControlBtn
-            tooltip="Stop"
+            tooltip={t("play.btn.stop")}
             Icon={TbPlayerStop}
             onClick={() => dispatch({ type: "reset" })} />
-          <ControlHint hint="Practicing" />
+          <ControlHint hint={t("play.btn.hint.practicing")} />
         </>);
       default:
         throw panic("unreachable");
@@ -84,7 +86,7 @@ function PlayerControl() {
   const rightControls = () => {
     return (<>
       <ControlBtn
-        tooltip="Adjust"
+        tooltip={t("play.btn.adjust")}
         Icon={TbAdjustments}
         onClick={() => dispatch({ type: "open_adjustments" })} />
       {/* <ControlBtn
@@ -92,11 +94,11 @@ function PlayerControl() {
         Icon={RiRecordCircleLine}
         onClick={() => dispatch({ type: "open_recorder" })} /> */}
       <ControlBtn
-        tooltip="Settings"
+        tooltip={t("play.btn.settings")}
         Icon={RiSettings3Line}
         onClick={() => dispatch({ type: "open_settings" })} />
       <ControlBtn
-        tooltip="Zen Mode"
+        tooltip={t("play.btn.zenMode")}
         Icon={TbMaximize}
         onClick={toggleZenMode} />
     </>);
@@ -142,9 +144,9 @@ function ControlBtn({ tooltip, onClick, Icon }: ControlBtnProps) {
           focus-visible:outline-theme-text focus-visible:outline-offset-2">
         <Icon />
       </button>
-      <div className="absolute -top-9 -translate-x-1/2 left-1/2 
+      <div className="absolute -top-9 -translate-x-1/2 left-1/2
         invisible group-hover:visible peer-focus-visible:visible
-        w-max text-base bg-theme-hover text-theme-text px-2.5 py-px rounded
+        w-max text-base bg-theme-hover text-theme-text px-2.5 pb-0.5 pt-[3px] rounded
         after:absolute after:top-full after:left-1/2 after:border-4 after:-ml-1
         after:border-transparent after:border-t-theme-hover">
         {tooltip}

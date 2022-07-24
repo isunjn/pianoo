@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { HiCursorClick } from "react-icons/hi";
 import player from "~/core/player";
 import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
@@ -191,15 +192,15 @@ function PlayerSheet() {
 
 function SheetMask() {
   const { status } = usePlayer();
+  const { t } = useTranslation();
+
   if (!(status == "ready" || status == "paused")) return null;
   return (
     <div className="absolute top-20 left-0 w-full h-52 pointer-events-none
       flex items-center justify-center bg-transparent backdrop-blur-lg">
       <div className="flex items-center gap-4 group-hover:scale-[1.025] 
         transition-transform ease-in">
-        {status == "ready"
-          ? "Click or press space to start"
-          : "Click or press space to resume"}
+        {status == "ready" ? t("play.hint.start") : t("play.hint.resume")}
         <HiCursorClick />
       </div>
     </div>

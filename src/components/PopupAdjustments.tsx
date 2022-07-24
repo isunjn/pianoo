@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
 import player from "~/core/player";
 import tonalities from "~/core/tonality";
@@ -6,6 +7,7 @@ import type { TonalityKind } from "~/core/tonality";
 function PopupAdjustments() {
   const { volume, tempo, tonality } = usePlayer();
   const dispatch = usePlayerDispatch();
+  const { t } = useTranslation();
 
   function handleVolumeChange(e: React.ChangeEvent<HTMLInputElement>) {
     const volume = parseInt(e.target.value);
@@ -32,7 +34,7 @@ function PopupAdjustments() {
     
       <div>
         <label htmlFor="volume" className="w-full flex items-center justify-between">
-          Volume: <div>{volume} %</div>
+          {t("play.adjust.volume")}: <div>{volume} %</div>
         </label>
         <input type="range" id="volume" min="0" max="100" className="w-full"
           value={volume} onChange={handleVolumeChange}/>
@@ -40,7 +42,7 @@ function PopupAdjustments() {
 
       <div>
         <label htmlFor="tempo" className="w-full flex items-center justify-between">
-          Tempo: <div>{tempo} BPM</div>
+        {t("play.adjust.tempo")}: <div>{tempo} BPM</div>
         </label>
         <input type="range" id="tempo" min="40" max="220" className="w-full"
           value={tempo} onChange={handleTempoChange}/>
@@ -48,7 +50,7 @@ function PopupAdjustments() {
       
       <div>
         <label htmlFor="tonality" className="w-full flex items-center justify-between">
-          Tonality: 
+        {t("play.adjust.tonality")}: 
           <select id="tonality" value={tonality} 
             onChange={handleTonalityChange}
             className="bg-theme-hover rounded px-4 py-1.5">

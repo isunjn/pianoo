@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
 import parse, { type MusicScore } from "~/core/parser";
 import player from "~/core/player";
@@ -6,6 +7,7 @@ import * as examples from "~/examples";
 function PopupChooser() {
   const { score } = usePlayer();
   const dispatch = usePlayerDispatch();
+  const { t } = useTranslation();
 
   function setScore(newScore: MusicScore) {
     if (newScore.id != score.id) {
@@ -20,10 +22,10 @@ function PopupChooser() {
       bg-theme-hover text-theme-text backdrop-blur-lg rounded shadow-lg" >
       <div className="flex gap-4 mb-4">
         {/* TODO */}
-        <div className="px-4 py-1.5 bg-theme-text text-theme-bg flex-1 text-center rounded">Example Scores</div>
-        <div className="px-4 py-1.5 bg-theme-hover flex-1 text-center rounded">Recently Played</div>
-        <div className="px-4 py-1.5 bg-theme-hover flex-1 text-center rounded">Just Play</div>
-        <div className="px-4 py-1.5 bg-theme-hover flex-1 text-center rounded">From File</div>
+        <div className="px-4 py-1.5 bg-theme-text text-theme-bg flex-1 text-center rounded">{t("play.tab.exampleScores")}</div>
+        <div className="px-4 py-1.5 bg-theme-hover flex-1 text-center rounded">{t("play.tab.recentlyPlayed")}</div>
+        <div className="px-4 py-1.5 bg-theme-hover flex-1 text-center rounded">{t("play.tab.justPlay")}</div>
+        <div className="px-4 py-1.5 bg-theme-hover flex-1 text-center rounded">{t("play.tab.fromFile")}</div>
       </div>
       {
         Object.values(examples).map(score => (
