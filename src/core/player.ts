@@ -1,4 +1,5 @@
-import * as Tone from "tone";
+type Tone = typeof import("tone");
+type Sampler = import("tone").Sampler;
 import {
   KEYMAP_STANDARD,
   KEYMAP_VIRTUALPIANO,
@@ -42,8 +43,9 @@ interface SheetItemRest {
 }
 
 class Player {
+  private tone: Tone | null;
   private loaded: Promise<void> | null;
-  private instrument: Tone.Sampler | null;
+  private instrument: Sampler | null;
   private keymap: Keymap;
   private score: ParsedMusicScore | null;
   private tempo: number;
@@ -51,6 +53,7 @@ class Player {
   private sequence: SheetItem[];
 
   constructor() {
+    this.tone = null;
     this.loaded = null;
     this.instrument = null;
     this.keymap = new Keymap(KEYMAP_STANDARD)
@@ -62,13 +65,15 @@ class Player {
 
   public load() {
     if (this.loaded != null) return this.loaded;
-    this.loaded = this.setInstrument("piano-acoustic");
+    this.loaded = import("tone")
+      .then(mod => this.tone = mod)
+      .then(() => this.setInstrument("piano-acoustic"));
     return this.loaded;
   }
 
   public async start() {
-    await Tone.start();
-    await Tone.loaded();
+    await this.tone!.start();
+    await this.tone!.loaded();
   }
 
   public prepare(score: ParsedMusicScore) {
@@ -84,7 +89,7 @@ class Player {
   }
 
   public playNote(note: string | string[]) {
-    this.instrument!.triggerAttackRelease(note, 0.75, Tone.context.currentTime);
+    this.instrument!.triggerAttackRelease(note, 0.75, this.tone!.context.currentTime);
   }
 
   public getSequence() {
@@ -107,7 +112,7 @@ class Player {
       instrumentKind == "violin" ? INSTRUMENT_VIOLIN : undefined;
       
     return new Promise<void>((resolve) => {
-      const instrument = new Tone.Sampler({
+      const instrument = new this.tone!.Sampler({
         urls: urls,
         baseUrl: "sample/",
         onload: () => {
