@@ -1,7 +1,10 @@
 import { usePlayer } from "~/contexts/PlayerContext";
+import panic from "~/utils/panic";
 
 function PlayerScoreMeta() {
   const { score, tonality, tempo } = usePlayer();
+
+  if (!score) throw panic("score is null");
 
   return (
     <div className="h-40 flex items-center font-mono text-theme-hint zen-hoverable">

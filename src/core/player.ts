@@ -20,6 +20,7 @@ import Keymap from "~/core/keymap";
 import panic from "~/utils/panic";
 import type { TonalityKind } from "~/core/tonality";
 import type { ParsedMusicScore } from "~/core/parser";
+import { K_INSTRUMENT, K_KEYMAP, K_VOLUME } from "~/constant/storage-keys";
 
 export type SheetItems = SheetItem[][]; // rows -> row -> item
 export type SheetItem = SheetItemNote | SheetItemChord | SheetItemRest;
@@ -44,7 +45,7 @@ interface SheetItemRest {
 
 class Player {
   private tone: Tone | null;
-  private loaded: Promise<void> | null;
+  private inited: Promise<void> | null;
   private instrument: Sampler | null;
   private keymap: Keymap;
   private score: ParsedMusicScore | null;
@@ -53,22 +54,33 @@ class Player {
   private sequence: SheetItem[];
 
   constructor() {
+    const keymapKind = localStorage.getItem(K_KEYMAP) as KeymapKind | null ?? "standard";
+    const keymapKeys = keymapKind == "standard" ? KEYMAP_STANDARD : KEYMAP_VIRTUALPIANO;
+
     this.tone = null;
-    this.loaded = null;
+    this.inited = null;
     this.instrument = null;
-    this.keymap = new Keymap(KEYMAP_STANDARD)
+    this.keymap = new Keymap(keymapKeys);
     this.score = null;
     this.tempo = 100;
     this.sheetItems = [];
     this.sequence = [];
   }
 
-  public load() {
-    if (this.loaded != null) return this.loaded;
-    this.loaded = import("tone")
+  public init() {
+    if (this.inited != null) return this.inited;
+    const instrument = 
+      localStorage.getItem(K_INSTRUMENT) as InstrumentKind | null
+      ?? "piano-acoustic";
+    this.inited = import("tone")
       .then(mod => this.tone = mod)
-      .then(() => this.setInstrument("piano-acoustic"));
-    return this.loaded;
+      .then(async () => {
+        await this.setInstrument(instrument);
+        const volume = localStorage.getItem(K_VOLUME) 
+          ? parseInt(localStorage.getItem(K_VOLUME)!) : 50;
+        this.setVolume(volume);
+      });
+    return this.inited;
   }
 
   public async start() {

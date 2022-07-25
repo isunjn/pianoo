@@ -1,5 +1,8 @@
 {
   "loading": "正在加载...",
+  "error": {
+    "crash": "出错了，请尝试刷新 :)"
+  },
   "header": {
     "play": "弹奏",
     "compose": "作曲",

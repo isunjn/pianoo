@@ -1,12 +1,10 @@
 import React, { createContext, useContext, useReducer } from "react";
-import defalutScore from "~/examples/001.json";
-import parse from "~/core/parser";
-import player from "~/core/player";
 import type { SheetItems } from "~/core/player";
 import type { TonalityKind } from "~/core/tonality";
-import type { MusicScore, ParsedMusicScore } from "~/core/parser";
+import type { ParsedMusicScore } from "~/core/parser";
 import type { InstrumentKind } from "~/config/instrument";
 import type { KeymapKind } from "~/config/keymap";
+import { K_INSTRUMENT, K_KEYMAP, K_VOLUME } from "~/constant/storage-keys";
 
 const PlayerContext = createContext<PlayerState | null>(null);
 const PlayerDispatchContext = createContext<React.Dispatch<PlayerAction> | null>(null);
@@ -57,7 +55,7 @@ interface PlayerState {
   volume: number;
   tempo: number;
   tonality: TonalityKind;
-  score: ParsedMusicScore;
+  score: ParsedMusicScore | null;
   sheetItems: SheetItems;
 }
 
@@ -149,16 +147,20 @@ function stateReducer(state: PlayerState, action: PlayerAction): PlayerState {
 
 //-----------------------------------------------------------------------------
 
-const score = parse(defalutScore as MusicScore);
-const sheetItems = player.prepare(score);
+const instrument = 
+  localStorage.getItem(K_INSTRUMENT) as InstrumentKind | null ?? "piano-acoustic";
+const keymap = localStorage.getItem(K_KEYMAP) as KeymapKind | null ?? "standard";
+const volume = localStorage.getItem(K_VOLUME) 
+  ? parseInt(localStorage.getItem(K_VOLUME)!) : 50;
+
 const initialState: PlayerState = {
   status: "idle",
   popuping: "none",
-  instrument: "piano-acoustic",
-  keymap: "standard",
-  volume: 50,
-  tonality: score.tonality,
-  tempo: score.tempo,
-  score: score,
-  sheetItems: sheetItems,
+  instrument,
+  keymap,
+  volume,
+  tonality: "1 = C",
+  tempo: 100,
+  score: null,
+  sheetItems: [],
 }

@@ -1,13 +1,12 @@
-import { useState, Suspense } from "react";
+import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
 import Loading from "~/components/Loading";
-import type { ThemeKind } from "~/config/theme";
+import useTheme from "~/hooks/useTheme";
 
 function App() {
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const [theme, setTheme] = useState<ThemeKind>(prefersDark ? "dark" : "light");
+  const { theme, changeTheme } = useTheme();
 
   return (
     <Suspense fallback={<Loading />}>
@@ -18,7 +17,7 @@ function App() {
           <main className="w-full">
             <Outlet />
           </main>
-          <Footer theme={theme} setTheme={setTheme} />
+          <Footer theme={theme} changeTheme={changeTheme} />
         </div>
       </div>
     </Suspense>

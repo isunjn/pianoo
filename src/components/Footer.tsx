@@ -9,10 +9,10 @@ import { langs, type LangKind } from "~/config/lang";
 
 interface FooterPorps {
   theme: ThemeKind;
-  setTheme: (theme: ThemeKind) => void;
+  changeTheme: (theme: ThemeKind) => void;
 }
 
-function Footer({ theme, setTheme }: FooterPorps) {
+function Footer({ theme, changeTheme }: FooterPorps) {
   const { t } = useTranslation();
 
   return (
@@ -26,7 +26,7 @@ function Footer({ theme, setTheme }: FooterPorps) {
       </div>
       <div className="flex items-center">
         <LangBtn />
-        <ThemeBtn theme={theme} setTheme={setTheme} />
+        <ThemeBtn theme={theme} changeTheme={changeTheme} />
         <Link to="/about" className="flex gap-1.5 items-center px-2 py-0.5 rounded
           hover:bg-theme-hover focus-visible:outline-2 focus-visible:outline
           focus-visible:outline-theme-text focus-visible:outline-offset-2" >
@@ -93,15 +93,15 @@ function LangBtn() {
 
 interface ThemeBtnPorps {
   theme: ThemeKind;
-  setTheme: (theme: ThemeKind) => void;
+  changeTheme: (theme: ThemeKind) => void;
 }
 
-function ThemeBtn({ theme, setTheme }: ThemeBtnPorps) {
+function ThemeBtn({ theme, changeTheme }: ThemeBtnPorps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  function changeTheme(newTheme: ThemeKind) {
+  function changeThemeTo(newTheme: ThemeKind) {
     if (newTheme != theme) {
-      setTheme(newTheme);
+      changeTheme(newTheme);
       setIsOpen(false);
     }
   }
@@ -118,7 +118,7 @@ function ThemeBtn({ theme, setTheme }: ThemeBtnPorps) {
         <div className="absolute bottom-10 min-w-max max-h-96 z-50 overflow-auto
           backdrop-blur bg-theme-hover rounded shadow">
           {[...themes].map(([theme, name]) => (
-            <div key={theme} onClick={() => changeTheme(theme)}
+            <div key={theme} onClick={() => changeThemeTo(theme)}
               className="px-4 py-2 hover:bg-theme-hover cursor-pointer">
               {name}
             </div>

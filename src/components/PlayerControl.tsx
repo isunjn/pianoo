@@ -115,7 +115,7 @@ function PlayerControl() {
         className="flex-1 flex-grow-[2] text-center px-2 py-1 rounded text-base
         hover:bg-theme-hover focus-visible:outline-2 focus-visible:outline 
         focus-visible:outline-theme-text focus-visible:outline-offset-2">
-        {score.name}
+        {score!.name}
       </button>
 
       <div className="flex-1 flex justify-end gap-3 items-center">

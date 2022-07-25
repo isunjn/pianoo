@@ -1,5 +1,8 @@
 {
   "loading": "loading...",
+  "error": {
+    "crash": "Something went wrong, please try refresh :)"
+  },
   "header": {
     "play": "Play",
     "compose": "Compose",
