@@ -10,7 +10,7 @@ const PlayerContext = createContext<PlayerState | null>(null);
 const PlayerDispatchContext = createContext<React.Dispatch<PlayerAction> | null>(null);
 
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(stateReducer, initialState);
+  const [state, dispatch] = useReducer(stateReducer, getInitialState());
 
   return (
     <PlayerDispatchContext.Provider value={dispatch}>
@@ -147,20 +147,24 @@ function stateReducer(state: PlayerState, action: PlayerAction): PlayerState {
 
 //-----------------------------------------------------------------------------
 
-const instrument = 
-  localStorage.getItem(K_INSTRUMENT) as InstrumentKind | null ?? "piano-acoustic";
-const keymap = localStorage.getItem(K_KEYMAP) as KeymapKind | null ?? "standard";
-const volume = localStorage.getItem(K_VOLUME) 
-  ? parseInt(localStorage.getItem(K_VOLUME)!) : 50;
+function getInitialState() {
+  const keymap = localStorage.getItem(K_KEYMAP) as KeymapKind | null ?? "standard";
+  const instrument = 
+    localStorage.getItem(K_INSTRUMENT) as InstrumentKind | null ?? "piano-acoustic";
+  const volume = 
+    localStorage.getItem(K_VOLUME) ? parseInt(localStorage.getItem(K_VOLUME)!) : 50;
 
-const initialState: PlayerState = {
-  status: "idle",
-  popuping: "none",
-  instrument,
-  keymap,
-  volume,
-  tonality: "1 = C",
-  tempo: 100,
-  score: null,
-  sheetItems: [],
+  const initialState: PlayerState = {
+    status: "idle",
+    popuping: "none",
+    instrument,
+    keymap,
+    volume,
+    tonality: "1 = C",
+    tempo: 100,
+    score: null,
+    sheetItems: [],
+  }
+
+  return initialState;
 }
