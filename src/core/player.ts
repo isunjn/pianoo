@@ -126,7 +126,7 @@ class Player {
     return new Promise<void>((resolve) => {
       const instrument = new this.tone!.Sampler({
         urls: urls,
-        baseUrl: "sample/",
+        baseUrl: "samples/",
         onload: () => {
           this.instrument = instrument;
           resolve();
