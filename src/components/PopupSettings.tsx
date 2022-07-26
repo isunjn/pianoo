@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
-import player from "~/core/player";
+import pianoo from "~/core/pianoo";
 import type { KeymapKind } from "~/config/keymap";
 import React from "react";
 import { InstrumentKind } from "~/config/instrument";
@@ -15,7 +15,7 @@ function PopupSettings() {
   function handleKeymapChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const newKeymap = e.target.value as KeymapKind;
     if (newKeymap != keymap) {
-      const sheetItems = player.setKeymap(newKeymap);
+      const sheetItems = pianoo.setKeymap(newKeymap);
       dispatch({ type: "set_keymap", keymap: newKeymap, sheetItems });
     }
   }
@@ -25,7 +25,7 @@ function PopupSettings() {
     if (newInstrument != instrument) {
 
       setLoadingInstrument(true);
-      player.setInstrument(newInstrument).then(() => {
+      pianoo.setInstrument(newInstrument).then(() => {
         dispatch({ type: "set_instrument", instrument: newInstrument });
         setLoadingInstrument(false);
       });

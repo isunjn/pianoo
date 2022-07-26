@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { HiCursorClick } from "react-icons/hi";
-import player from "~/core/player";
+import pianoo from "~/core/pianoo";
 import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
 import Sheet, { type SheetImperativeHandleAPI } from "~/components/Sheet";
-import type { SheetItem } from "~/core/player";
+import type { SheetItem } from "~/core/pianoo";
 import panic from "~/utils/panic";
 
 function PlayerSheet() {
@@ -23,7 +23,7 @@ function PlayerSheet() {
     async function startToPlay() {
       _sheetContainer.removeEventListener("click", startToPlay);
       document.removeEventListener("keydown", keydownHandler);
-      await player.start();
+      await pianoo.start();
       dispatch({ type: "play" });
     }
     function keydownHandler(e: KeyboardEvent) {
@@ -65,7 +65,7 @@ function PlayerSheet() {
   // start/resume playing
   useEffect(() => {
     if (status != "playing") return;
-    const seq = player.getSequence();
+    const seq = pianoo.getSequence();
     if (idx.current == -1) {
       let firstNonRest = 0;
       while (seq[firstNonRest] && seq[firstNonRest].kind == "rest") {
@@ -83,9 +83,9 @@ function PlayerSheet() {
     // play music note & update sheet
     function keydownHandler(e: KeyboardEvent) {
       if (e.repeat) return;
-      const note = player.getNote(e.key);
+      const note = pianoo.getNote(e.key);
       if (!note) return;
-      player.playNote(note);
+      pianoo.playNote(note);
       const _pressing = pressing.current;
       const expected = seq[idx.current];
       switch (expected.kind) {
@@ -130,8 +130,8 @@ function PlayerSheet() {
     if (status != "autoplaying") return;
     let timeoutId: ReturnType<typeof setTimeout>;
     async function autoPlay() {
-      await player.start();
-      const seq = player.getSequence();
+      await pianoo.start();
+      const seq = pianoo.getSequence();
       if (idx.current == -1) {
         let firstNonRest = 0;
         while (seq[firstNonRest] && seq[firstNonRest].kind == "rest") {
@@ -142,14 +142,14 @@ function PlayerSheet() {
       }
       // play each item after a delay
       timeoutId = (function play(item: SheetItem, after: number) {
-        const msPerQuarter = 60 * 1000 / player.getTempo(); // tempo may change
+        const msPerQuarter = 60 * 1000 / pianoo.getTempo(); // tempo may change
         return setTimeout(() => {
           const note =
-            item.kind == "note" ? player.getNote(item.key)! :
-              item.kind == "chord" ? item.keys.map(k => player.getNote(k)!) :
+            item.kind == "note" ? pianoo.getNote(item.key)! :
+              item.kind == "chord" ? item.keys.map(k => pianoo.getNote(k)!) :
                 undefined;
           if (note) {
-            player.playNote(note);
+            pianoo.playNote(note);
             let nextNonRest = idx.current + 1;
             while (seq[nextNonRest] && seq[nextNonRest].kind == "rest") {
               nextNonRest++;
@@ -173,8 +173,8 @@ function PlayerSheet() {
     if (status != "practicing") return;
     function keydownHandler(e: KeyboardEvent) {
       if (e.repeat) return;
-      const note = player.getNote(e.key);
-      if (note) player.playNote(note);
+      const note = pianoo.getNote(e.key);
+      if (note) pianoo.playNote(note);
     }
     document.addEventListener("keydown", keydownHandler);
     return () => document.removeEventListener("keydown", keydownHandler);

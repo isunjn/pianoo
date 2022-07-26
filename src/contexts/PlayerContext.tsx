@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer } from "react";
-import type { SheetItems } from "~/core/player";
+import type { SheetItems } from "~/core/pianoo";
 import type { TonalityKind } from "~/core/tonality";
 import type { ParsedMusicScore } from "~/core/parser";
 import type { InstrumentKind } from "~/config/instrument";

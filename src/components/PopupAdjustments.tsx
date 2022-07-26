@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
-import player from "~/core/player";
+import pianoo from "~/core/pianoo";
 import tonalities from "~/core/tonality";
 import type { TonalityKind } from "~/core/tonality";
 
@@ -11,19 +11,19 @@ function PopupAdjustments() {
 
   function handleVolumeChange(e: React.ChangeEvent<HTMLInputElement>) {
     const volume = parseInt(e.target.value);
-    player.setVolume(volume);
+    pianoo.setVolume(volume);
     dispatch({ type: "set_volume", volume });
   }
 
   function handleTempoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const tempo = parseInt(e.target.value);
-    player.setTempo(tempo);
+    pianoo.setTempo(tempo);
     dispatch({ type: "set_tempo", tempo });
   }
 
   function handleTonalityChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const tonality = e.target.value as TonalityKind;
-    const sheetItems = player.transpose(tonality);
+    const sheetItems = pianoo.transpose(tonality);
     dispatch({ type: "set_tonality", tonality, sheetItems });
   }
 

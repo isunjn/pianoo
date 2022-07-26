@@ -48,7 +48,7 @@ interface SheetItemRest {
   quarter: number;
 }
 
-class Player {
+class Pianoo {
   private tone: Tone | null;
   private inited: Promise<void> | null;
   private instrument: Sampler | null;
@@ -188,6 +188,6 @@ class Player {
   }
 }
 
-const player = new Player(); // singleton
+const pianoo = new Pianoo(); // singleton
 
-export default player;
+export default pianoo;

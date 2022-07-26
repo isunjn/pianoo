@@ -3,7 +3,7 @@ import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
 import Loading from "~/components/Loading";
 import Error from "~/components/Error";
 import parse, { type MusicScore } from "~/core/parser";
-import player from "~/core/player";
+import pianoo from "~/core/pianoo";
 import useExampleScores from "~/hooks/useExampleScores";
 import range from "~/utils/range";
 
@@ -16,7 +16,7 @@ function PopupChooser() {
   function setScore(newScore: MusicScore) {
     if (newScore.id != score!.id) {
       const newParsedScore = parse(newScore);
-      const sheetItems = player.prepare(newParsedScore);
+      const sheetItems = pianoo.prepare(newParsedScore);
       dispatch({ type: "set_score", score: newParsedScore, sheetItems });
     }
   }

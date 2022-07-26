@@ -1,5 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useRef, type Ref } from "react";
-import type { SheetItems } from "~/core/player";
+import type { SheetItems } from "~/core/pianoo";
 import panic from "~/utils/panic";
 
 export interface SheetImperativeHandleAPI {
