@@ -60,7 +60,7 @@ interface PlayerState {
 }
 
 type PlayerAction =
-  | { type: "loaded" }
+  | { type: "unmount" }
   | { type: "play" }
   | { type: "pause" }
   | { type: "done" }
@@ -81,8 +81,8 @@ type PlayerAction =
 
 function stateReducer(state: PlayerState, action: PlayerAction): PlayerState {
   switch (action.type) {
-    case "loaded":
-      return { ...state, status: "ready" };
+    case "unmount":
+      return { ...state, status: state.status == "idle" ? "idle" : "ready" }
     case "play":
       return { ...state, status: "playing" };
     case "pause":

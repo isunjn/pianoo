@@ -4,6 +4,7 @@ import Header from "~/components/Header";
 import Footer from "~/components/Footer";
 import Loading from "~/components/Loading";
 import useTheme from "~/hooks/useTheme";
+import { PlayerProvider } from "~/contexts/PlayerContext";
 
 function App() {
   const { theme, changeTheme } = useTheme();
@@ -15,7 +16,9 @@ function App() {
           flex flex-col justify-between text-theme-text">
           <Header />
           <main className="w-full">
-            <Outlet />
+            <PlayerProvider>
+              <Outlet />
+            </PlayerProvider>
           </main>
           <Footer theme={theme} changeTheme={changeTheme} />
         </div>
