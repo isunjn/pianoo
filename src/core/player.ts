@@ -20,7 +20,12 @@ import Keymap from "~/core/keymap";
 import panic from "~/utils/panic";
 import type { TonalityKind } from "~/core/tonality";
 import type { ParsedMusicScore } from "~/core/parser";
-import { K_INSTRUMENT, K_KEYMAP, K_VOLUME } from "~/constant/storage-keys";
+import {
+  K_SCORE_ID,
+  K_INSTRUMENT,
+  K_KEYMAP,
+  K_VOLUME,
+} from "~/constant/storage-keys";
 
 export type SheetItems = SheetItem[][]; // rows -> row -> item
 export type SheetItem = SheetItemNote | SheetItemChord | SheetItemRest;
@@ -74,12 +79,7 @@ class Player {
       ?? "piano-acoustic";
     this.inited = import("tone")
       .then(mod => this.tone = mod)
-      .then(async () => {
-        await this.setInstrument(instrument);
-        const volume = localStorage.getItem(K_VOLUME) 
-          ? parseInt(localStorage.getItem(K_VOLUME)!) : 50;
-        this.setVolume(volume);
-      });
+      .then(() => this.setInstrument(instrument));
     return this.inited;
   }
 
@@ -89,6 +89,7 @@ class Player {
   }
 
   public prepare(score: ParsedMusicScore) {
+    localStorage.setItem(K_SCORE_ID, score.id.toString());
     this.score = score;
     this.keymap.transpose(score.tonality);
     this.tempo = score.tempo;
@@ -113,6 +114,7 @@ class Player {
   }
 
   public setInstrument(instrumentKind: InstrumentKind) {
+    localStorage.setItem(K_INSTRUMENT, instrumentKind);
     const urls = 
       instrumentKind == "piano-acoustic" ? INSTRUMENT_PIANO_ACOUSTIC :
       instrumentKind == "piano-upright" ? INSTRUMENT_PIANO_UPRIGHT :
@@ -129,6 +131,9 @@ class Player {
         baseUrl: "samples/",
         onload: () => {
           this.instrument = instrument;
+          const volume = localStorage.getItem(K_VOLUME) 
+            ? parseInt(localStorage.getItem(K_VOLUME)!) : 50;
+          this.setVolume(volume);
           resolve();
         },
       }).toDestination();
@@ -136,6 +141,7 @@ class Player {
   }
 
   public setKeymap(keymapKind: KeymapKind): SheetItems {
+    localStorage.setItem(K_KEYMAP, keymapKind);
     this.keymap = new Keymap(
       keymapKind == "standard" ? KEYMAP_STANDARD : KEYMAP_VIRTUALPIANO
     );
@@ -155,6 +161,7 @@ class Player {
   }
 
   public setVolume(volume: number) {
+    localStorage.setItem(K_VOLUME, volume.toString());
     // percentage to decibel
     this.instrument!.volume.value = 2 * 10 * Math.log10(volume / 100); 
   }

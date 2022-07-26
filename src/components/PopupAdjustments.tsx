@@ -3,7 +3,6 @@ import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
 import player from "~/core/player";
 import tonalities from "~/core/tonality";
 import type { TonalityKind } from "~/core/tonality";
-import { K_VOLUME } from "~/constant/storage-keys";
 
 function PopupAdjustments() {
   const { volume, tempo, tonality } = usePlayer();
@@ -12,7 +11,6 @@ function PopupAdjustments() {
 
   function handleVolumeChange(e: React.ChangeEvent<HTMLInputElement>) {
     const volume = parseInt(e.target.value);
-    localStorage.setItem(K_VOLUME, volume.toString());
     player.setVolume(volume);
     dispatch({ type: "set_volume", volume });
   }

@@ -6,7 +6,6 @@ import parse, { type MusicScore } from "~/core/parser";
 import player from "~/core/player";
 import useExampleScores from "~/hooks/useExampleScores";
 import range from "~/utils/range";
-import { K_SCORE_ID } from "~/constant/storage-keys";
 
 function PopupChooser() {
   const { score } = usePlayer();
@@ -16,7 +15,6 @@ function PopupChooser() {
   
   function setScore(newScore: MusicScore) {
     if (newScore.id != score!.id) {
-      localStorage.setItem(K_SCORE_ID, newScore.id.toString());
       const newParsedScore = parse(newScore);
       const sheetItems = player.prepare(newParsedScore);
       dispatch({ type: "set_score", score: newParsedScore, sheetItems });

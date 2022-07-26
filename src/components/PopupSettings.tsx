@@ -5,7 +5,6 @@ import player from "~/core/player";
 import type { KeymapKind } from "~/config/keymap";
 import React from "react";
 import { InstrumentKind } from "~/config/instrument";
-import { K_INSTRUMENT, K_KEYMAP } from "~/constant/storage-keys";
 
 function PopupSettings() {
   const { keymap, instrument } = usePlayer();
@@ -16,7 +15,6 @@ function PopupSettings() {
   function handleKeymapChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const newKeymap = e.target.value as KeymapKind;
     if (newKeymap != keymap) {
-      localStorage.setItem(K_KEYMAP, newKeymap);
       const sheetItems = player.setKeymap(newKeymap);
       dispatch({ type: "set_keymap", keymap: newKeymap, sheetItems });
     }
@@ -25,7 +23,7 @@ function PopupSettings() {
   function handleInstrumentChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const newInstrument = e.target.value as InstrumentKind;
     if (newInstrument != instrument) {
-      localStorage.setItem(K_INSTRUMENT, newInstrument);
+
       setLoadingInstrument(true);
       player.setInstrument(newInstrument).then(() => {
         dispatch({ type: "set_instrument", instrument: newInstrument });
