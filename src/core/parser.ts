@@ -57,58 +57,67 @@ export type Accidental = "#" | "b" | undefined;
 const REGEXP_NOTE = /^(#|b)??(\+{1,2}|-{1,2})??([1-7])$/;
 const REGEXP_QUARTER = /^(-{1,7}|_{1,2})??(\.{1,2})??$/;
 
-function parse(score: MusicScore): ParsedMusicScore {
-  try {
-    const parsedItems = score.content.split("@@@").map(row => 
-      row.match(/\S+/g)?.filter(s => s != "|").map(s => parseItem(s)) ?? []
-    );
-    return { ...score, parsed: parsedItems };
-  } catch (err) {
-    if (err instanceof SyntaxError) {
-      throw panic("Syntax error: " + err.message);
-    } else {
-      throw err;
-    }
-  }
+function parse(score: MusicScore): [ParsedMusicScore, null] | [null, string[]] {
+  const itemsOrErrs = score.content.split("@@@").map(row => 
+    row.match(/\S+/g)?.filter(s => s != "|").map(s => parseItem(s)) ?? []
+  );
+
+  const errors = itemsOrErrs.flat()
+    .filter(item => item instanceof SyntaxError)
+    .map(err => (<SyntaxError>err).message);
+
+  if (errors.length > 0) return [null, errors];
+
+  const parsed = itemsOrErrs as ParsedItems;
+  return [{ ...score, parsed }, null];
 }
 
-function parseItem(str: string): ParsedItem {
-  // rest
-  if (str.startsWith("0")) {
-    const quarter = parseQuarter(str.slice(1));
-    return { kind: "rest", quarter };
-  }
+function parseItem(str: string): ParsedItem | SyntaxError {
+  try {
+    // rest
+    if (str.startsWith("0")) {
+      const quarter = parseQuarter(str.slice(1));
+      return { kind: "rest", quarter };
+    }
 
-  // chord
-  if (str.startsWith("[")) {
-    const rightSquareIdx = str.indexOf("]");
-    if (rightSquareIdx == -1) {
-      throw new SyntaxError(`Invalid chord: \`${str}\`, missing \`]\``);
+    // chord
+    if (str.startsWith("[")) {
+      const rightSquareIdx = str.indexOf("]");
+      if (rightSquareIdx == -1) {
+        throw new SyntaxError(`Invalid chord: \`${str}\`, missing \`]\``);
+      }
+      const noteStrs = str.slice(1, rightSquareIdx).split("&");
+      if (noteStrs.length == 1) {
+        throw new SyntaxError(
+          `Invalid chord: \`${str}\`, at least two notes in \`[]\``
+        );
+      }
+      if (noteStrs.some(s => s == "")) {
+        throw new SyntaxError(
+          `Invalid chord: \`${str}\`, empty string around \`&\``
+        );
+      }
+      const notes = noteStrs.map(s => parseNote(s));
+      const quarter = parseQuarter(str.slice(rightSquareIdx + 1));
+      return { kind: "chord", notes, quarter };
     }
-    const noteStrs = str.slice(1, rightSquareIdx).split("&");
-    if (noteStrs.length == 1) {
-      throw new SyntaxError(
-        `Invalid chord: \`${str}\`, at least two notes in \`[]\``
-      );
+    
+    // note
+    const solfaNumIdx = str.search(/[1-7]/);
+    if (solfaNumIdx == -1) {
+      throw new SyntaxError(`Invalid note: \`${str}\`, missing solfa number`);
     }
-    if (noteStrs.some(s => s == "")) {
-      throw new SyntaxError(
-        `Invalid chord: \`${str}\`, empty string around \`&\``
-      );
+    const note = parseNote(str.slice(0, solfaNumIdx + 1));
+    const quarter = parseQuarter(str.slice(solfaNumIdx + 1));
+    return { kind: "note", ...note, quarter };
+
+  } catch (err) {
+    if (err instanceof SyntaxError) {
+      err.message = `Syntax error in \`${str}\`: ` + err.message;
+      return err;
     }
-    const notes = noteStrs.map(s => parseNote(s));
-    const quarter = parseQuarter(str.slice(rightSquareIdx + 1));
-    return { kind: "chord", notes, quarter };
+    throw err;
   }
-  
-  // note
-  const solfaNumIdx = str.search(/[1-7]/);
-  if (solfaNumIdx == -1) {
-    throw new SyntaxError(`Invalid note: \`${str}\`, missing solfa number`);
-  }
-  const note = parseNote(str.slice(0, solfaNumIdx + 1));
-  const quarter = parseQuarter(str.slice(solfaNumIdx + 1));
-  return { kind: "note", ...note, quarter };
 }
 
 function parseNote(str: string): Omit<ParsedNote, "kind" | "quarter"> {

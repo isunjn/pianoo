@@ -6,6 +6,7 @@ import parse, { type MusicScore } from "~/core/parser";
 import pianoo from "~/core/pianoo";
 import useExampleScores from "~/hooks/useExampleScores";
 import range from "~/utils/range";
+import panic from "~/utils/panic";
 
 function PopupChooser() {
   const { score } = usePlayer();
@@ -15,9 +16,10 @@ function PopupChooser() {
   
   function setScore(newScore: MusicScore) {
     if (newScore.id != score!.id) {
-      const newParsedScore = parse(newScore);
-      const sheetItems = pianoo.prepare(newParsedScore);
-      dispatch({ type: "set_score", score: newParsedScore, sheetItems });
+      const [newParsedScore, syntaxErrors] = parse(newScore);
+      if (syntaxErrors) panic("syntax error occurred");
+      const sheetItems = pianoo.prepare(newParsedScore!);
+      dispatch({ type: "set_score", score: newParsedScore!, sheetItems });
     }
   }
 

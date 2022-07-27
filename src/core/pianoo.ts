@@ -89,7 +89,9 @@ class Pianoo {
   }
 
   public prepare(score: ParsedMusicScore) {
-    localStorage.setItem(K_SCORE_ID, score.id.toString());
+    if (score.id != 0) {
+      localStorage.setItem(K_SCORE_ID, score.id.toString());
+    }
     this.score = score;
     this.keymap.transpose(score.tonality);
     this.tempo = score.tempo;

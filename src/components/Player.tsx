@@ -11,6 +11,7 @@ import pianoo from "~/core/pianoo";
 import parse, { type MusicScore } from "~/core/parser";
 import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
 import { K_SCORE_ID } from "~/constant/storage-keys";
+import panic from "~/utils/panic";
 
 function Player() {
   const { status } = usePlayer();
@@ -28,9 +29,10 @@ function Player() {
     Promise.all([loadScore, pianoo.init()])
       .then(([score]) => {
         if (ignore) return;
-        const parsedScore = parse(score);
-        const sheetItems = pianoo.prepare(parsedScore);
-        dispatch({ type: "set_score", score: parsedScore, sheetItems });
+        const [parsedScore, syntaxErrors] = parse(score);
+        if (syntaxErrors) panic("syntax error occurred");
+        const sheetItems = pianoo.prepare(parsedScore!);
+        dispatch({ type: "set_score", score: parsedScore!, sheetItems });
       })
       .catch(() => setError(true));
     return () => { ignore = true; };
