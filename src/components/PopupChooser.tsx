@@ -12,7 +12,7 @@ function PopupChooser() {
   const { score } = usePlayer();
   const dispatch = usePlayerDispatch();
   const { t } = useTranslation();
-  const { exampleScores, isLoading, isError } = useExampleScores(range(1, 15));
+  const { exampleScores, isLoading, isError } = useExampleScores(range(1, 20));
   
   function setScore(newScore: MusicScore) {
     if (newScore.id != score!.id) {
