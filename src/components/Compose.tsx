@@ -146,7 +146,7 @@ function Compose() {
         <label htmlFor="content">Content:</label>
         <textarea name="content" id="content" defaultValue={content}
           onChange={perpsist(K_COMPOSE_CONTENT)}
-          className="w-full h-64 p-4 rounded bg-theme-hover
+          className="w-full h-64 p-4 rounded bg-theme-hover whitespace-pre
             focus-visible:outline-none"></textarea>
       </div>
 
