@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import tonalities, { TonalityKind } from "~/core/tonality";
 import parse, { type MusicScore } from "~/core/parser";
@@ -11,7 +11,7 @@ import {
   K_COMPOSE_TIMESIGN_2,
   K_COMPOSE_TEMPO,
   K_COMPOSE_CONTENT,
-} from "~/constant/storage-keys";
+} from "~/constants/storage-keys";
 import pianoo from "~/core/pianoo";
 
 interface ComposeFormElements extends HTMLFormControlsCollection {

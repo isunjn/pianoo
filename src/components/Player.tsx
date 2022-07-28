@@ -10,7 +10,7 @@ import Error from "~/components/Error";
 import pianoo from "~/core/pianoo";
 import parse, { type MusicScore } from "~/core/parser";
 import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
-import { K_SCORE_ID } from "~/constant/storage-keys";
+import { K_SCORE_ID } from "~/constants/storage-keys";
 import panic from "~/utils/panic";
 
 function Player() {

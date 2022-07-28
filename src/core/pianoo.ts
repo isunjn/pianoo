@@ -25,7 +25,7 @@ import {
   K_INSTRUMENT,
   K_KEYMAP,
   K_VOLUME,
-} from "~/constant/storage-keys";
+} from "~/constants/storage-keys";
 
 export type SheetItems = SheetItem[][]; // rows -> row -> item
 export type SheetItem = SheetItemNote | SheetItemChord | SheetItemRest;

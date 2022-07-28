@@ -4,7 +4,7 @@ import type { TonalityKind } from "~/core/tonality";
 import type { ParsedMusicScore } from "~/core/parser";
 import type { InstrumentKind } from "~/config/instrument";
 import type { KeymapKind } from "~/config/keymap";
-import { K_INSTRUMENT, K_KEYMAP, K_VOLUME } from "~/constant/storage-keys";
+import { K_INSTRUMENT, K_KEYMAP, K_VOLUME } from "~/constants/storage-keys";
 
 const PlayerContext = createContext<PlayerState | null>(null);
 const PlayerDispatchContext = createContext<React.Dispatch<PlayerAction> | null>(null);
