@@ -1,13 +1,27 @@
-import { Suspense } from "react";
-import { Outlet } from "react-router-dom";
+import { useState, useEffect, Suspense } from "react";
+import { Outlet, useOutletContext } from "react-router-dom";
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
 import Loading from "~/components/Loading";
+import pianoo from "~/core/pianoo";
 import useTheme from "~/hooks/useTheme";
 import { PlayerProvider } from "~/contexts/PlayerContext";
 
+type PianooStatus = "idle" | "ready" | "error";
+
+export function usePianooStatus() {
+  return useOutletContext<PianooStatus>();
+}
+
 function App() {
   const { theme, changeTheme } = useTheme();
+  const [pianooStatus, setPianooStatus] = useState<PianooStatus>("idle");
+
+  useEffect(() => {
+    pianoo.init()
+      .then(() => setPianooStatus("ready"))
+      .catch(() => setPianooStatus("error"));
+  }, []);
 
   return (
     <Suspense fallback={<Loading />}>
@@ -17,7 +31,7 @@ function App() {
           <Header />
           <main className="w-full">
             <PlayerProvider>
-              <Outlet />
+              <Outlet context={pianooStatus} />
             </PlayerProvider>
           </main>
           <Footer theme={theme} changeTheme={changeTheme} />

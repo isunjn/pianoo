@@ -7,6 +7,7 @@ import PlayerHint from "~/components/PlayerHint";
 import PlayerPopup from "~/components/PlayerPopup";
 import Loading from "~/components/Loading";
 import Error from "~/components/Error";
+import { usePianooStatus } from "~/components/App";
 import pianoo from "~/core/pianoo";
 import parse, { type MusicScore } from "~/core/parser";
 import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
@@ -14,6 +15,7 @@ import { K_SCORE_ID } from "~/constants/storage-keys";
 import panic from "~/utils/panic";
 
 function Player() {
+  const pianooStatus = usePianooStatus();
   const { status } = usePlayer();
   const dispatch = usePlayerDispatch();
   const { t } = useTranslation();
@@ -24,10 +26,9 @@ function Player() {
     /* backend not built yet, use static files in public/examples temporarily */
     let ignore = false;
     const id = localStorage.getItem(K_SCORE_ID) ?? "1";
-    const loadScore = fetch(`/examples/${id.padStart(3, "0")}.json`)
+    fetch(`/examples/${id.padStart(3, "0")}.json`)
       .then(r => r.json() as Promise<MusicScore>)
-    Promise.all([loadScore, pianoo.init()])
-      .then(([score]) => {
+      .then(score => {
         if (ignore) return;
         const [parsedScore, syntaxErrors] = parse(score);
         if (syntaxErrors) panic("syntax error occurred");
@@ -35,18 +36,20 @@ function Player() {
         dispatch({ type: "set_score", score: parsedScore!, sheetItems });
       })
       .catch(() => setError(true));
-    return () => { ignore = true; };
+    return () => {
+      ignore = true;
+    };
   }, [status, dispatch]);
 
   useEffect(() => {
     return () => dispatch({ type: "unmount" });
   }, [dispatch]);
 
-  if (error) {
+  if (pianooStatus == "error" || error) {
     return <Error msg={t("error.crash")} />;
   }
 
-  if (status == "idle") {
+  if (pianooStatus == "idle" || status == "idle") {
     return <Loading />;
   }
 
