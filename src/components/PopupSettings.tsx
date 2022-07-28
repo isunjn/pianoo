@@ -10,7 +10,6 @@ function PopupSettings() {
   const { keymap, instrument } = usePlayer();
   const dispatch = usePlayerDispatch();
   const { t } = useTranslation();
-  const [loadingInstrument, setLoadingInstrument] = useState(false);
 
   function handleKeymapChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const newKeymap = e.target.value as KeymapKind;
@@ -23,11 +22,9 @@ function PopupSettings() {
   function handleInstrumentChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const newInstrument = e.target.value as InstrumentKind;
     if (newInstrument != instrument) {
-
-      setLoadingInstrument(true);
+      dispatch({ type: "start_to_load_instrument" });
       pianoo.setInstrument(newInstrument).then(() => {
         dispatch({ type: "set_instrument", instrument: newInstrument });
-        setLoadingInstrument(false);
       });
     }
   }
@@ -51,19 +48,18 @@ function PopupSettings() {
       <div>
         <label htmlFor="instrument" className="w-full flex items-center justify-between">
           {t("play.settings.instrument")}: 
-          {loadingInstrument ? <div>{t("loading")}</div> :
-            <select id="instrument" onChange={handleInstrumentChange}
-              value={instrument}
-              className="bg-theme-hover rounded px-4 py-1.5">
-              <option className="bg-theme-hover text-theme-text" value="piano-acoustic">{t("play.instrument.acousticPiano")}</option>
-              <option className="bg-theme-hover text-theme-text" value="piano-upright">{t("play.instrument.uprightPiano")}</option>
-              <option className="bg-theme-hover text-theme-text" value="guitar-acoustic">{t("play.instrument.acousticGuitar")}</option>
-              <option className="bg-theme-hover text-theme-text" value="guitar-electric">{t("play.instrument.electricGuitar")}</option>
-              <option className="bg-theme-hover text-theme-text" value="bass-electric">{t("play.instrument.electricBass")}</option>
-              <option className="bg-theme-hover text-theme-text" value="harp">{t("play.instrument.harp")}</option>
-              <option className="bg-theme-hover text-theme-text" value="cello">{t("play.instrument.cello")}</option>
-              <option className="bg-theme-hover text-theme-text" value="violin">{t("play.instrument.violin")}</option>
-            </select>}
+          <select id="instrument" onChange={handleInstrumentChange}
+            value={instrument}
+            className="bg-theme-hover rounded px-4 py-1.5">
+            <option className="bg-theme-hover text-theme-text" value="piano-acoustic">{t("play.instrument.acousticPiano")}</option>
+            <option className="bg-theme-hover text-theme-text" value="piano-upright">{t("play.instrument.uprightPiano")}</option>
+            <option className="bg-theme-hover text-theme-text" value="guitar-acoustic">{t("play.instrument.acousticGuitar")}</option>
+            <option className="bg-theme-hover text-theme-text" value="guitar-electric">{t("play.instrument.electricGuitar")}</option>
+            <option className="bg-theme-hover text-theme-text" value="bass-electric">{t("play.instrument.electricBass")}</option>
+            <option className="bg-theme-hover text-theme-text" value="harp">{t("play.instrument.harp")}</option>
+            <option className="bg-theme-hover text-theme-text" value="cello">{t("play.instrument.cello")}</option>
+            <option className="bg-theme-hover text-theme-text" value="violin">{t("play.instrument.violin")}</option>
+          </select>
         </label>
       </div>
     

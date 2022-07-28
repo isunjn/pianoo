@@ -38,7 +38,8 @@ type PlayerStatus =
   | "paused"
   | "done"
   | "autoplaying"
-  | "practicing";
+  | "practicing"
+  | "loadingInstrument";
 
 type PlayerPopuping =
   | "none"
@@ -72,6 +73,7 @@ type PlayerAction =
   | { type: "open_recorder" }
   | { type: "open_settings" }
   | { type: "close_popup" }
+  | { type: "start_to_load_instrument" }
   | { type: "set_instrument", instrument: InstrumentKind }
   | { type: "set_keymap", keymap: KeymapKind, sheetItems: SheetItems }
   | { type: "set_volume", volume: number }
@@ -105,6 +107,8 @@ function stateReducer(state: PlayerState, action: PlayerAction): PlayerState {
       return { ...state, popuping: "settings" };
     case "close_popup":
       return { ...state, popuping: "none" };
+    case "start_to_load_instrument":
+      return { ...state, status: "loadingInstrument" };
     case "set_instrument":
       return {
         ...state,

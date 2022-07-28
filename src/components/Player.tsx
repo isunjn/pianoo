@@ -49,7 +49,7 @@ function Player() {
     return <Error msg={t("error.crash")} />;
   }
 
-  if (pianooStatus == "idle" || status == "idle") {
+  if (pianooStatus == "idle" || status == "idle" || status == "loadingInstrument") {
     return <Loading />;
   }
 
