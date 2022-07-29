@@ -4,15 +4,10 @@ import { useTranslation } from "react-i18next";
 import { TbBrandGithub, TbBrandTwitter, TbFileText, TbShieldLock, TbMail, TbGitMerge, TbPalette, TbLanguageHiragana } from "react-icons/tb";
 import type { IconBaseProps } from "react-icons";
 import type { ComponentType } from "react";
-import { themes, type ThemeKind } from "~/config/theme";
+import appTheme, { type ThemeKind } from "~/config/theme";
 import { langs, type LangKind } from "~/config/lang";
 
-interface FooterPorps {
-  theme: ThemeKind;
-  changeTheme: (theme: ThemeKind) => void;
-}
-
-function Footer({ theme, changeTheme }: FooterPorps) {
+function Footer() {
   const { t } = useTranslation();
 
   return (
@@ -26,10 +21,10 @@ function Footer({ theme, changeTheme }: FooterPorps) {
       </div>
       <div className="flex items-center">
         <LangBtn />
-        <ThemeBtn theme={theme} changeTheme={changeTheme} />
+        <ThemeBtn />
         <Link to="/about" className="flex gap-1.5 items-center px-2 py-0.5 rounded
-          hover:bg-theme-hover focus-visible:outline-2 focus-visible:outline
-          focus-visible:outline-theme-text focus-visible:outline-offset-2" >
+          hover:bg-th-hover focus-visible:outline-2 focus-visible:outline
+          focus-visible:outline-th-text focus-visible:outline-offset-2" >
           <TbGitMerge className="text-base" />v0.1.0
         </Link>
       </div>
@@ -46,13 +41,12 @@ interface FooterLinkProps {
 function FooterLink({ href, name, Icon }: FooterLinkProps) {
   return (
     <a href={href} className="flex gap-1.5 items-center px-2 py-0.5 rounded
-    hover:bg-theme-hover focus-visible:outline-2 focus-visible:outline
-    focus-visible:outline-theme-text focus-visible:outline-offset-2">
+    hover:bg-th-hover focus-visible:outline-2 focus-visible:outline
+    focus-visible:outline-th-text focus-visible:outline-offset-2">
       <Icon className="text-base" /> {name}
     </a>
   );
 }
-
 
 function LangBtn() {
   const [isOpen, setIsOpen] = useState(false);
@@ -70,16 +64,16 @@ function LangBtn() {
     <div className="relative">
       <button onClick={() => setIsOpen(!isOpen)}
         className="flex gap-1.5 items-center px-2 py-0.5 rounded
-          hover:bg-theme-hover focus-visible:outline-2 focus-visible:outline
-          focus-visible:outline-theme-text focus-visible:outline-offset-2">
+          hover:bg-th-hover focus-visible:outline-2 focus-visible:outline
+          focus-visible:outline-th-text focus-visible:outline-offset-2">
           <TbLanguageHiragana className="text-base" />{langs.get(currentLang)}
       </button>
       {isOpen && (<>
         <div className="absolute bottom-10 min-w-max max-h-96 z-50 overflow-auto
-          backdrop-blur bg-theme-hover rounded shadow">
+          backdrop-blur bg-th-hover rounded shadow">
           {[...langs].map(([lang, name]) => (
             <div key={lang} onClick={() => changeLang(lang)}
-              className="px-4 py-2 hover:bg-theme-hover cursor-pointer">
+              className="px-4 py-2 hover:bg-th-hover cursor-pointer">
               {name}
             </div>
           ))}
@@ -91,17 +85,14 @@ function LangBtn() {
   );
 }
 
-interface ThemeBtnPorps {
-  theme: ThemeKind;
-  changeTheme: (theme: ThemeKind) => void;
-}
-
-function ThemeBtn({ theme, changeTheme }: ThemeBtnPorps) {
+function ThemeBtn() {
+  const [theme, setThemeKind] = useState<ThemeKind>(appTheme.initial);
   const [isOpen, setIsOpen] = useState(false);
 
   function changeThemeTo(newTheme: ThemeKind) {
     if (newTheme != theme) {
-      changeTheme(newTheme);
+      appTheme.changeTheme(newTheme);
+      setThemeKind(newTheme);
       setIsOpen(false);
     }
   }
@@ -110,17 +101,17 @@ function ThemeBtn({ theme, changeTheme }: ThemeBtnPorps) {
     <div className="relative">
       <button onClick={() => setIsOpen(!isOpen)}
         className="flex gap-1.5 items-center px-2 py-0.5 rounded
-        hover:bg-theme-hover focus-visible:outline-2 focus-visible:outline
-        focus-visible:outline-theme-text focus-visible:outline-offset-2">
-        <TbPalette className="text-base" />{themes.get(theme)}
+        hover:bg-th-hover focus-visible:outline-2 focus-visible:outline
+        focus-visible:outline-th-text focus-visible:outline-offset-2">
+        <TbPalette className="text-base" />{theme}
       </button>
       {isOpen && (<>
         <div className="absolute bottom-10 min-w-max max-h-96 z-50 overflow-auto
-          backdrop-blur bg-theme-hover rounded shadow">
-          {[...themes].map(([theme, name]) => (
-            <div key={theme} onClick={() => changeThemeTo(theme)}
-              className="px-4 py-2 hover:bg-theme-hover cursor-pointer">
-              {name}
+          backdrop-blur bg-th-hover rounded shadow">
+          {appTheme.list.map(th => (
+            <div key={th} onClick={() => changeThemeTo(th)}
+              className="px-4 py-2 hover:bg-th-hover cursor-pointer">
+              {th}
             </div>
           ))}
         </div>

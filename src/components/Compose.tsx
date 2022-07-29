@@ -100,7 +100,7 @@ function Compose() {
           <label htmlFor="scoreName">Name:</label>
           <input name="scoreName" id="scoreName" type="text" defaultValue={scoreName}
             onChange={perpsist(K_COMPOSE_NAME)}
-            className="w-80 px-2 py-0.5 rounded flex-1 bg-theme-hover 
+            className="w-80 px-2 py-0.5 rounded flex-1 bg-th-hover 
             focus-visible:outline-none"></input>
         </div>
         <div className="w-1/4 flex justify-between">
@@ -108,9 +108,9 @@ function Compose() {
           <select name="tonality" id="tonality" defaultValue={tonality}
             onChange={perpsist(K_COMPOSE_TONALITY)}
             className="w-28 px-1 py-1 rounded
-              bg-theme-hover focus-visible:outline-none">
+              bg-th-hover focus-visible:outline-none">
             {tonalities.kinds().map(kind =>
-              <option key={kind} value={kind} className="bg-theme-hover text-theme-text">
+              <option key={kind} value={kind}>
                 {kind}
               </option>)
             }
@@ -125,12 +125,12 @@ function Compose() {
             <input name="timesign1" id="timesign1" type="number" min="1" max="16" defaultValue={timesign1} 
               onChange={perpsist(K_COMPOSE_TIMESIGN_1)}
               className="w-12 px-2 py-0.5 rounded
-                bg-theme-hover focus-visible:outline-none"></input>
+                bg-th-hover focus-visible:outline-none"></input>
             <span className="mx-2">/</span>
             <input name="timesign2" type="number" min="1" max="16" defaultValue={timesign2}
               onChange={perpsist(K_COMPOSE_TIMESIGN_2)}
               className="w-12 px-2 py-0.5 rounded
-                bg-theme-hover focus-visible:outline-none"></input>
+                bg-th-hover focus-visible:outline-none"></input>
           </div>
         </div>
         <div className="w-1/4 flex justify-between">
@@ -138,7 +138,7 @@ function Compose() {
           <input name="tempo" id="tempo" type="number" min="40" max="220" defaultValue={tempo}
             onChange={perpsist(K_COMPOSE_TEMPO)}
           className="w-28 ml-4 px-2 py-0.5 rounded
-          bg-theme-hover focus-visible:outline-none"></input>
+          bg-th-hover focus-visible:outline-none"></input>
         </div>
       </div>
       
@@ -146,19 +146,19 @@ function Compose() {
         <label htmlFor="content">Content:</label>
         <textarea name="content" id="content" defaultValue={content}
           onChange={perpsist(K_COMPOSE_CONTENT)}
-          className="w-full h-64 p-4 rounded bg-theme-hover whitespace-pre
+          className="w-full h-64 p-4 rounded bg-th-hover whitespace-pre
             focus-visible:outline-none"></textarea>
       </div>
 
       {errors.length > 0 && (
-        <div className="border-2 border-red-400 text-red-400 border-dashed rounded p-4 space-y-2">
+        <div className="border-2 border-th-error text-th-error border-dashed rounded p-4 space-y-2">
           {errors.map((error, i) => <div key={i}>{error}</div>)}
         </div>  
       )}
 
       <div className="flex justify-between">
         <button className="underline">Learn how to compose</button>
-        <button type="submit" className="rounded px-6 py-1 bg-theme-text text-theme-bg">
+        <button type="submit" className="rounded px-6 py-1 bg-th-text text-th-bg">
           {errors.length > 0 ? "Retry" : "Play"}
         </button>
       </div>

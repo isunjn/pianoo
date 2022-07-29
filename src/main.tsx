@@ -9,9 +9,12 @@ import Account from "~/components/Account";
 import Compose from "~/components/Compose";
 import ScoreList from "~/components/ScoreList";
 import NotFound from "~/components/NotFound";
+import appTheme from "~/config/theme";
 
 import "./index.css";
 import "./i18n";
+
+appTheme.init();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

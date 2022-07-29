@@ -7,8 +7,8 @@ function PlayerScoreMeta() {
   if (!score) throw panic("score is null");
 
   return (
-    <div className="h-40 flex items-center font-mono text-theme-hint zen-hoverable">
-      <div className="flex-1 text-center">
+    <div className="h-24 px-4 flex justify-between items-center font-mono text-th-hint zen-hoverable">
+      <div>
         {
           tonality == score.tonality ? score.tonality :
           <>
@@ -17,8 +17,8 @@ function PlayerScoreMeta() {
           </>
         }
       </div>
-      <div className="flex-1 text-center">{score.timesign[0]} / {score.timesign[1]}</div>
-      <div className="flex-1 text-center">
+      <div>{score.timesign[0]} / {score.timesign[1]}</div>
+      <div>
         {
           tempo == score.tempo ? `♩ = ${score.tempo}` :
           <>

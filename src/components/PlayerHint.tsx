@@ -7,7 +7,8 @@ function PlayerHint() {
   const { t } = useTranslation();
   
   return (
-    <div className="h-6 flex justify-center items-center gap-4 font-mono zen-hoverable">
+    <div className="h-12 flex justify-center items-center gap-4 font-mono
+      zen-hoverable text-th-text">
       {status == "done" && <>
         <div>{t("play.hint.restart")}</div>
         <TbRotate className="text-xl" />

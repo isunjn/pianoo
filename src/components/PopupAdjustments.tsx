@@ -30,7 +30,7 @@ function PopupAdjustments() {
   // TODO: use custom component
   return (
     <div className="absolute z-50 top-10 right-0 w-72 px-4 py-6 space-y-8 
-      backdrop-blur bg-theme-hover text-theme-text rounded shadow-lg">
+      backdrop-blur bg-th-hover text-th-text rounded shadow-lg">
     
       <div>
         <label htmlFor="volume" className="w-full flex items-center justify-between">
@@ -53,9 +53,9 @@ function PopupAdjustments() {
         {t("play.adjust.tonality")}: 
           <select id="tonality" value={tonality} 
             onChange={handleTonalityChange}
-            className="bg-theme-hover rounded px-4 py-1.5">
+            className="bg-th-hover rounded px-4 py-1.5">
             {tonalities.kinds().map(kind => 
-              <option key={kind} value={kind} className="bg-theme-hover text-theme-text">
+              <option key={kind} value={kind}>
                 {kind}
               </option>)
             }

@@ -107,14 +107,14 @@ function PlayerControl() {
 
   return (
     <div className="h-10 mb-10 flex justify-between items-center 
-      text-xl font-mono border-b-2 border-theme-hover zen-hoverable">
+      text-xl font-mono border-b-2 border-th-hint zen-hoverable">
 
       <div className="flex-1 flex items-center gap-3">{leftControls()}</div>
 
       <button onClick={() => dispatch({ type: "open_chooser" })}
         className="flex-1 flex-grow-[2] text-center px-2 py-1 rounded text-base
-        hover:bg-theme-hover focus-visible:outline-2 focus-visible:outline 
-        focus-visible:outline-theme-text focus-visible:outline-offset-2">
+        hover:bg-th-hover focus-visible:outline-2 focus-visible:outline 
+        focus-visible:outline-th-text focus-visible:outline-offset-2">
         {score!.name}
       </button>
 
@@ -141,14 +141,14 @@ function ControlBtn({ tooltip, onClick, Icon }: ControlBtnProps) {
     <div className="relative group rounded h-6">
       <button key={tooltip} aria-label={tooltip} onClick={handleClick}
         className="peer focus-visible:outline-2 focus-visible:outline 
-          focus-visible:outline-theme-text focus-visible:outline-offset-2">
+          focus-visible:outline-th-text focus-visible:outline-offset-2">
         <Icon />
       </button>
       <div className="absolute -top-9 -translate-x-1/2 left-1/2
         invisible group-hover:visible peer-focus-visible:visible
-        w-max text-base bg-theme-hover text-theme-text px-2.5 pb-0.5 pt-[3px] rounded
+        w-max text-base bg-th-hover text-th-text px-2.5 pb-0.5 pt-[3px] rounded
         after:absolute after:top-full after:left-1/2 after:border-4 after:-ml-1
-        after:border-transparent after:border-t-theme-hover">
+        after:border-transparent after:border-t-th-hover">
         {tooltip}
       </div>
     </div>
@@ -157,7 +157,7 @@ function ControlBtn({ tooltip, onClick, Icon }: ControlBtnProps) {
 
 function ControlHint({ hint }: { hint: string }) {
   return (
-    <div className="text-base leading-none text-theme-hint">
+    <div className="text-base leading-none text-th-hint">
       {hint}
     </div>
   );

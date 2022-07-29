@@ -7,10 +7,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "theme-bg": "var(--bg-color)",
-        "theme-text": "var(--text-color)",
-        "theme-hover": "var(--hover-color)",
-        "theme-hint": "var(--hint-color)",
+        "th-bg": "var(--th-bg)",
+        "th-text": "var(--th-text)",
+        "th-hint": "var(--th-hint)",
+        "th-hover": "var(--th-hover)",
+        "th-active": "var(--th-active)",
+        "th-correct": "var(--th-correct)",
+        "th-error": "var(--th-error)",
       },
     },
   },

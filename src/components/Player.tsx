@@ -57,8 +57,8 @@ function Player() {
     <div className="relative mx-auto w-3/4 select-none">
       <PlayerControl />
       <PlayerSheet />
-      <PlayerHint />
       <PlayerScoreMeta />
+      <PlayerHint />
       <PlayerPopup />
     </div>
   );
