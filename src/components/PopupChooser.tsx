@@ -26,13 +26,12 @@ function PopupChooser() {
   return (
     <div className="absolute z-50 top-10 right-0 w-full h-full p-4 overflow-y-scroll
       bg-th-hover text-th-text backdrop-blur-lg rounded shadow-lg" >
-      <div className="flex gap-4 mb-4">
-        {/* TODO */}
+      {/* <div className="flex gap-4 mb-4">
         <div className="px-4 py-1.5 bg-th-text text-th-bg flex-1 text-center rounded">{t("play.tab.exampleScores")}</div>
         <div className="px-4 py-1.5 bg-th-hover flex-1 text-center rounded">{t("play.tab.recentlyPlayed")}</div>
         <div className="px-4 py-1.5 bg-th-hover flex-1 text-center rounded">{t("play.tab.justPlay")}</div>
         <div className="px-4 py-1.5 bg-th-hover flex-1 text-center rounded">{t("play.tab.fromFile")}</div>
-      </div>
+      </div> */}
       {
         isLoading ? <Loading /> :
         isError ? <Error msg={t("error.crash")} /> :

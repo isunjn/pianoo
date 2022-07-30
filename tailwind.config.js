@@ -15,6 +15,10 @@ module.exports = {
         "th-correct": "var(--th-correct)",
         "th-error": "var(--th-error)",
       },
+      spacing: {
+        "50": "12.5rem",
+        "70": "17.5rem",
+      }
     },
   },
   plugins: [],

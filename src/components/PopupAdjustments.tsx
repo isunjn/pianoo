@@ -29,7 +29,7 @@ function PopupAdjustments() {
 
   // TODO: use custom component
   return (
-    <div className="absolute z-50 top-10 right-0 w-72 px-4 py-6 space-y-8 
+    <div className="absolute z-50 top-10 right-0 w-80 px-4 py-6 space-y-8 
       backdrop-blur bg-th-hover text-th-text rounded shadow-lg">
     
       <div>

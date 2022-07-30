@@ -11,15 +11,16 @@ function Footer() {
   const { t } = useTranslation();
 
   return (
-    <footer className="flex justify-between text-sm zen-invisible">
-      <div className="flex items-center">
+    <footer className="flex flex-col-reverse sm:flex-row gap-4
+      items-center justify-between text-sm zen-invisible">
+      <div className="w-max flex items-center">
         <FooterLink href="https://github.com/isunjn/pianoo" name="GitHub" Icon={TbBrandGithub} />
         <FooterLink href="mailto:isunjn@gmail.com" name={t("footer.contact")} Icon={TbMail} />
         {/* <FooterLink href="#" name="Twitter" Icon={TbBrandTwitter} /> */}
         {/* <FooterLink href="#" name="Terms" Icon={TbFileText} /> */}
         {/* <FooterLink href="#" name="Privacy" Icon={TbShieldLock} /> */}
       </div>
-      <div className="flex items-center">
+      <div className="w-max flex items-center">
         <LangBtn />
         <ThemeBtn />
         <Link to="/about" className="flex gap-1.5 items-center px-2 py-0.5 rounded

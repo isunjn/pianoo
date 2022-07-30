@@ -182,7 +182,7 @@ function PlayerSheet() {
 
   // TODO: handle overflow-x
   return (
-    <div className="w-full h-52 font-mono text-xl scrollbar-hidden group"
+    <div className="w-full h-50 font-mono text-xl scrollbar-hidden group"
       ref={sheetContainer}>
       <Sheet sheetItems={sheetItems} ref={sheet} />
       <SheetMask />
@@ -196,12 +196,12 @@ function SheetMask() {
 
   if (!(status == "ready" || status == "paused")) return null;
   return (
-    <div className="absolute top-20 left-0 w-full h-52 pointer-events-none
+    <div className="absolute top-10 left-0 w-full h-70 pointer-events-none
       flex items-center justify-center bg-transparent backdrop-blur-lg">
-      <div className="flex items-center gap-4 group-hover:scale-[1.025] 
-        transition-transform ease-in">
+      <div className="flex items-center gap-4 group-hover:scale-105
+        transition-transform">
         {status == "ready" ? t("play.hint.start") : t("play.hint.resume")}
-        <HiCursorClick />
+        <HiCursorClick className="group-hover:animate-pulse" />
       </div>
     </div>
   );

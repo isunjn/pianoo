@@ -93,17 +93,17 @@ function Compose() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="font-mono w-3/4 mx-auto my-8 space-y-6">
+    <form onSubmit={handleSubmit} className="font-mono w-full lg:w-5/6 mx-auto my-8 space-y-6">
       
-      <div className="w-full flex justify-between flex-wrap">
-        <div className="w-1/2 flex justify-between gap-6">
+      <div className="w-full space-y-6 md:space-y-0 md:flex md:justify-between">
+        <div className="w-full md:w-1/2 flex justify-between gap-6">
           <label htmlFor="scoreName">Name:</label>
           <input name="scoreName" id="scoreName" type="text" defaultValue={scoreName}
             onChange={perpsist(K_COMPOSE_NAME)}
             className="w-80 px-2 py-0.5 rounded flex-1 bg-th-hover 
             focus-visible:outline-none"></input>
         </div>
-        <div className="w-1/4 flex justify-between">
+        <div className="w-full md:w-1/3 lg:w-1/4 flex justify-between">
           <label htmlFor="tonality">Tonality:</label>
           <select name="tonality" id="tonality" defaultValue={tonality}
             onChange={perpsist(K_COMPOSE_TONALITY)}
@@ -118,22 +118,22 @@ function Compose() {
         </div>
       </div>
 
-      <div className="w-full flex justify-between flex-wrap">
-        <div className="w-1/2 flex justify-between">
+      <div className="w-full space-y-6 md:space-y-0 md:flex md:justify-between">
+        <div className="w-full md:w-1/2 flex justify-between">
           <label htmlFor="timesign1">Time Signature:</label>
           <div className="flex">
             <input name="timesign1" id="timesign1" type="number" min="1" max="16" defaultValue={timesign1} 
               onChange={perpsist(K_COMPOSE_TIMESIGN_1)}
-              className="w-12 px-2 py-0.5 rounded
+              className="w-16 px-2 py-0.5 rounded
                 bg-th-hover focus-visible:outline-none"></input>
             <span className="mx-2">/</span>
             <input name="timesign2" type="number" min="1" max="16" defaultValue={timesign2}
               onChange={perpsist(K_COMPOSE_TIMESIGN_2)}
-              className="w-12 px-2 py-0.5 rounded
+              className="w-16 px-2 py-0.5 rounded
                 bg-th-hover focus-visible:outline-none"></input>
           </div>
         </div>
-        <div className="w-1/4 flex justify-between">
+        <div className="w-full md:w-1/3 lg:w-1/4 flex justify-between">
           <label htmlFor="tempo">Tempo:</label>
           <input name="tempo" id="tempo" type="number" min="40" max="220" defaultValue={tempo}
             onChange={perpsist(K_COMPOSE_TEMPO)}

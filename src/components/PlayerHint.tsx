@@ -7,7 +7,7 @@ function PlayerHint() {
   const { t } = useTranslation();
   
   return (
-    <div className="h-12 flex justify-center items-center gap-4 font-mono
+    <div className="h-20 flex justify-center items-center gap-4 font-mono
       zen-hoverable text-th-text">
       {status == "done" && <>
         <div>{t("play.hint.restart")}</div>

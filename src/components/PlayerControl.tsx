@@ -106,22 +106,24 @@ function PlayerControl() {
 
 
   return (
-    <div className="h-10 mb-10 flex justify-between items-center 
-      text-xl font-mono border-b-2 border-th-hint zen-hoverable">
+    <div className="pb-10 zen-hoverable">
+      <div className="h-10 flex justify-between items-center 
+        text-xl font-mono border-b-2 border-th-hint">
 
-      <div className="flex-1 flex items-center gap-3">{leftControls()}</div>
+        <div className="flex-1 flex items-center gap-3">{leftControls()}</div>
 
-      <button onClick={() => dispatch({ type: "open_chooser" })}
-        className="flex-1 flex-grow-[2] text-center px-2 py-1 rounded text-base
-        hover:bg-th-hover focus-visible:outline-2 focus-visible:outline 
-        focus-visible:outline-th-text focus-visible:outline-offset-2">
-        {score!.name}
-      </button>
+        <button onClick={() => dispatch({ type: "open_chooser" })}
+          className="flex-1 flex-grow-[2] text-center px-2 py-1 rounded text-base
+          hover:bg-th-hover focus-visible:outline-2 focus-visible:outline 
+          focus-visible:outline-th-text focus-visible:outline-offset-2">
+          {score!.name}
+        </button>
 
-      <div className="flex-1 flex justify-end gap-3 items-center">
-        {rightControls()}
+        <div className="flex-1 flex justify-end gap-3 items-center">
+          {rightControls()}
+        </div>
+
       </div>
-
     </div>
   );
 }
@@ -144,9 +146,9 @@ function ControlBtn({ tooltip, onClick, Icon }: ControlBtnProps) {
           focus-visible:outline-th-text focus-visible:outline-offset-2">
         <Icon />
       </button>
-      <div className="absolute -top-9 -translate-x-1/2 left-1/2
+      <div className="absolute -top-12 -translate-x-1/2 left-1/2
         invisible group-hover:visible peer-focus-visible:visible
-        w-max text-base bg-th-hover text-th-text px-2.5 pb-0.5 pt-[3px] rounded
+        w-max text-base bg-th-hover px-4 py-1 rounded
         after:absolute after:top-full after:left-1/2 after:border-4 after:-ml-1
         after:border-transparent after:border-t-th-hover">
         {tooltip}

@@ -13,6 +13,9 @@ import parse, { type MusicScore } from "~/core/parser";
 import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
 import { K_SCORE_ID } from "~/constants/storage-keys";
 import panic from "~/utils/panic";
+import detectIsMobile from "~/utils/detectIsMobile";
+
+const isMobile = detectIsMobile();
 
 function Player() {
   const pianooStatus = usePianooStatus();
@@ -45,6 +48,13 @@ function Player() {
     return () => dispatch({ type: "unmount" });
   }, [dispatch]);
 
+  if (isMobile) {
+    return <p className="text-center">
+      Mobile devices are not supported yet :) <br />
+      Please open it on your computer
+    </p>
+  }
+
   if (pianooStatus == "error" || error) {
     return <Error msg={t("error.crash")} />;
   }
@@ -54,11 +64,11 @@ function Player() {
   }
 
   return (
-    <div className="relative mx-auto w-3/4 select-none">
+    <div className="relative mx-auto w-full lg:w-3/4">
       <PlayerControl />
       <PlayerSheet />
-      <PlayerScoreMeta />
       <PlayerHint />
+      <PlayerScoreMeta />
       <PlayerPopup />
     </div>
   );
