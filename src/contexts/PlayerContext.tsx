@@ -7,16 +7,15 @@ import type { KeymapKind } from "~/config/keymap";
 import { K_INSTRUMENT, K_KEYMAP, K_VOLUME } from "~/constants/storage-keys";
 
 const PlayerContext = createContext<PlayerState | null>(null);
-const PlayerDispatchContext = createContext<React.Dispatch<PlayerAction> | null>(null);
+const PlayerDispatchContext =
+  createContext<React.Dispatch<PlayerAction> | null>(null);
 
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(stateReducer, getInitialState());
 
   return (
     <PlayerDispatchContext.Provider value={dispatch}>
-      <PlayerContext.Provider value={state}>
-        {children}
-      </PlayerContext.Provider>
+      <PlayerContext.Provider value={state}>{children}</PlayerContext.Provider>
     </PlayerDispatchContext.Provider>
   );
 }
@@ -74,17 +73,17 @@ type PlayerAction =
   | { type: "open_settings" }
   | { type: "close_popup" }
   | { type: "start_to_load_instrument" }
-  | { type: "set_instrument", instrument: InstrumentKind }
-  | { type: "set_keymap", keymap: KeymapKind, sheetItems: SheetItems }
-  | { type: "set_volume", volume: number }
-  | { type: "set_tempo", tempo: number }
-  | { type: "set_tonality", tonality: TonalityKind, sheetItems: SheetItems }
-  | { type: "set_score", score: ParsedMusicScore, sheetItems: SheetItems };
+  | { type: "set_instrument"; instrument: InstrumentKind }
+  | { type: "set_keymap"; keymap: KeymapKind; sheetItems: SheetItems }
+  | { type: "set_volume"; volume: number }
+  | { type: "set_tempo"; tempo: number }
+  | { type: "set_tonality"; tonality: TonalityKind; sheetItems: SheetItems }
+  | { type: "set_score"; score: ParsedMusicScore; sheetItems: SheetItems };
 
 function stateReducer(state: PlayerState, action: PlayerAction): PlayerState {
   switch (action.type) {
     case "unmount":
-      return { ...state, status: state.status == "idle" ? "idle" : "ready" }
+      return { ...state, status: state.status == "idle" ? "idle" : "ready" };
     case "play":
       return { ...state, status: "playing" };
     case "pause":
@@ -115,7 +114,7 @@ function stateReducer(state: PlayerState, action: PlayerAction): PlayerState {
         status: "ready",
         instrument: action.instrument,
       };
-    case "set_keymap": 
+    case "set_keymap":
       return {
         ...state,
         status: "ready",
@@ -152,11 +151,14 @@ function stateReducer(state: PlayerState, action: PlayerAction): PlayerState {
 //-----------------------------------------------------------------------------
 
 function getInitialState() {
-  const keymap = localStorage.getItem(K_KEYMAP) as KeymapKind | null ?? "standard";
-  const instrument = 
-    localStorage.getItem(K_INSTRUMENT) as InstrumentKind | null ?? "piano-acoustic";
-  const volume = 
-    localStorage.getItem(K_VOLUME) ? parseInt(localStorage.getItem(K_VOLUME)!) : 50;
+  const keymap =
+    (localStorage.getItem(K_KEYMAP) as KeymapKind | null) ?? "standard";
+  const instrument =
+    (localStorage.getItem(K_INSTRUMENT) as InstrumentKind | null) ??
+    "piano-acoustic";
+  const volume = localStorage.getItem(K_VOLUME)
+    ? parseInt(localStorage.getItem(K_VOLUME)!)
+    : 50;
 
   const initialState: PlayerState = {
     status: "idle",
@@ -168,7 +170,7 @@ function getInitialState() {
     tempo: 100,
     score: null,
     sheetItems: [],
-  }
+  };
 
   return initialState;
 }

@@ -5,9 +5,10 @@ import useSWRImmutable from "swr/immutable";
 
 const parallelScoreFetcher = (...ids: number[]) =>
   Promise.all(
-    ids.map(id => 
-      fetch(`/examples/${id.toString().padStart(3, "0")}.json`)
-        .then(r => r.json() as Promise<MusicScore>)
+    ids.map(id =>
+      fetch(`/examples/${id.toString().padStart(3, "0")}.json`).then(
+        r => r.json() as Promise<MusicScore>
+      )
     )
   );
 
@@ -17,7 +18,7 @@ function useExampleScores(ids: number[]) {
     exampleScores: data,
     isLoading: !error && !data,
     isError: error,
-  }
+  };
 }
 
 export default useExampleScores;

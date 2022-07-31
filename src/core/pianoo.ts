@@ -59,8 +59,10 @@ class Pianoo {
   private sequence: SheetItem[];
 
   constructor() {
-    const keymapKind = localStorage.getItem(K_KEYMAP) as KeymapKind | null ?? "standard";
-    const keymapKeys = keymapKind == "standard" ? KEYMAP_STANDARD : KEYMAP_VIRTUALPIANO;
+    const keymapKind =
+      (localStorage.getItem(K_KEYMAP) as KeymapKind | null) ?? "standard";
+    const keymapKeys =
+      keymapKind == "standard" ? KEYMAP_STANDARD : KEYMAP_VIRTUALPIANO;
 
     this.tone = null;
     this.inited = null;
@@ -74,11 +76,11 @@ class Pianoo {
 
   public init() {
     if (this.inited != null) return this.inited;
-    const instrument = 
-      localStorage.getItem(K_INSTRUMENT) as InstrumentKind | null
-      ?? "piano-acoustic";
+    const instrument =
+      (localStorage.getItem(K_INSTRUMENT) as InstrumentKind | null) ??
+      "piano-acoustic";
     this.inited = import("tone")
-      .then(mod => this.tone = mod)
+      .then(mod => (this.tone = mod))
       .then(() => this.setInstrument(instrument));
     return this.inited;
   }
@@ -104,7 +106,11 @@ class Pianoo {
   }
 
   public playNote(note: string | string[]) {
-    this.instrument!.triggerAttackRelease(note, 0.75, this.tone!.context.currentTime);
+    this.instrument!.triggerAttackRelease(
+      note,
+      0.75,
+      this.tone!.context.currentTime
+    );
   }
 
   public getSequence() {
@@ -117,24 +123,34 @@ class Pianoo {
 
   public setInstrument(instrumentKind: InstrumentKind) {
     localStorage.setItem(K_INSTRUMENT, instrumentKind);
-    const urls = 
-      instrumentKind == "piano-acoustic" ? INSTRUMENT_PIANO_ACOUSTIC :
-      instrumentKind == "piano-upright" ? INSTRUMENT_PIANO_UPRIGHT :
-      instrumentKind == "guitar-acoustic" ? INSTRUMENT_GUITAR_ACOUSTIC :
-      instrumentKind == "guitar-electric" ? INSTRUMENT_GUITAR_ELECTRIC :
-      instrumentKind == "bass-electric" ? INSTRUMENT_BASS_ELECTRIC :
-      instrumentKind == "harp" ? INSTRUMENT_HARP :
-      instrumentKind == "cello" ? INSTRUMENT_CELLO :
-      instrumentKind == "violin" ? INSTRUMENT_VIOLIN : undefined;
-      
-    return new Promise<void>((resolve) => {
+    const urls =
+      instrumentKind == "piano-acoustic"
+        ? INSTRUMENT_PIANO_ACOUSTIC
+        : instrumentKind == "piano-upright"
+        ? INSTRUMENT_PIANO_UPRIGHT
+        : instrumentKind == "guitar-acoustic"
+        ? INSTRUMENT_GUITAR_ACOUSTIC
+        : instrumentKind == "guitar-electric"
+        ? INSTRUMENT_GUITAR_ELECTRIC
+        : instrumentKind == "bass-electric"
+        ? INSTRUMENT_BASS_ELECTRIC
+        : instrumentKind == "harp"
+        ? INSTRUMENT_HARP
+        : instrumentKind == "cello"
+        ? INSTRUMENT_CELLO
+        : instrumentKind == "violin"
+        ? INSTRUMENT_VIOLIN
+        : undefined;
+
+    return new Promise<void>(resolve => {
       const instrument = new this.tone!.Sampler({
         urls: urls,
         baseUrl: "samples/",
         onload: () => {
           this.instrument = instrument;
-          const volume = localStorage.getItem(K_VOLUME) 
-            ? parseInt(localStorage.getItem(K_VOLUME)!) : 50;
+          const volume = localStorage.getItem(K_VOLUME)
+            ? parseInt(localStorage.getItem(K_VOLUME)!)
+            : 50;
           this.setVolume(volume);
           resolve();
         },
@@ -165,27 +181,30 @@ class Pianoo {
   public setVolume(volume: number) {
     localStorage.setItem(K_VOLUME, volume.toString());
     // percentage to decibel
-    this.instrument!.volume.value = 2 * 10 * Math.log10(volume / 100); 
+    this.instrument!.volume.value = 2 * 10 * Math.log10(volume / 100);
   }
 
   // set/update sheetItems and sequence
   private maintain() {
-    this.sheetItems = this.score!.parsed.map(row => row.map(item => {
-      switch (item.kind) {
-        case "note": {
-          const key = this.keymap.getKey(item);
-          return { kind: "note", key, quarter: item.quarter };        
+    this.sheetItems = this.score!.parsed.map(row =>
+      row.map(item => {
+        switch (item.kind) {
+          case "note": {
+            const key = this.keymap.getKey(item);
+            return { kind: "note", key, quarter: item.quarter };
+          }
+          case "chord": {
+            const keys = item.notes.map(note => this.keymap.getKey(note));
+            return { kind: "chord", keys, quarter: item.quarter };
+          }
+          case "rest": {
+            return { kind: "rest", quarter: item.quarter };
+          }
+          default:
+            throw panic("unreachable");
         }
-        case "chord": {
-          const keys = item.notes.map(note => this.keymap.getKey(note));
-          return { kind: "chord", keys, quarter: item.quarter };
-        }
-        case "rest": {
-          return { kind: "rest", quarter: item.quarter };
-        }
-        default: throw panic("unreachable");
-      }
-    }));
+      })
+    );
     this.sequence = this.sheetItems.flat();
   }
 }

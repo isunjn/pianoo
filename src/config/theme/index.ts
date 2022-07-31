@@ -29,7 +29,9 @@ const appTheme = {
   list: Object.keys(themes) as ThemeKind[],
 
   init(): ThemeKind {
-    const preferDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const preferDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
     const defaultTheme = preferDark ? "Dark" : "Light";
     const choosenTheme = localStorage.getItem(K_THEME) as ThemeKind | null;
     const th = choosenTheme ?? defaultTheme;
@@ -41,7 +43,7 @@ const appTheme = {
   changeTheme(th: ThemeKind) {
     setTheme(themes[th]);
     localStorage.setItem(K_THEME, th);
-  }
-}
+  },
+};
 
 export default appTheme;

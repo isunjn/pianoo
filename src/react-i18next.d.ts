@@ -3,7 +3,7 @@ import ns from "../public/locales/en/translation.json";
 
 declare module "react-i18next" {
   interface CustomTypeOptions {
-    defaultNS: 'ns';
+    defaultNS: "ns";
     resources: {
       ns: typeof ns;
     };

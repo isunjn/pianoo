@@ -27,7 +27,8 @@ function PlayerSheet() {
       dispatch({ type: "play" });
     }
     function keydownHandler(e: KeyboardEvent) {
-      if (e.key == " ") { // space key
+      if (e.key == " ") {
+        // space key
         e.preventDefault();
         startToPlay();
       }
@@ -99,14 +100,15 @@ function PlayerSheet() {
             move(false);
           }
           break;
-        default: throw panic("unreachable");
+        default:
+          throw panic("unreachable");
       }
     }
     function move(correct: boolean) {
       let nextIdx = idx.current + 1;
       while (seq[nextIdx] && seq[nextIdx].kind == "rest") {
         nextIdx++;
-      }      
+      }
       sheet.current!.move(correct, idx.current, nextIdx);
       if (nextIdx == seq.length) {
         dispatch({ type: "done" });
@@ -122,7 +124,7 @@ function PlayerSheet() {
       document.removeEventListener("keydown", trackKeydown, { capture: true });
       document.removeEventListener("keyup", trackKeyup, { capture: true });
       document.removeEventListener("keydown", keydownHandler);
-    }
+    };
   }, [status, dispatch]);
 
   // auto play mode
@@ -142,12 +144,14 @@ function PlayerSheet() {
       }
       // play each item after a delay
       timeoutId = (function play(item: SheetItem, after: number) {
-        const msPerQuarter = 60 * 1000 / pianoo.getTempo(); // tempo may change
+        const msPerQuarter = (60 * 1000) / pianoo.getTempo(); // tempo may change
         return setTimeout(() => {
           const note =
-            item.kind == "note" ? pianoo.getNote(item.key)! :
-              item.kind == "chord" ? item.keys.map(k => pianoo.getNote(k)!) :
-                undefined;
+            item.kind == "note"
+              ? pianoo.getNote(item.key)!
+              : item.kind == "chord"
+              ? item.keys.map(k => pianoo.getNote(k)!)
+              : undefined;
           if (note) {
             pianoo.playNote(note);
             let nextNonRest = idx.current + 1;
@@ -156,7 +160,8 @@ function PlayerSheet() {
             }
             sheet.current!.move(true, idx.current, nextNonRest);
           }
-          if (++idx.current == seq.length) { // done
+          if (++idx.current == seq.length) {
+            // done
             dispatch({ type: "reset" });
           } else {
             timeoutId = play(seq[idx.current], item.quarter * msPerQuarter);
@@ -182,8 +187,10 @@ function PlayerSheet() {
 
   // TODO: handle overflow-x
   return (
-    <div className="w-full h-50 font-mono text-xl scrollbar-hidden group"
-      ref={sheetContainer}>
+    <div
+      className="w-full h-50 font-mono text-xl scrollbar-hidden group"
+      ref={sheetContainer}
+    >
       <Sheet sheetItems={sheetItems} ref={sheet} />
       <SheetMask />
     </div>
@@ -196,10 +203,14 @@ function SheetMask() {
 
   if (!(status == "ready" || status == "paused")) return null;
   return (
-    <div className="absolute top-10 left-0 w-full h-70 pointer-events-none
-      flex items-center justify-center bg-transparent backdrop-blur-lg">
-      <div className="flex items-center gap-4 group-hover:scale-105
-        transition-transform">
+    <div
+      className="absolute top-10 left-0 w-full h-70 pointer-events-none
+      flex items-center justify-center bg-transparent backdrop-blur-lg"
+    >
+      <div
+        className="flex items-center gap-4 group-hover:scale-105
+        transition-transform"
+      >
         {status == "ready" ? t("play.hint.start") : t("play.hint.resume")}
         <HiCursorClick className="group-hover:animate-pulse" />
       </div>

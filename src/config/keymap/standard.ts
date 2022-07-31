@@ -1,5 +1,6 @@
 import type { KeymapKeys } from "~/core/keymap";
 
+// prettier-ignore
 export const KEYMAP_STANDARD: KeymapKeys = new Map()
   .set(2, ["1", "!", "2", "@", "3", "#", "4", "$", "5", "%", "z", "Z", "x", "X"])
   .set(3, ["q", "Q", "w", "W", "e", "E", "a", "A", "s", "S", "d", "D", "f", "F"])

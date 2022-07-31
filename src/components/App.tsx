@@ -16,15 +16,18 @@ function App() {
   const [pianooStatus, setPianooStatus] = useState<PianooStatus>("idle");
 
   useEffect(() => {
-    pianoo.init()
+    pianoo
+      .init()
       .then(() => setPianooStatus("ready"))
       .catch(() => setPianooStatus("error"));
   }, []);
 
   return (
     <Suspense fallback={<Loading />}>
-      <div className="mx-auto px-4 max-w-6xl h-screen
-        flex flex-col justify-between">
+      <div
+        className="mx-auto px-4 max-w-6xl h-screen
+        flex flex-col justify-between"
+      >
         <Header />
         <main className="w-full">
           <PlayerProvider>

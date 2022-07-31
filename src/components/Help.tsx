@@ -5,9 +5,10 @@ function Help() {
 
   return (
     <article className="w-full lg:w-3/4 mx-auto my-12 space-y-16">
-
       <section>
-        <p><strong>pianoo</strong> {t("help.s1")}</p>
+        <p>
+          <strong>pianoo</strong> {t("help.s1")}
+        </p>
       </section>
 
       <section>
@@ -32,7 +33,9 @@ function Help() {
         <p>{t("help.s3.p1.2")}</p>
         <p>{t("help.s3.p1.3")}</p>
         <p>{t("help.s3.p1.4")}</p>
-        <p><strong>{t("help.s3.list.title")}</strong></p>
+        <p>
+          <strong>{t("help.s3.list.title")}</strong>
+        </p>
         <ol className="list-decimal ml-8">
           <li>{t("help.s3.list.1")}</li>
           <li>{t("help.s3.list.2")}</li>
@@ -40,56 +43,68 @@ function Help() {
           <li>{t("help.s3.list.4")}</li>
         </ol>
 
-        <p><strong>{t("help.s3.syntax.title")}</strong></p>
+        <p>
+          <strong>{t("help.s3.syntax.title")}</strong>
+        </p>
         <p>{t("help.s3.syntax.num")}</p>
         <p>{t("help.s3.syntax.rest")}</p>
         <p>{t("help.s3.syntax.barline")}</p>
         <div>
           <p>{t("help.s3.syntax.octave")}</p>
-          <img className="rounded"
-            src="imgs/octave.png"
-            alt="octave syntax" />
+          <img className="rounded" src="imgs/octave.png" alt="octave syntax" />
         </div>
         <div>
           <p>{t("help.s3.syntax.length")}</p>
-          <img className="rounded"
+          <img
+            className="rounded"
             src="imgs/length.png"
-            alt="note length syntax" />
+            alt="note length syntax"
+          />
         </div>
         <div>
           <p>{t("help.s3.syntax.accitental.title")}</p>
           <p>{t("help.s3.syntax.accitental.p")}</p>
-          <img className="rounded"
+          <img
+            className="rounded"
             src="imgs/accidental.png"
-            alt={t("help.s3.syntax.accitental.alt")} />
+            alt={t("help.s3.syntax.accitental.alt")}
+          />
         </div>
         <div>
           <p>{t("help.s3.syntax.examples.title")}</p>
-          <img className="rounded"
+          <img
+            className="rounded"
             src="imgs/examples.png"
-            alt={t("help.s3.syntax.examples.alt")} />
+            alt={t("help.s3.syntax.examples.alt")}
+          />
         </div>
         <div>
           <p>{t("help.s3.syntax.chord.title")}</p>
           <p>{t("help.s3.syntax.chord.p")}</p>
-          <img className="rounded"
+          <img
+            className="rounded"
             src="imgs/chord.png"
-            alt={t("help.s3.syntax.chord.alt")} />
+            alt={t("help.s3.syntax.chord.alt")}
+          />
         </div>
         <div>
           <p>{t("help.s3.syntax.tuplet.title")}</p>
           <p>{t("help.s3.syntax.tuplet.p.1")}</p>
           <p>{t("help.s3.syntax.tuplet.p.2")}</p>
           <p>{t("help.s3.syntax.tuplet.p.3")}</p>
-          <img className="rounded"
+          <img
+            className="rounded"
             src="imgs/tuplet.png"
-            alt={t("help.s3.syntax.tuplet.alt")} />
+            alt={t("help.s3.syntax.tuplet.alt")}
+          />
         </div>
         <div>
           <p>{t("help.s3.syntax.chordTuplet.title")}</p>
-          <img className="rounded"
+          <img
+            className="rounded"
             src="imgs/chord-tuplet.png"
-            alt={t("help.s3.syntax.chordTuplet.alt")} />
+            alt={t("help.s3.syntax.chordTuplet.alt")}
+          />
         </div>
         <p>{t("help.s3.syntax.p2.1")}</p>
         <p>{t("help.s3.syntax.p2.2")}</p>
@@ -97,7 +112,6 @@ function Help() {
         <p>{t("help.s3.syntax.p2.4")}</p>
         <p>{t("help.s3.syntax.p2.5")}</p>
       </section>
-
     </article>
   );
 }

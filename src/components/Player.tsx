@@ -49,16 +49,24 @@ function Player() {
   }, [dispatch]);
 
   if (isMobile) {
-    return <p className="text-center">
-      {t("error.mobileNotSupported.1")}<br />{t("error.mobileNotSupported.2")}
-    </p>
+    return (
+      <p className="text-center">
+        {t("error.mobileNotSupported.1")}
+        <br />
+        {t("error.mobileNotSupported.2")}
+      </p>
+    );
   }
 
   if (pianooStatus == "error" || error) {
     return <Error msg={t("error.crash")} />;
   }
 
-  if (pianooStatus == "idle" || status == "idle" || status == "loadingInstrument") {
+  if (
+    pianooStatus == "idle" ||
+    status == "idle" ||
+    status == "loadingInstrument"
+  ) {
     return <Loading />;
   }
 

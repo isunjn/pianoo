@@ -19,7 +19,7 @@ i18n
     },
     detection: {
       order: ["localStorage", "navigator", "htmlTag"],
-    }
+    },
   });
 
 export default i18n;

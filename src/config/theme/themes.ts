@@ -18,7 +18,7 @@ const DARK: Theme = {
   active: "rgba(100 100 100 / .3)",
   correct: "rgba(150 150 150)",
   error: "rgba(187 100 100)",
-}
+};
 
 const DESERT: Theme = {
   bg: "rgba(235 220 203)",
@@ -28,7 +28,7 @@ const DESERT: Theme = {
   active: "rgba(162 92 92 / .25)",
   correct: "rgba(162 92 92)",
   error: "rgba(242 77 77)",
-}
+};
 
 const LAVENDER: Theme = {
   bg: "rgba(173 166 194)",
@@ -78,7 +78,7 @@ const DARLING: Theme = {
   active: "rgba(163 0 0 / .25)",
   correct: "rgba(255 255 255)",
   error: "rgba(186 100 100)",
-}
+};
 
 const NORD: Theme = {
   bg: "rgba(59 66 82)",
@@ -111,6 +111,6 @@ const themes = {
   "Darling": DARLING,
   "Nord": NORD,
   "Arctic": ARCTIC,
-}
+};
 
 export default themes;
