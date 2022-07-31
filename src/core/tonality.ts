@@ -3,17 +3,17 @@ import type { Accidental, SolfaNum } from "~/core/parser";
 type Mode = "major" | "minor";
 
 type Pitch =
-  | "C" 
-  | "C#" 
-  | "D" 
-  | "D#" 
-  | "E" 
-  | "F" 
-  | "F#" 
-  | "G" 
-  | "G#" 
-  | "A" 
-  | "A#" 
+  | "C"
+  | "C#"
+  | "D"
+  | "D#"
+  | "E"
+  | "F"
+  | "F#"
+  | "G"
+  | "G#"
+  | "A"
+  | "A#"
   | "B";
 
 export type TonalityKind =
@@ -48,7 +48,20 @@ export type TonalityKind =
   | "6 = bE"
   | "6 = bA";
 
-const CHROMATIC_CIRCLE: Pitch[] = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+const CHROMATIC_CIRCLE: Pitch[] = [
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B",
+];
 const CIRCLE_LEN = 12;
 const MAJOR_SCALE_STEPS = [2, 2, 1, 2, 2, 2]; // W-W-H-W-W-W-H
 const MINOR_SCALE_STEPS = [2, 1, 2, 2, 1, 2]; // W-H-W-W-H-W-W
@@ -62,10 +75,13 @@ class Tonality {
     this.mode = mode;
     const tonicIdx = CHROMATIC_CIRCLE.indexOf(tonic);
     const steps = mode == "major" ? MAJOR_SCALE_STEPS : MINOR_SCALE_STEPS;
-    this.pitchIndexes = steps.reduce((indexes, step) => {
-      indexes.push((indexes.at(-1)! + step) % CIRCLE_LEN);
-      return indexes;
-    }, [tonicIdx]);
+    this.pitchIndexes = steps.reduce(
+      (indexes, step) => {
+        indexes.push((indexes.at(-1)! + step) % CIRCLE_LEN);
+        return indexes;
+      },
+      [tonicIdx]
+    );
     this.transposition = tonicIdx;
   }
 
@@ -123,8 +139,8 @@ const tonalities = {
   },
   kinds(): TonalityKind[] {
     return Array.from(tonalityMap.keys());
-  }
-}
+  },
+};
 
 export type { Tonality };
 

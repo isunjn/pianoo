@@ -1,6 +1,4 @@
-export type LangKind =
-  | "en"
-  | "zh-CN";
+export type LangKind = "en" | "zh-CN";
 
 export const langs = new Map<LangKind, string>()
   .set("en", "English")

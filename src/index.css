@@ -20,15 +20,15 @@
 }
 
 #sheet span.active {
-  background-color: var(--hover-color);
+  background-color: var(--th-active);
 }
 
 #sheet span.correct {
-  color: var(--correct-color);
+  color: var(--th-correct);
 }
 
 #sheet span.incorrect {
-  color: var(--incorrect-color);
+  color: var(--th-error);
 }
 
 body.zen-mode .zen-invisible {
@@ -42,76 +42,4 @@ body.zen-mode .zen-hoverable {
 
 body.zen-mode .zen-hoverable:hover {
   opacity: 1;
-}
-
-[data-theme="light"] {
-  --bg-color: rgb(240 240 240);
-  --text-color: rgb(90 90 90);
-  --hover-color: rgb(120 120 120 / .15);
-  --hint-color: rgb(90 90 90 / .6);
-  --correct-color: rgb(90 90 90);
-  --incorrect-color: rgb(187 100 100);
-}
-
-[data-theme="dark"] {
-  --bg-color: rgb(30 30 30);
-  --text-color: rgb(150 150 150);
-  --hover-color: rgb(100 100 100 / .4);
-  --hint-color: rgb(150 150 150 / .6);
-  --correct-color: rgb(150 150 150);
-  --incorrect-color: rgb(187 100 100);
-}
-
-[data-theme="desert"] {
-  --bg-color: rgb(255 237 219);
-  --text-color: rgb(216 182 164);
-  --hover-color: rgb(216 182 164 / .2);
-  --hint-color: rgb(216 182 164);
-  --correct-color: rgb(216 182 164);
-  --incorrect-color: rgb(255 181 181);
-}
-
-[data-theme="lavender"] {
-  --bg-color: rgb(173 166 194);
-  --text-color: rgb(228 227 233);
-  --hover-color: rgb(47 42 65 / .15);
-  --hint-color: rgb(47 42 65 / .5);
-  --correct-color: rgb(228 227 233);
-  --incorrect-color: rgb(255 222 222);
-}
-
-[data-theme="strawberry"] {
-  --bg-color: rgb(243 127 131);
-  --text-color: rgb(252 252 248);
-  --hover-color: rgb(252 252 248 / .2);
-  --hint-color: rgb(229 60 88);
-  --correct-color: rgb(252 252 248);
-  --incorrect-color: rgb(255 222 222);
-}
-
-[data-theme="nord"] {
-  --bg-color: rgb(46 52 64);
-  --text-color: rgb(216 222 233);
-  --hover-color: rgb(229 233 240 / .15);
-  --hint-color: rgb(129 161 193);
-  --correct-color: rgb(216 222 233);
-  --incorrect-color: rgb(180 142 173);
-}
-
-[data-theme="nord-light"] {
-  --bg-color: rgb(242 244 248);
-  --text-color: rgb(129 161 193);
-  --hover-color: rgb(129 161 193 / .15);
-  --hint-color: rgb(94 129 172);
-  --correct-color: rgb(143 188 187);
-  --incorrect-color: rgb(180 142 173);
-}
-
-[data-theme="botanical"] {
-  --bg-color: rgb(123 156 152);
-  --text-color: rgb(234 241 243);
-  --hover-color: rgb(73 87 85 / 0.25);
-  --hint-color: rgb(73 87 85 / 0.7);
-  --correct-color: rgb(206 229 208);
-  --incorrect-color: rgb(246 201 180);
 }

@@ -1,5 +1,10 @@
-import React, { forwardRef, useImperativeHandle, useRef, type Ref } from "react";
-import type { SheetItems } from "~/core/player";
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  type Ref,
+} from "react";
+import type { SheetItems } from "~/core/pianoo";
 import panic from "~/utils/panic";
 
 export interface SheetImperativeHandleAPI {
@@ -13,7 +18,8 @@ interface SheetProps {
 }
 
 const Sheet = forwardRef(function Sheet(
-  { sheetItems }: SheetProps, ref: Ref<SheetImperativeHandleAPI>
+  { sheetItems }: SheetProps,
+  ref: Ref<SheetImperativeHandleAPI>
 ) {
   const spans = useRef<HTMLSpanElement[]>([]);
 
@@ -58,48 +64,56 @@ const Sheet = forwardRef(function Sheet(
 
   return (
     <div id="sheet" className="w-full py-10">
-      {
-        sheetItems.map((row, i) => (
-          <div key={i} className="w-fit mx-auto h-10 flex items-center">
-            {row.map((item, j) => {
-              // rythm is visualized by the spacing
-              // 1/16 note is handled specially to avoid too much overlapping
-              const mr = item.quarter == 0.25 ? -0.6 : (item.quarter * 3 - 1.5);
-              const style = { marginRight: `${mr}ch` };
-              switch (item.kind) {
-                case "note":
-                  return (
-                    <span key={j} style={style} ref={itemRefCallback}>
-                      {item.key}
-                    </span>
-                  );
-                case "chord":
-                  return (
-                    <span key={j} style={style} ref={itemRefCallback}
-                      className="underline underline-offset-4">
-                      {item.keys.join("")}
-                    </span>
-                  );
-                case "rest": // &nbsp; is exactly what we want
-                  return (
-                    <span key={j} style={style} ref={itemRefCallback}>
-                      &nbsp;
-                    </span>
-                  );
-                default:
-                  throw panic("unreachable");
-              }
-            })}
-          </div>
-        ))
-      }
+      {sheetItems.map((row, i) => (
+        <div key={i} className="w-fit mx-auto h-10 flex items-center">
+          {row.map((item, j) => {
+            // rythm is visualized by the spacing
+            // 1/16 note is handled specially to avoid too much overlapping
+            const mr = item.quarter == 0.25 ? -0.6 : item.quarter * 3 - 1.5;
+            const style = { marginRight: `${mr}ch` };
+            switch (item.kind) {
+              case "note":
+                return (
+                  <span key={j} style={style} ref={itemRefCallback}>
+                    {item.key}
+                  </span>
+                );
+              case "chord":
+                return (
+                  <span
+                    key={j}
+                    style={style}
+                    ref={itemRefCallback}
+                    className="underline underline-offset-4"
+                  >
+                    {item.keys.join("")}
+                  </span>
+                );
+              case "rest": // &nbsp; is exactly what we want
+                return (
+                  <span key={j} style={style} ref={itemRefCallback}>
+                    &nbsp;
+                  </span>
+                );
+              default:
+                throw panic("unreachable");
+            }
+          })}
+        </div>
+      ))}
     </div>
   );
 });
 
 // build the scroll function based on browser support of scrollIntoViewOptions
-const scroll = "scrollBehavior" in document.documentElement.style
-  ? (el: HTMLElement) => el.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" })
-  : (el: HTMLElement) => el.scrollIntoView(true); // fallback
+const scroll =
+  "scrollBehavior" in document.documentElement.style
+    ? (el: HTMLElement) =>
+        el.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "center",
+        })
+    : (el: HTMLElement) => el.scrollIntoView(true); // fallback
 
 export default React.memo(Sheet);

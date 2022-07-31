@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { HiCursorClick } from "react-icons/hi";
-import player from "~/core/player";
+import pianoo from "~/core/pianoo";
 import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
 import Sheet, { type SheetImperativeHandleAPI } from "~/components/Sheet";
-import type { SheetItem } from "~/core/player";
+import type { SheetItem } from "~/core/pianoo";
 import panic from "~/utils/panic";
 
 function PlayerSheet() {
@@ -23,11 +23,12 @@ function PlayerSheet() {
     async function startToPlay() {
       _sheetContainer.removeEventListener("click", startToPlay);
       document.removeEventListener("keydown", keydownHandler);
-      await player.start();
+      await pianoo.start();
       dispatch({ type: "play" });
     }
     function keydownHandler(e: KeyboardEvent) {
-      if (e.key == " ") { // space key
+      if (e.key == " ") {
+        // space key
         e.preventDefault();
         startToPlay();
       }
@@ -65,7 +66,7 @@ function PlayerSheet() {
   // start/resume playing
   useEffect(() => {
     if (status != "playing") return;
-    const seq = player.getSequence();
+    const seq = pianoo.getSequence();
     if (idx.current == -1) {
       let firstNonRest = 0;
       while (seq[firstNonRest] && seq[firstNonRest].kind == "rest") {
@@ -83,9 +84,9 @@ function PlayerSheet() {
     // play music note & update sheet
     function keydownHandler(e: KeyboardEvent) {
       if (e.repeat) return;
-      const note = player.getNote(e.key);
+      const note = pianoo.getNote(e.key);
       if (!note) return;
-      player.playNote(note);
+      pianoo.playNote(note);
       const _pressing = pressing.current;
       const expected = seq[idx.current];
       switch (expected.kind) {
@@ -99,14 +100,15 @@ function PlayerSheet() {
             move(false);
           }
           break;
-        default: throw panic("unreachable");
+        default:
+          throw panic("unreachable");
       }
     }
     function move(correct: boolean) {
       let nextIdx = idx.current + 1;
       while (seq[nextIdx] && seq[nextIdx].kind == "rest") {
         nextIdx++;
-      }      
+      }
       sheet.current!.move(correct, idx.current, nextIdx);
       if (nextIdx == seq.length) {
         dispatch({ type: "done" });
@@ -122,7 +124,7 @@ function PlayerSheet() {
       document.removeEventListener("keydown", trackKeydown, { capture: true });
       document.removeEventListener("keyup", trackKeyup, { capture: true });
       document.removeEventListener("keydown", keydownHandler);
-    }
+    };
   }, [status, dispatch]);
 
   // auto play mode
@@ -130,8 +132,8 @@ function PlayerSheet() {
     if (status != "autoplaying") return;
     let timeoutId: ReturnType<typeof setTimeout>;
     async function autoPlay() {
-      await player.start();
-      const seq = player.getSequence();
+      await pianoo.start();
+      const seq = pianoo.getSequence();
       if (idx.current == -1) {
         let firstNonRest = 0;
         while (seq[firstNonRest] && seq[firstNonRest].kind == "rest") {
@@ -142,21 +144,24 @@ function PlayerSheet() {
       }
       // play each item after a delay
       timeoutId = (function play(item: SheetItem, after: number) {
-        const msPerQuarter = 60 * 1000 / player.getTempo(); // tempo may change
+        const msPerQuarter = (60 * 1000) / pianoo.getTempo(); // tempo may change
         return setTimeout(() => {
           const note =
-            item.kind == "note" ? player.getNote(item.key)! :
-              item.kind == "chord" ? item.keys.map(k => player.getNote(k)!) :
-                undefined;
+            item.kind == "note"
+              ? pianoo.getNote(item.key)!
+              : item.kind == "chord"
+              ? item.keys.map(k => pianoo.getNote(k)!)
+              : undefined;
           if (note) {
-            player.playNote(note);
+            pianoo.playNote(note);
             let nextNonRest = idx.current + 1;
             while (seq[nextNonRest] && seq[nextNonRest].kind == "rest") {
               nextNonRest++;
             }
             sheet.current!.move(true, idx.current, nextNonRest);
           }
-          if (++idx.current == seq.length) { // done
+          if (++idx.current == seq.length) {
+            // done
             dispatch({ type: "reset" });
           } else {
             timeoutId = play(seq[idx.current], item.quarter * msPerQuarter);
@@ -173,8 +178,8 @@ function PlayerSheet() {
     if (status != "practicing") return;
     function keydownHandler(e: KeyboardEvent) {
       if (e.repeat) return;
-      const note = player.getNote(e.key);
-      if (note) player.playNote(note);
+      const note = pianoo.getNote(e.key);
+      if (note) pianoo.playNote(note);
     }
     document.addEventListener("keydown", keydownHandler);
     return () => document.removeEventListener("keydown", keydownHandler);
@@ -182,8 +187,10 @@ function PlayerSheet() {
 
   // TODO: handle overflow-x
   return (
-    <div className="w-full h-52 font-mono text-xl scrollbar-hidden group"
-      ref={sheetContainer}>
+    <div
+      className="w-full h-50 font-mono text-xl scrollbar-hidden group"
+      ref={sheetContainer}
+    >
       <Sheet sheetItems={sheetItems} ref={sheet} />
       <SheetMask />
     </div>
@@ -196,12 +203,16 @@ function SheetMask() {
 
   if (!(status == "ready" || status == "paused")) return null;
   return (
-    <div className="absolute top-20 left-0 w-full h-52 pointer-events-none
-      flex items-center justify-center bg-transparent backdrop-blur-lg">
-      <div className="flex items-center gap-4 group-hover:scale-[1.025] 
-        transition-transform ease-in">
+    <div
+      className="absolute top-10 left-0 w-full h-70 pointer-events-none
+      flex items-center justify-center bg-transparent backdrop-blur-lg"
+    >
+      <div
+        className="flex items-center gap-4 group-hover:scale-105
+        transition-transform"
+      >
         {status == "ready" ? t("play.hint.start") : t("play.hint.resume")}
-        <HiCursorClick />
+        <HiCursorClick className="group-hover:animate-pulse" />
       </div>
     </div>
   );

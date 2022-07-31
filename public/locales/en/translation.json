@@ -1,7 +1,22 @@
 {
   "loading": "loading...",
   "error": {
-    "crash": "Something went wrong, please try refresh :)"
+    "crash": "Something went wrong, please try refresh :)",
+    "mobileNotSupported": {
+      "1": "Mobile devices are not supported yet :)",
+      "2": "Please open it on your computer"
+    },
+    "syntax": {
+      "E11": "Invalid note",
+      "E12": "Invalid note",
+      "E21": "Invalid chord, missing `]`",
+      "E22": "Invalid chord, at least two notes in `[]`",
+      "E23": "Invalid chord, empty string around `&`",
+      "E31": "Invalid length, at least two length part in `()`",
+      "E32": "Invalid length, empty string around `&`",
+      "E33": "Invalid length",
+      "E34": "Invalid length, `.` or `..` can't be put after `-` or `__`"
+    }
   },
   "header": {
     "play": "Play",
@@ -62,5 +77,97 @@
       "cello": "Cello",
       "violin": "Violin"
     }
+  },
+  "compose": {
+    "name": "Score Name",
+    "tonality": "Tonality",
+    "timesign": "Time Signature",
+    "tempo": "Tempo",
+    "content": "Content",
+    "play": "Play",
+    "retry": "Retry",
+    "hint": "Learn how to compose",
+    "error": {
+      "nameEmpty": "Score name can't be empty",
+      "timesignEmpty": "Time signature can't be empty",
+      "tempoEmpty": "Tempo can't be empty",
+      "contentEmpty": "Content can't be empty"
+    }
+  },
+  "help": {
+    "s1": "is a web app where you to play piano with a computer keyboard. Even people who don't understand music can experience the fun of music here.",
+    "s2": {
+      "title": "How to play",
+      "list": {
+        "1": "Click or press the space to start playing",
+        "2": "Each letter represents a note, and the rythm (time intervals) is represented by the spacing of the letters",
+        "3": "Press the key corresponding to the highlighted letter to play this note",
+        "4": "Multiple letters underlined represent a chord, all keys need to be pressed at the same time",
+        "5": "Use 'Shift + Letter Key' to press uppercase letters instead of using CapsLock",
+        "6": "If a chord has both lowercase and uppercase letters, you can press and hold the lowercase letter key first, then quickly press the shift key and the uppercase letter key"
+      }
+    },
+    "s3": {
+      "title": "How to compose",
+      "p1": {
+        "1": "Real world music is complex, if you want to play it with a computer keyboard, some kind of simplification is unavoidable, so it may not be as rich and delicate as the real instrument, but simple music also has simplicity fun of.",
+        "2": "If you have a `numbered musical notation` for a musical score, you can easily convert it into a format that pianoo can recognize so you can play it.",
+        "3": "If there are only staves but no numbered notation, then you need to convert it to numbered notation first.",
+        "4": "You need to first learn `numbered musical notation`, which is a simplified notation of musical notation, and there are many learning resources on the Internet."
+      },
+      "list": {
+        "title": "When composing music, you first need the following information, which is usually indicated on your score:",
+        "1": "Score name, e.g. 'City in the Sky'",
+        "2": "Tonality, e.g. '1 = C', '6 = A'",
+        "3": "Time signature, e.g. '4 / 4', '3 / 4'",
+        "4": "Tempo, beats per minute (BPM), e.g. 88, 120"
+      },
+      "syntax": {
+        "title": "The content of the score is represented using a specific syntax:",
+        "num": "Note number: 1 2 3 4 5 6 7",
+        "rest": "Rest: 0",
+        "barline": "Barline: | (Barline is only for auxiliary purposes and does not affect the content of the score)",
+        "octave": "Octave:",
+        "length": "Note length / duration:",
+        "accitental": {
+          "title": "Accitental:",
+          "p": "Only sharp and flat are supported, not restore, you need to mark all the notes that need an accitental with # or b",
+          "alt": "Accitental syntax"
+        },
+        "examples": {
+          "title": "A few examples:",
+          "alt": "A few examples"
+        },
+        "chord": {
+          "title": "Chords:",
+          "p": "A chord is a number of different notes played at the same time, and their duration is the same. Use [ ] to represent multiple notes, separated by &.",
+          "alt": "Chord syntax"
+        },
+        "tuplet": {
+          "title": "Tuplet:",
+          "p": {
+            "1": "If an arc is used for the same note, it means that the note is played only once, and the duration is the sum of their respective durations, called a tuplet, represented by ( ), and separated by & as well.",
+            "2": "The duration part of the quarter note is empty, use a ~ symbol in ( )",
+            "3": "If it's different notes, it's a slur, not a tuplet. Slur are not handled, you can just pretend the arc doesn't exist."
+          },
+          "alt": "Tuplet syntax"
+        },
+        "chordTuplet": {
+          "title": "Chord + Tuplet:",
+          "alt": "Chord with tuplet syntax"
+        },
+        "p2": {
+          "1": "All notes, rests, and barlines are separated by spaces.",
+          "2": "Add appropriate line breaks to avoid a single line being too long. Line breaks should be made at appropriate places in the score, usually near rests or notes with longer durations.",
+          "3": "A piece of music usually has two melodies: a main melody and a sub-melody. For playing with a computer keyboard, only the main melody is usually reserved.",
+          "4": "If possible, chords should be avoided. Chords increase the difficulty of playing, our goal is not to reproduce the score as much as possible, but to make it playable with a computer keyboard.",
+          "5": "Some functions such as transposition within the score, grace notes, etc. are not currently supported."
+        }
+      }
+    }
+  },
+  "about": {
+    "title": "About",
+    "p": "is a web app where you can play piano (and a few other instruments) with your computer keyboard, easily and breezily. May it brings you some relaxation and fun."
   }
 }

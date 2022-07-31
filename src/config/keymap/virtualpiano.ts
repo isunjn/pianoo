@@ -1,5 +1,6 @@
 import type { KeymapKeys } from "~/core/keymap";
 
+// prettier-ignore
 export const KEYMAP_VIRTUALPIANO: KeymapKeys = new Map()
   .set(2, ["1", "!", "2", "@", "3", "#", "4", "$", "5", "%", "6", "^", "7", "&"])
   .set(3, ["8", "*", "9", "(", "0", ")", "q", "Q", "w", "W", "e", "E", "r", "R"])

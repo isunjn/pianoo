@@ -7,50 +7,71 @@ import PlayerHint from "~/components/PlayerHint";
 import PlayerPopup from "~/components/PlayerPopup";
 import Loading from "~/components/Loading";
 import Error from "~/components/Error";
-import player from "~/core/player";
+import { usePianooStatus } from "~/components/App";
+import pianoo from "~/core/pianoo";
 import parse, { type MusicScore } from "~/core/parser";
-import { PlayerProvider, usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
-import { K_SCORE_ID } from "~/constant/storage-keys";
+import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
+import { K_SCORE_ID } from "~/constants/storage-keys";
+import panic from "~/utils/panic";
+import detectIsMobile from "~/utils/detectIsMobile";
 
+const isMobile = detectIsMobile();
 
 function Player() {
+  const pianooStatus = usePianooStatus();
   const { status } = usePlayer();
   const dispatch = usePlayerDispatch();
   const { t } = useTranslation();
-  const [failToLoad, setFailToLoad] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    let ignore = false;
-    
+    if (status != "idle") return;
     /* backend not built yet, use static files in public/examples temporarily */
-
+    let ignore = false;
     const id = localStorage.getItem(K_SCORE_ID) ?? "1";
-    const loadScore = fetch(`/examples/${id.padStart(3, "0")}.json`)
+    fetch(`/examples/${id.padStart(3, "0")}.json`)
       .then(r => r.json() as Promise<MusicScore>)
-
-    Promise.all([loadScore, player.init()])
-      .then(([score]) => {
+      .then(score => {
         if (ignore) return;
-        const parsedScore = parse(score);
-        const sheetItems = player.prepare(parsedScore);
-        dispatch({ type: "set_score", score: parsedScore, sheetItems });
-        dispatch({ type: "loaded" });
+        const [parsedScore, syntaxErrors] = parse(score);
+        if (syntaxErrors) panic("syntax error occurred");
+        const sheetItems = pianoo.prepare(parsedScore!);
+        dispatch({ type: "set_score", score: parsedScore!, sheetItems });
       })
-      .catch(() => setFailToLoad(true));
+      .catch(() => setError(true));
+    return () => {
+      ignore = true;
+    };
+  }, [status, dispatch]);
 
-    return () => { ignore = true; };
+  useEffect(() => {
+    return () => dispatch({ type: "unmount" });
   }, [dispatch]);
 
-  if (failToLoad) {
+  if (isMobile) {
+    return (
+      <p className="text-center">
+        {t("error.mobileNotSupported.1")}
+        <br />
+        {t("error.mobileNotSupported.2")}
+      </p>
+    );
+  }
+
+  if (pianooStatus == "error" || error) {
     return <Error msg={t("error.crash")} />;
   }
 
-  if (status == "idle") {
+  if (
+    pianooStatus == "idle" ||
+    status == "idle" ||
+    status == "loadingInstrument"
+  ) {
     return <Loading />;
   }
 
   return (
-    <div className="relative mx-auto w-3/4 select-none">
+    <div className="relative mx-auto w-full lg:w-3/4">
       <PlayerControl />
       <PlayerSheet />
       <PlayerHint />
@@ -60,14 +81,4 @@ function Player() {
   );
 }
 
-function PlayerWrapper() {
-  return (
-    <PlayerProvider>
-      <Player />
-    </PlayerProvider>
-  );
-}
-
-
-
-export default PlayerWrapper;
+export default Player;
