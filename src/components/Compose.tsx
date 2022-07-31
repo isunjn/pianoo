@@ -1,7 +1,9 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { TbLink } from "react-icons/tb";
 import tonalities, { TonalityKind } from "~/core/tonality";
-import parse, { type MusicScore } from "~/core/parser";
+import parse, { type MusicScore, type SyntaxErr } from "~/core/parser";
 import { usePlayerDispatch } from "~/contexts/PlayerContext";
 import {
   K_COMPOSE_ERRORS,
@@ -13,6 +15,7 @@ import {
   K_COMPOSE_CONTENT,
 } from "~/constants/storage-keys";
 import pianoo from "~/core/pianoo";
+import panic from "~/utils/panic";
 
 interface ComposeFormElements extends HTMLFormControlsCollection {
   scoreName: HTMLInputElement;
@@ -31,6 +34,7 @@ function retrievalLocal(key: string, defaultValue: string) {
 function Compose() {
   const dispatch = usePlayerDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const scoreName = retrievalLocal(K_COMPOSE_NAME, "Composing...");
   const tonality = retrievalLocal(K_COMPOSE_TONALITY, "1 = C");
@@ -57,10 +61,10 @@ function Compose() {
 
     const errors = [];
 
-    if (scoreName.trim() == "") errors.push("Score name can't be empty");
-    if (!timesign1 || !timesign2) errors.push("Time signature can't be empty");
-    if (!tempo) errors.push("Tempo can't be empty");
-    if (content.trim() == "") errors.push("Content can't be empty");
+    if (scoreName.trim() == "") errors.push(t("compose.error.nameEmpty"));
+    if (!timesign1 || !timesign2) errors.push(t("compose.error.timesignEmpty"));
+    if (!tempo) errors.push(t("compose.error.tempoEmpty"));
+    if (content.trim() == "") errors.push(t("compose.error.contentEmpty"));
 
     const score: MusicScore = {
       id: 0,
@@ -72,7 +76,7 @@ function Compose() {
     }
     const [parsedScore, syntaxErrors] = parse(score);
     if (syntaxErrors) {
-      syntaxErrors.forEach(err => errors.push(err));
+      syntaxErrors.map(syntaxErrToMsg).forEach(err => errors.push(err));
     }
 
     if (errors.length > 0) {
@@ -83,6 +87,21 @@ function Compose() {
       const sheetItems = pianoo.prepare(parsedScore!);
       dispatch({ type: "set_score", score: parsedScore!, sheetItems });
       navigate("/");
+    }
+  }
+
+  function syntaxErrToMsg(err: SyntaxErr) {
+    switch (err.code) {
+      case "E11": return `\`${err.item}\`: ${t("error.syntax.E11")}`;
+      case "E12": return `\`${err.item}\`: ${t("error.syntax.E12")}: \`${err.note}\``;
+      case "E21": return `\`${err.item}\`: ${t("error.syntax.E21")}`;
+      case "E22": return `\`${err.item}\`: ${t("error.syntax.E22")}`;
+      case "E23": return `\`${err.item}\`: ${t("error.syntax.E23")}`;
+      case "E31": return `\`${err.item}\`: ${t("error.syntax.E31")}`;
+      case "E32": return `\`${err.item}\`: ${t("error.syntax.E32")}`;
+      case "E33": return `\`${err.item}\`: ${t("error.syntax.E33")}: \`${err.length}\``;
+      case "E34": return `\`${err.item}\`: ${t("error.syntax.E34")}: \`${err.length}\``;
+      default: throw panic("unreachable");
     }
   }
 
@@ -97,14 +116,14 @@ function Compose() {
       
       <div className="w-full space-y-6 md:space-y-0 md:flex md:justify-between">
         <div className="w-full md:w-1/2 flex justify-between gap-6">
-          <label htmlFor="scoreName">Name:</label>
+          <label htmlFor="scoreName">{t("compose.name")}:</label>
           <input name="scoreName" id="scoreName" type="text" defaultValue={scoreName}
             onChange={perpsist(K_COMPOSE_NAME)}
             className="w-80 px-2 py-0.5 rounded flex-1 bg-th-hover 
             focus-visible:outline-none"></input>
         </div>
         <div className="w-full md:w-1/3 lg:w-1/4 flex justify-between">
-          <label htmlFor="tonality">Tonality:</label>
+          <label htmlFor="tonality">{t("compose.tonality")}:</label>
           <select name="tonality" id="tonality" defaultValue={tonality}
             onChange={perpsist(K_COMPOSE_TONALITY)}
             className="w-28 px-1 py-1 rounded
@@ -120,7 +139,7 @@ function Compose() {
 
       <div className="w-full space-y-6 md:space-y-0 md:flex md:justify-between">
         <div className="w-full md:w-1/2 flex justify-between">
-          <label htmlFor="timesign1">Time Signature:</label>
+          <label htmlFor="timesign1">{t("compose.timesign")}:</label>
           <div className="flex">
             <input name="timesign1" id="timesign1" type="number" min="1" max="16" defaultValue={timesign1} 
               onChange={perpsist(K_COMPOSE_TIMESIGN_1)}
@@ -134,7 +153,7 @@ function Compose() {
           </div>
         </div>
         <div className="w-full md:w-1/3 lg:w-1/4 flex justify-between">
-          <label htmlFor="tempo">Tempo:</label>
+          <label htmlFor="tempo">{t("compose.tempo")}:</label>
           <input name="tempo" id="tempo" type="number" min="40" max="220" defaultValue={tempo}
             onChange={perpsist(K_COMPOSE_TEMPO)}
           className="w-28 ml-4 px-2 py-0.5 rounded
@@ -143,7 +162,7 @@ function Compose() {
       </div>
       
       <div>
-        <label htmlFor="content">Content:</label>
+        <label htmlFor="content">{t("compose.content")}:</label>
         <textarea name="content" id="content" defaultValue={content}
           onChange={perpsist(K_COMPOSE_CONTENT)}
           className="w-full h-64 p-4 rounded bg-th-hover whitespace-pre
@@ -152,14 +171,17 @@ function Compose() {
 
       {errors.length > 0 && (
         <div className="border-2 border-th-error text-th-error border-dashed rounded p-4 space-y-2">
-          {errors.map((error, i) => <div key={i}>{error}</div>)}
+          {errors.map(error => <div key={error}>{error}</div>)}
         </div>  
       )}
 
       <div className="flex justify-between">
-        <button className="underline">Learn how to compose</button>
+        <Link to="/help#how-to-compose" className="h-min border-b-2 border-th-text">
+          {t("compose.hint")}
+          <TbLink className="inline ml-2" />
+        </Link>
         <button type="submit" className="rounded px-6 py-1 bg-th-text text-th-bg">
-          {errors.length > 0 ? "Retry" : "Play"}
+          {errors.length > 0 ? t("compose.retry") : t("compose.play")}
         </button>
       </div>
     </form>

@@ -50,8 +50,7 @@ function Player() {
 
   if (isMobile) {
     return <p className="text-center">
-      Mobile devices are not supported yet :) <br />
-      Please open it on your computer
+      {t("error.mobileNotSupported.1")}<br />{t("error.mobileNotSupported.2")}
     </p>
   }
 

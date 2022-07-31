@@ -6,7 +6,7 @@ import type { IconBaseProps } from "react-icons";
 
 function Header() {
   return (
-    <header className="flex justify-between items-end zen-invisible">
+    <header className="pt-4 flex justify-between items-end zen-invisible">
       <Link to="/" className="focus-visible:outline-2 focus-visible:outline
         focus-visible:outline-th-text focus-visible:outline-offset-2 group">
         <div className="text-xl mb-1">
@@ -33,7 +33,7 @@ function Nav() {
       <button onClick={() => setOpen(!open)} className="z-50 sm:hidden">
         {open ? <TbX className="text-lg" /> : <TbMenu2 className="text-lg" />}
       </button>
-      <div className={`${open ? "" : "hidden"} flex z-50 bg-th-bg rounded
+      <div className={`${open ? "" : "hidden"} flex z-50 bg-th-bg rounded w-max
         absolute top-full mt-2 right-0 flex-col gap-4 shadow-lg p-2
         sm:flex sm:static sm:mt-0 sm:flex-row sm:gap-0 sm:shadow-none sm:p-0`}>
         <TabBtn to="/" name={t("header.play")} Icon={TbMusic} />

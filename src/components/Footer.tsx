@@ -11,7 +11,7 @@ function Footer() {
   const { t } = useTranslation();
 
   return (
-    <footer className="flex flex-col-reverse sm:flex-row gap-4
+    <footer className="py-4 flex flex-col-reverse sm:flex-row gap-4
       items-center justify-between text-sm zen-invisible">
       <div className="w-max flex items-center">
         <FooterLink href="https://github.com/isunjn/pianoo" name="GitHub" Icon={TbBrandGithub} />

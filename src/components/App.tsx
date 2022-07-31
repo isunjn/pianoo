@@ -23,10 +23,10 @@ function App() {
 
   return (
     <Suspense fallback={<Loading />}>
-      <div className="mx-auto px-4 py-6 max-w-6xl h-screen
+      <div className="mx-auto px-4 max-w-6xl h-screen
         flex flex-col justify-between">
         <Header />
-        <main className="w-full my-4">
+        <main className="w-full">
           <PlayerProvider>
             <Outlet context={pianooStatus} />
           </PlayerProvider>
