@@ -12,6 +12,6 @@ export default defineConfig({
   },
   plugins: [
     react(),
-    visualizer(),
+    visualizer({ gzipSize: true }),
   ],
 });
