@@ -40,7 +40,7 @@
       "restart": "重新开始",
       "adjust": "调整",
       "settings": "设置",
-      "zenMode": "专注模式",
+      "focusMode": "专注模式",
       "hint": {
         "playing": "正在弹奏",
         "paused": "已暂停",

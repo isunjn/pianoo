@@ -121,9 +121,9 @@ function PlayerControl() {
           onClick={() => dispatch({ type: "open_settings" })}
         />
         <ControlBtn
-          tooltip={t("play.btn.zenMode")}
+          tooltip={t("play.btn.focusMode")}
           Icon={TbMaximize}
-          onClick={toggleZenMode}
+          onClick={toggleFocusMode}
         />
       </>
     );
@@ -193,7 +193,7 @@ function ControlHint({ hint }: { hint: string }) {
   return <div className="text-base leading-none text-th-hint">{hint}</div>;
 }
 
-function toggleZenMode() {
+function toggleFocusMode() {
   if (document.body.classList.contains("zen-mode")) {
     if (document.fullscreenElement) document.exitFullscreen();
     document.body.classList.remove("zen-mode");

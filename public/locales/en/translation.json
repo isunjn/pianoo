@@ -40,7 +40,7 @@
       "restart": "Restart",
       "adjust": "Adjust",
       "settings": "Settings",
-      "zenMode": "Zen Mode",
+      "focusMode": "Focus Mode",
       "hint": {
         "playing": "Playing",
         "paused": "Paused",
