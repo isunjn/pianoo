@@ -1,29 +1,32 @@
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
+import usePlayerStore from "~/store/usePlayerStore";
 import pianoo from "~/core/pianoo";
 import type { KeymapKind } from "~/config/keymap";
-import React from "react";
 import { InstrumentKind } from "~/config/instrument";
 
 function PopupSettings() {
-  const { keymap, instrument } = usePlayer();
-  const dispatch = usePlayerDispatch();
+  const keymap = usePlayerStore(state => state.keymap);
+  const setKeymap = usePlayerStore(state => state.setKeymap);
+  const instrument = usePlayerStore(state => state.instrument);
+  const setInstrument = usePlayerStore(state => state.setInstrument);
+  const setStatus = usePlayerStore(state => state.setStatus);
   const { t } = useTranslation();
 
   function handleKeymapChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const newKeymap = e.target.value as KeymapKind;
     if (newKeymap != keymap) {
       const sheetItems = pianoo.setKeymap(newKeymap);
-      dispatch({ type: "set_keymap", keymap: newKeymap, sheetItems });
+      setKeymap(newKeymap, sheetItems);
     }
   }
 
   function handleInstrumentChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const newInstrument = e.target.value as InstrumentKind;
     if (newInstrument != instrument) {
-      dispatch({ type: "start_to_load_instrument" });
+      setStatus("loading");
       pianoo.setInstrument(newInstrument).then(() => {
-        dispatch({ type: "set_instrument", instrument: newInstrument });
+        setInstrument(newInstrument);
       });
     }
   }

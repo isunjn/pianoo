@@ -1,25 +1,25 @@
 import { useTranslation } from "react-i18next";
-import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
+import usePlayerStore from "~/store/usePlayerStore";
 import Loading from "~/components/Loading";
 import Error from "~/components/Error";
 import parse, { type MusicScore } from "~/core/parser";
 import pianoo from "~/core/pianoo";
-import useExampleScores from "~/hooks/useExampleScores";
+import { useExampleScores } from "~/hooks/useExampleScore";
 import range from "~/utils/range";
 import panic from "~/utils/panic";
 
 function PopupChooser() {
-  const { score } = usePlayer();
-  const dispatch = usePlayerDispatch();
+  const currentScore = usePlayerStore(state => state.score);
+  const setScore = usePlayerStore(state => state.setScore);
+  const { scores, isLoading, isError } = useExampleScores(range(1, 20));
   const { t } = useTranslation();
-  const { exampleScores, isLoading, isError } = useExampleScores(range(1, 20));
 
-  function setScore(newScore: MusicScore) {
-    if (newScore.id != score!.id) {
+  function handleSetScore(newScore: MusicScore) {
+    if (newScore.id != currentScore!.id) {
       const [newParsedScore, syntaxErrors] = parse(newScore);
       if (syntaxErrors) panic("syntax error occurred");
       const sheetItems = pianoo.prepare(newParsedScore!);
-      dispatch({ type: "set_score", score: newParsedScore!, sheetItems });
+      setScore(newParsedScore!, sheetItems);
     }
   }
 
@@ -39,11 +39,11 @@ function PopupChooser() {
       ) : isError ? (
         <Error msg={t("error.crash")} />
       ) : (
-        exampleScores!.map(score => (
+        scores!.map(score => (
           <div
             key={score.id}
             className="px-4 py-1.5 hover:bg-th-hover rounded cursor-pointer flex"
-            onClick={() => setScore(score)}
+            onClick={() => handleSetScore(score)}
           >
             <span className="flex-[5]">{score.name}</span>
             <span className="flex-1">{score.tonality}</span>

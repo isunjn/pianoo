@@ -1,8 +1,13 @@
-import { usePlayer } from "~/contexts/PlayerContext";
+import shallow from "zustand/shallow";
+import usePlayerStore from "~/store/usePlayerStore";
 import panic from "~/utils/panic";
 
+
 function PlayerScoreMeta() {
-  const { score, tonality, tempo } = usePlayer();
+  const [score, tonality, tempo] = usePlayerStore(
+    state => [state.score, state.tonality, state.tempo],
+    shallow
+  );
 
   if (!score) throw panic("score is null");
 

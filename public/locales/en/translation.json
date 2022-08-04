@@ -29,21 +29,17 @@
   "play": {
     "hint": {
       "start": "Click or press space to start",
-      "resume": "Click or press space to resume",
       "restart": "Press space to restart"
     },
     "btn": {
       "autoPlay": "Auto Play",
       "practiceMode": "Practice Mode",
-      "pause": "Pause",
       "stop": "Stop",
       "restart": "Restart",
       "adjust": "Adjust",
       "settings": "Settings",
       "focusMode": "Focus Mode",
       "hint": {
-        "playing": "Playing",
-        "paused": "Paused",
         "autoPlaying": "Auto Playing",
         "practicing": "Practicing",
         "endOfPlay": "End of Play"

@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { TbRotate } from "react-icons/tb";
-import { usePlayer } from "~/contexts/PlayerContext";
+import usePlayerStore from "~/store/usePlayerStore";
 
 function PlayerHint() {
-  const { status } = usePlayer();
+  const status = usePlayerStore(state => state.status);
   const { t } = useTranslation();
 
   return (

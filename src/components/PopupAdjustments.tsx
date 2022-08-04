@@ -1,30 +1,35 @@
 import { useTranslation } from "react-i18next";
-import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
+import usePlayerStore from "~/store/usePlayerStore";
 import pianoo from "~/core/pianoo";
 import tonalities from "~/core/tonality";
 import type { TonalityKind } from "~/core/tonality";
 
 function PopupAdjustments() {
-  const { volume, tempo, tonality } = usePlayer();
-  const dispatch = usePlayerDispatch();
+  const volume = usePlayerStore(state => state.volume);
+  const setVolume = usePlayerStore(state => state.setVolume);
+  const tempo = usePlayerStore(state => state.tempo);
+  const setTempo = usePlayerStore(state => state.setTempo);
+  const tonality = usePlayerStore(state => state.tonality);
+  const setTonality = usePlayerStore(state => state.setTonality);
+
   const { t } = useTranslation();
 
   function handleVolumeChange(e: React.ChangeEvent<HTMLInputElement>) {
     const volume = parseInt(e.target.value);
     pianoo.setVolume(volume);
-    dispatch({ type: "set_volume", volume });
+    setVolume(volume);
   }
 
   function handleTempoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const tempo = parseInt(e.target.value);
     pianoo.setTempo(tempo);
-    dispatch({ type: "set_tempo", tempo });
+    setTempo(tempo);
   }
 
   function handleTonalityChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const tonality = e.target.value as TonalityKind;
     const sheetItems = pianoo.transpose(tonality);
-    dispatch({ type: "set_tonality", tonality, sheetItems });
+    setTonality(tonality, sheetItems);
   }
 
   // TODO: use custom component
