@@ -15,6 +15,7 @@ specifiers:
   i18next: ^21.8.14
   i18next-browser-languagedetector: ^6.1.4
   i18next-http-backend: ^1.4.1
+  is-mobile: ^3.1.1
   postcss: ^8.4.14
   prettier: ^2.7.1
   react: ^18.1.0
@@ -35,6 +36,7 @@ dependencies:
   i18next: 21.8.16
   i18next-browser-languagedetector: 6.1.4
   i18next-http-backend: 1.4.1
+  is-mobile: 3.1.1
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-i18next: 11.18.2_shxxmfhtk2bc4pbx5cyq3uoph4
@@ -1723,6 +1725,10 @@ packages:
     dependencies:
       is-extglob: 2.1.1
     dev: true
+
+  /is-mobile/3.1.1:
+    resolution: {integrity: sha512-RRoXXR2HNFxNkUnxtaBdGBXtFlUMFa06S0NUKf/LCF+MuGLu13gi9iBCkoEmc6+rpXuwi5Mso5V8Zf7mNynMBQ==}
+    dev: false
 
   /is-negative-zero/2.0.2:
     resolution: {integrity: sha512-dqJvarLawXsFbNDeJW7zAz8ItJ9cd28YufuuFzh0G8pNHjJMnY08Dv7sYX2uF5UpQOwieAeOExEYAWWfu7ZZUA==}

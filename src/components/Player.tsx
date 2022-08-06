@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import detectIsMobile from "is-mobile";
 import PlayerControl from "~/components/PlayerControl";
 import PlayerSheet from "~/components/PlayerSheet";
 import PlayerScoreMeta from "~/components/PlayerScoreMeta";
@@ -14,9 +15,8 @@ import { useExampleScore } from "~/hooks/useExampleScore";
 import usePlayerStore from "~/store/usePlayerStore";
 import { K_SCORE_ID } from "~/constants/storage-keys";
 import panic from "~/utils/panic";
-import detectIsMobile from "~/utils/detectIsMobile";
 
-const isMobile = detectIsMobile();
+const isMobile = detectIsMobile({ tablet: true });
 const initialScoreIdStr = localStorage.getItem(K_SCORE_ID);
 const initialScoreId = initialScoreIdStr ? parseInt(initialScoreIdStr) : 1;
 
