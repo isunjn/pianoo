@@ -42,6 +42,7 @@
       "hint": {
         "autoPlaying": "Auto Playing",
         "practicing": "Practicing",
+        "justPlaying": "Just Playing",
         "endOfPlay": "End of Play"
       }
     },
@@ -49,7 +50,10 @@
       "exampleScores": "Example Scores",
       "recentlyPlayed": "Recently Played",
       "justPlay": "Just Play",
-      "fromFile": "From File"
+      "fromFile": "From File",
+      "hint": {
+        "justPlay": "No music score, just play"
+      }
     },
     "adjust": {
       "volume": "Volume",

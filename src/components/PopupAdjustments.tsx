@@ -5,6 +5,7 @@ import tonalities from "~/core/tonality";
 import type { TonalityKind } from "~/core/tonality";
 
 function PopupAdjustments() {
+  const status = usePlayerStore(state => state.status);
   const volume = usePlayerStore(state => state.volume);
   const setVolume = usePlayerStore(state => state.setVolume);
   const tempo = usePlayerStore(state => state.tempo);
@@ -56,23 +57,25 @@ function PopupAdjustments() {
         />
       </div>
 
-      <div>
-        <label
-          htmlFor="tempo"
-          className="w-full flex items-center justify-between"
-        >
-          {t("play.adjust.tempo")}: <div>{tempo} BPM</div>
-        </label>
-        <input
-          type="range"
-          id="tempo"
-          min="40"
-          max="220"
-          className="w-full"
-          value={tempo}
-          onChange={handleTempoChange}
-        />
-      </div>
+      {status != "justplaying" && (
+        <div>
+          <label
+            htmlFor="tempo"
+            className="w-full flex items-center justify-between"
+          >
+            {t("play.adjust.tempo")}: <div>{tempo} BPM</div>
+          </label>
+          <input
+            type="range"
+            id="tempo"
+            min="40"
+            max="220"
+            className="w-full"
+            value={tempo}
+            onChange={handleTempoChange}
+          />
+        </div>
+      )}
 
       <div>
         <label

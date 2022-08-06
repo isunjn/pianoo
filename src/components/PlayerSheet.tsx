@@ -174,9 +174,9 @@ function PlayerSheet() {
     return () => clearTimeout(timeoutId);
   }, [status, setStatus]);
 
-  // practice mode, just play music note, do not move sheet
+  // practice mode and just-play mode, just play music note, do not move sheet
   useEffect(() => {
-    if (status != "practicing") return;
+    if (!(status == "practicing" || status == "justplaying")) return;
     function keydownHandler(e: KeyboardEvent) {
       if (e.repeat) return;
       const note = pianoo.getNote(e.key);
@@ -192,7 +192,17 @@ function PlayerSheet() {
       className="w-full h-50 font-mono text-xl scrollbar-hidden group"
       ref={sheetContainer}
     >
-      <Sheet sheetItems={sheetItems} ref={sheet} />
+      {status == "justplaying" && (
+        <div className="h-full flex justify-center items-center">
+          <div
+            className="h-16 w-16 flex justify-center items-center 
+              rounded-full bg-th-hover"
+          >
+            <div className="text-2xl">𝄞</div>
+          </div>
+        </div>
+      )}
+      {status != "justplaying" && <Sheet sheetItems={sheetItems} ref={sheet} />}
       {status == "ready" && <SheetMask />}
     </div>
   );

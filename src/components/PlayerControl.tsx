@@ -88,6 +88,17 @@ function PlayerControl() {
             <ControlHint hint={t("play.btn.hint.practicing")} />
           </>
         );
+      case "justplaying":
+        return (
+          <>
+            <ControlBtn
+              tooltip={t("play.btn.stop")}
+              Icon={TbPlayerStop}
+              onClick={() => setStatus("ready")}
+            />
+            <ControlHint hint={t("play.btn.hint.justPlaying")} />
+          </>
+        );
       default:
         throw panic("unreachable");
     }
@@ -127,14 +138,16 @@ function PlayerControl() {
       >
         <div className="flex-1 flex items-center gap-3">{leftControls()}</div>
 
-        <button
-          onClick={() => setPopuping("chooser")}
-          className="flex-1 flex-grow-[2] text-center px-2 py-1 rounded text-base
-          hover:bg-th-hover focus-visible:outline-2 focus-visible:outline 
-          focus-visible:outline-th-text focus-visible:outline-offset-2"
-        >
-          {score!.name}
-        </button>
+        {status != "justplaying" && (
+          <button
+            onClick={() => setPopuping("chooser")}
+            className="flex-1 flex-grow-[2] text-center px-2 py-1 rounded text-base
+              hover:bg-th-hover focus-visible:outline-2 focus-visible:outline 
+              focus-visible:outline-th-text focus-visible:outline-offset-2"
+          >
+            {score!.name}
+          </button>
+        )}
 
         <div className="flex-1 flex justify-end gap-3 items-center">
           {rightControls()}

@@ -42,14 +42,18 @@
       "hint": {
         "autoPlaying": "正在自动弹奏",
         "practicing": "正在练习",
+        "justPlaying": "正在自由弹奏",
         "endOfPlay": "弹奏结束"
       }
     },
     "tab": {
       "exampleScores": "样例乐谱",
       "recentlyPlayed": "最近弹奏",
-      "justPlay": "任意弹奏",
-      "fromFile": "加载文件"
+      "justPlay": "自由弹奏",
+      "fromFile": "加载文件",
+      "hint": {
+        "justPlay": "没有乐谱，自由弹奏"
+      }
     },
     "adjust": {
       "volume": "音量",

@@ -13,7 +13,8 @@ type PlayerStatus =
   | "playing"
   | "done"
   | "autoplaying"
-  | "practicing";
+  | "practicing"
+  | "justplaying";
 
 type PlayerPopuping =
   | "none"
@@ -58,46 +59,64 @@ const usePlayerStore = create<PlayerState>()(set => ({
   score: null,
   sheetItems: [],
 
-  reset: () => set((state) => ({
-    status: state.status == "idle" ? "idle" : "ready" 
-  })),
+  reset() {
+    return set(state => ({
+      status: state.status == "idle" ? "idle" : "ready",
+    }));
+  },
 
-  setStatus: (status: PlayerStatus) => set({ status }),
+  setStatus(status: PlayerStatus) {
+    set({ status });
+  },
 
-  setPopuping: (popuping: PlayerPopuping) => set({ popuping }),
+  setPopuping(popuping: PlayerPopuping) {
+    set({ popuping });
+  },
 
-  setInstrument: (instrument: InstrumentKind) => set({
-    status: "ready",
-    popuping: "none",
-    instrument,
-  }),
+  setInstrument(instrument: InstrumentKind) {
+    set(state => ({
+      status: state.status == "justplaying" ? "justplaying" : "ready",
+      popuping: "none",
+      instrument,
+    }));
+  },
 
-  setKeymap: (keymap: KeymapKind, sheetItems: SheetItems) => set({
-    status: "ready",
-    popuping: "none",
-    keymap,
-    sheetItems,
-  }),
+  setKeymap(keymap: KeymapKind, sheetItems: SheetItems) {
+    set(state => ({
+      status: state.status == "justplaying" ? "justplaying" : "ready",
+      popuping: "none",
+      keymap,
+      sheetItems,
+    }));
+  },
 
-  setVolume: (volume: number) => set({ volume }),
+  setVolume(volume: number) {
+    set({ volume });
+  },
 
-  setTempo: (tempo: number) => set({ tempo }),
+  setTempo(tempo: number) {
+    set({ tempo });
+  },
 
-  setTonality: (tonality: TonalityKind, sheetItems: SheetItems) => set({
-    status: "ready",
-    popuping: "none",
-    tonality,
-    sheetItems,
-  }),
+  setTonality(tonality: TonalityKind, sheetItems: SheetItems) {
+    set(state => ({
+      status: state.status == "justplaying" ? "justplaying" : "ready",
+      popuping: "none",
+      tonality,
+      sheetItems,
+    }));
+  },
 
-  setScore: (score: ParsedMusicScore, sheetItems: SheetItems) => set({
-    status: "ready",
-    popuping: "none",
-    score,
-    sheetItems,
-    tempo: score.tempo,
-    tonality: score.tonality,
-  }),
+  setScore(score: ParsedMusicScore, sheetItems: SheetItems) {
+    set({
+      status: "ready",
+      popuping: "none",
+      score,
+      sheetItems,
+      tempo: score.tempo,
+      tonality: score.tonality,
+    });
+  },
 }));
 
 export default usePlayerStore;
