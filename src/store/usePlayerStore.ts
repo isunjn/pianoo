@@ -84,7 +84,6 @@ const usePlayerStore = create<PlayerState>()(set => ({
   setKeymap(keymap: KeymapKind, sheetItems: SheetItems) {
     set(state => ({
       status: state.status == "justplaying" ? "justplaying" : "ready",
-      popuping: "none",
       keymap,
       sheetItems,
     }));

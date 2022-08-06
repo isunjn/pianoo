@@ -19,8 +19,8 @@ function PopupChooser() {
 
   return (
     <div
-      className="absolute z-50 top-10 right-0 w-full h-full overflow-y-scroll
-        px-4 bg-th-hover text-th-text backdrop-blur-lg rounded shadow-lg"
+      className="absolute z-50 top-10 right-0 w-full h-full px-4
+        bg-th-hover text-th-text backdrop-blur-lg rounded shadow-lg"
     >
       <div className="h-[12.5%] flex items-center gap-4">
         <TabBtn
@@ -35,7 +35,7 @@ function PopupChooser() {
         />
       </div>
 
-      <div className="h-[87.5%] overflow-scroll pb-4">
+      <div className="h-[87.5%] overflow-y-auto pb-4">
         {tab == "ExampleScores" && <TabExampleScores />}
         {tab == "JustPlay" && <TabJustPlay />}
       </div>
@@ -50,16 +50,14 @@ interface TabBtnProps {
 }
 
 function TabBtn({ isActive, text, onClick }: TabBtnProps) {
-  const colorCls = isActive ? "bg-th-text text-th-bg" : "bg-th-hover";
-
   return (
-    <div
+    <button
       onClick={onClick}
-      className={`${colorCls} px-4 py-1.5 flex-1 text-center 
-        rounded cursor-pointer`}
+      className={`px-4 py-1.5 flex-1 text-center rounded
+        ${isActive ? "bg-th-text text-th-bg" : "bg-th-hover"}`}
     >
       {text}
-    </div>
+    </button>
   );
 }
 
@@ -119,7 +117,7 @@ function TabJustPlay() {
       <div>{t("play.tab.hint.justPlay")}</div>
       <button
         onClick={handleClick}
-        className="px-4 py-1 rounded bg-th-hover text-th-text text-xl group"
+        className="px-8 py-2 rounded bg-th-hover text-th-text text-xl group"
       >
         <TbArrowRight className="group-hover:translate-x-0.5 transition-transform" />
       </button>
