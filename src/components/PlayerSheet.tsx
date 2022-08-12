@@ -194,12 +194,7 @@ function PlayerSheet() {
     >
       {status == "justplaying" && (
         <div className="h-full flex justify-center items-center">
-          <div
-            className="h-16 w-16 flex justify-center items-center 
-              rounded-full bg-th-hover"
-          >
-            <div className="text-2xl">𝄞</div>
-          </div>
+          <div className="text-3xl">𝄞</div>
         </div>
       )}
       {status != "justplaying" && <Sheet sheetItems={sheetItems} ref={sheet} />}
