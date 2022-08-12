@@ -51,7 +51,13 @@ function Help() {
         <p>{t("help.s3.syntax.barline")}</p>
         <div>
           <p>{t("help.s3.syntax.octave")}</p>
-          <img className="rounded" src="imgs/octave.png" alt="octave syntax" />
+          <img
+            className="rounded"
+            src="imgs/octave.png"
+            alt="octave syntax"
+            width="840"
+            height="175"
+          />
         </div>
         <div>
           <p>{t("help.s3.syntax.length")}</p>
@@ -59,6 +65,8 @@ function Help() {
             className="rounded"
             src="imgs/length.png"
             alt="note length syntax"
+            width="840"
+            height="155"
           />
         </div>
         <div>
@@ -68,6 +76,8 @@ function Help() {
             className="rounded"
             src="imgs/accidental.png"
             alt={t("help.s3.syntax.accitental.alt")}
+            width="840"
+            height="150"
           />
         </div>
         <div>
@@ -76,6 +86,8 @@ function Help() {
             className="rounded"
             src="imgs/examples.png"
             alt={t("help.s3.syntax.examples.alt")}
+            width="840"
+            height="170"
           />
         </div>
         <div>
@@ -85,6 +97,8 @@ function Help() {
             className="rounded"
             src="imgs/chord.png"
             alt={t("help.s3.syntax.chord.alt")}
+            width="840"
+            height="210"
           />
         </div>
         <div>
@@ -96,6 +110,8 @@ function Help() {
             className="rounded"
             src="imgs/tuplet.png"
             alt={t("help.s3.syntax.tuplet.alt")}
+            width="840"
+            height="180"
           />
         </div>
         <div>
@@ -104,6 +120,8 @@ function Help() {
             className="rounded"
             src="imgs/chord-tuplet.png"
             alt={t("help.s3.syntax.chordTuplet.alt")}
+            width="840"
+            height="215"
           />
         </div>
         <p>{t("help.s3.syntax.p2.1")}</p>
