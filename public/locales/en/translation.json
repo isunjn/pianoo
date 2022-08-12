@@ -29,23 +29,20 @@
   "play": {
     "hint": {
       "start": "Click or press space to start",
-      "resume": "Click or press space to resume",
       "restart": "Press space to restart"
     },
     "btn": {
       "autoPlay": "Auto Play",
       "practiceMode": "Practice Mode",
-      "pause": "Pause",
       "stop": "Stop",
       "restart": "Restart",
       "adjust": "Adjust",
       "settings": "Settings",
-      "zenMode": "Zen Mode",
+      "focusMode": "Focus Mode",
       "hint": {
-        "playing": "Playing",
-        "paused": "Paused",
         "autoPlaying": "Auto Playing",
         "practicing": "Practicing",
+        "justPlaying": "Just Playing",
         "endOfPlay": "End of Play"
       }
     },
@@ -53,7 +50,10 @@
       "exampleScores": "Example Scores",
       "recentlyPlayed": "Recently Played",
       "justPlay": "Just Play",
-      "fromFile": "From File"
+      "fromFile": "From File",
+      "hint": {
+        "justPlay": "No music score, just play"
+      }
     },
     "adjust": {
       "volume": "Volume",

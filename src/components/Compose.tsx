@@ -4,7 +4,9 @@ import { useTranslation } from "react-i18next";
 import { TbLink } from "react-icons/tb";
 import tonalities, { TonalityKind } from "~/core/tonality";
 import parse, { type MusicScore, type SyntaxErr } from "~/core/parser";
-import { usePlayerDispatch } from "~/contexts/PlayerContext";
+import usePlayerStore from "~/store/usePlayerStore";
+import pianoo from "~/core/pianoo";
+import panic from "~/utils/panic";
 import {
   K_COMPOSE_ERRORS,
   K_COMPOSE_NAME,
@@ -14,8 +16,6 @@ import {
   K_COMPOSE_TEMPO,
   K_COMPOSE_CONTENT,
 } from "~/constants/storage-keys";
-import pianoo from "~/core/pianoo";
-import panic from "~/utils/panic";
 
 interface ComposeFormElements extends HTMLFormControlsCollection {
   scoreName: HTMLInputElement;
@@ -32,7 +32,7 @@ function retrievalLocal(key: string, defaultValue: string) {
 }
 
 function Compose() {
-  const dispatch = usePlayerDispatch();
+  const setScore = usePlayerStore(state => state.setScore);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -86,7 +86,7 @@ function Compose() {
     } else {
       localStorage.removeItem(K_COMPOSE_ERRORS);
       const sheetItems = pianoo.prepare(parsedScore!);
-      dispatch({ type: "set_score", score: parsedScore!, sheetItems });
+      setScore(parsedScore!, sheetItems);
       navigate("/");
     }
   }

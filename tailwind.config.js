@@ -18,7 +18,10 @@ module.exports = {
       spacing: {
         "50": "12.5rem",
         "70": "17.5rem",
-      }
+      },
+      gridTemplateColumns: {
+        "30": "repeat(30, minmax(0, 1fr))",
+      },
     },
   },
   plugins: [],

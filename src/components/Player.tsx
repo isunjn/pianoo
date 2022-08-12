@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import detectIsMobile from "is-mobile";
 import PlayerControl from "~/components/PlayerControl";
 import PlayerSheet from "~/components/PlayerSheet";
 import PlayerScoreMeta from "~/components/PlayerScoreMeta";
@@ -9,44 +10,34 @@ import Loading from "~/components/Loading";
 import Error from "~/components/Error";
 import { usePianooStatus } from "~/components/App";
 import pianoo from "~/core/pianoo";
-import parse, { type MusicScore } from "~/core/parser";
-import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
+import parse from "~/core/parser";
+import { useExampleScore } from "~/hooks/useExampleScore";
+import usePlayerStore from "~/store/usePlayerStore";
 import { K_SCORE_ID } from "~/constants/storage-keys";
 import panic from "~/utils/panic";
-import detectIsMobile from "~/utils/detectIsMobile";
 
-const isMobile = detectIsMobile();
+const isMobile = detectIsMobile({ tablet: true });
+const initialScoreIdStr = localStorage.getItem(K_SCORE_ID);
+const initialScoreId = initialScoreIdStr ? parseInt(initialScoreIdStr) : 1;
 
 function Player() {
   const pianooStatus = usePianooStatus();
-  const { status } = usePlayer();
-  const dispatch = usePlayerDispatch();
+  const status = usePlayerStore(state => state.status);
+  const setScore = usePlayerStore(state => state.setScore);
+  const resetPlayer = usePlayerStore(state => state.reset);
   const { t } = useTranslation();
-  const [error, setError] = useState(false);
+  const { score: initialScore, isError } = useExampleScore(initialScoreId);
 
   useEffect(() => {
-    if (status != "idle") return;
-    /* backend not built yet, use static files in public/examples temporarily */
-    let ignore = false;
-    const id = localStorage.getItem(K_SCORE_ID) ?? "1";
-    fetch(`/examples/${id.padStart(3, "0")}.json`)
-      .then(r => r.json() as Promise<MusicScore>)
-      .then(score => {
-        if (ignore) return;
-        const [parsedScore, syntaxErrors] = parse(score);
-        if (syntaxErrors) panic("syntax error occurred");
-        const sheetItems = pianoo.prepare(parsedScore!);
-        dispatch({ type: "set_score", score: parsedScore!, sheetItems });
-      })
-      .catch(() => setError(true));
-    return () => {
-      ignore = true;
-    };
-  }, [status, dispatch]);
+    if (status == "idle" && initialScore) {
+      const [parsedScore, syntaxErrors] = parse(initialScore);
+      if (syntaxErrors) panic("syntax error occurred");
+      const sheetItems = pianoo.prepare(parsedScore!);
+      setScore(parsedScore!, sheetItems);
+    }
+  }, [status, initialScore, setScore]);
 
-  useEffect(() => {
-    return () => dispatch({ type: "unmount" });
-  }, [dispatch]);
+  useEffect(() => resetPlayer, [resetPlayer]);
 
   if (isMobile) {
     return (
@@ -58,15 +49,11 @@ function Player() {
     );
   }
 
-  if (pianooStatus == "error" || error) {
+  if (pianooStatus == "error" || isError) {
     return <Error msg={t("error.crash")} />;
   }
 
-  if (
-    pianooStatus == "idle" ||
-    status == "idle" ||
-    status == "loadingInstrument"
-  ) {
+  if (pianooStatus == "idle" || status == "idle" || status == "loading") {
     return <Loading />;
   }
 

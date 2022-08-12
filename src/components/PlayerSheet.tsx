@@ -2,14 +2,15 @@ import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { HiCursorClick } from "react-icons/hi";
 import pianoo from "~/core/pianoo";
-import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
 import Sheet, { type SheetImperativeHandleAPI } from "~/components/Sheet";
+import usePlayerStore from "~/store/usePlayerStore";
 import type { SheetItem } from "~/core/pianoo";
 import panic from "~/utils/panic";
 
 function PlayerSheet() {
-  const { status, sheetItems } = usePlayer();
-  const dispatch = usePlayerDispatch();
+  const status = usePlayerStore(state => state.status);
+  const sheetItems = usePlayerStore(state => state.sheetItems);
+  const setStatus = usePlayerStore(state => state.setStatus);
 
   const sheetContainer = useRef<HTMLDivElement>(null);
   const sheet = useRef<SheetImperativeHandleAPI>(null);
@@ -18,13 +19,13 @@ function PlayerSheet() {
 
   // ready to play, chick or press space to start
   useEffect(() => {
-    if (!(status == "ready" || status == "paused")) return;
+    if (status != "ready") return;
     const _sheetContainer = sheetContainer.current!;
     async function startToPlay() {
       _sheetContainer.removeEventListener("click", startToPlay);
       document.removeEventListener("keydown", keydownHandler);
       await pianoo.start();
-      dispatch({ type: "play" });
+      setStatus("playing");
     }
     function keydownHandler(e: KeyboardEvent) {
       if (e.key == " ") {
@@ -39,7 +40,7 @@ function PlayerSheet() {
       _sheetContainer.removeEventListener("click", startToPlay);
       document.removeEventListener("keydown", keydownHandler);
     };
-  }, [status, dispatch]);
+  }, [status, setStatus]);
 
   // if play is done, user can press space to restart
   useEffect(() => {
@@ -47,13 +48,13 @@ function PlayerSheet() {
     function keydownHandler(e: KeyboardEvent) {
       if (e.key == " ") {
         e.preventDefault();
-        dispatch({ type: "reset" });
+        setStatus("ready");
         document.removeEventListener("keydown", keydownHandler);
       }
     }
     document.addEventListener("keydown", keydownHandler);
     return () => document.removeEventListener("keydown", keydownHandler);
-  }, [status, dispatch]);
+  }, [status, setStatus]);
 
   // clear sheet when ready/reset/restart
   useEffect(() => {
@@ -111,7 +112,7 @@ function PlayerSheet() {
       }
       sheet.current!.move(correct, idx.current, nextIdx);
       if (nextIdx == seq.length) {
-        dispatch({ type: "done" });
+        setStatus("done");
       } else {
         idx.current = nextIdx;
         pressing.current = {};
@@ -125,7 +126,7 @@ function PlayerSheet() {
       document.removeEventListener("keyup", trackKeyup, { capture: true });
       document.removeEventListener("keydown", keydownHandler);
     };
-  }, [status, dispatch]);
+  }, [status, setStatus]);
 
   // auto play mode
   useEffect(() => {
@@ -162,7 +163,7 @@ function PlayerSheet() {
           }
           if (++idx.current == seq.length) {
             // done
-            dispatch({ type: "reset" });
+            setStatus("ready");
           } else {
             timeoutId = play(seq[idx.current], item.quarter * msPerQuarter);
           }
@@ -171,11 +172,11 @@ function PlayerSheet() {
     }
     autoPlay();
     return () => clearTimeout(timeoutId);
-  }, [status, dispatch]);
+  }, [status, setStatus]);
 
-  // practice mode, just play music note, do not move sheet
+  // practice mode and just-play mode, just play music note, do not move sheet
   useEffect(() => {
-    if (status != "practicing") return;
+    if (!(status == "practicing" || status == "justplaying")) return;
     function keydownHandler(e: KeyboardEvent) {
       if (e.repeat) return;
       const note = pianoo.getNote(e.key);
@@ -191,17 +192,20 @@ function PlayerSheet() {
       className="w-full h-50 font-mono text-xl scrollbar-hidden group"
       ref={sheetContainer}
     >
-      <Sheet sheetItems={sheetItems} ref={sheet} />
-      <SheetMask />
+      {status == "justplaying" && (
+        <div className="h-full flex justify-center items-center">
+          <div className="text-3xl">𝄞</div>
+        </div>
+      )}
+      {status != "justplaying" && <Sheet sheetItems={sheetItems} ref={sheet} />}
+      {status == "ready" && <SheetMask />}
     </div>
   );
 }
 
 function SheetMask() {
-  const { status } = usePlayer();
   const { t } = useTranslation();
 
-  if (!(status == "ready" || status == "paused")) return null;
   return (
     <div
       className="absolute top-10 left-0 w-full h-70 pointer-events-none
@@ -211,7 +215,7 @@ function SheetMask() {
         className="flex items-center gap-4 group-hover:scale-105
         transition-transform"
       >
-        {status == "ready" ? t("play.hint.start") : t("play.hint.resume")}
+        {t("play.hint.start")}
         <HiCursorClick className="group-hover:animate-pulse" />
       </div>
     </div>

@@ -13,12 +13,14 @@ import {
   RiRecordCircleLine,
 } from "react-icons/ri";
 import type { IconType } from "react-icons";
-import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
+import usePlayerStore from "~/store/usePlayerStore";
 import panic from "~/utils/panic";
 
 function PlayerControl() {
-  const { status, score } = usePlayer();
-  const dispatch = usePlayerDispatch();
+  const status = usePlayerStore(state => state.status);
+  const score = usePlayerStore(state => state.score);
+  const setStatus = usePlayerStore(state => state.setStatus);
+  const setPopuping = usePlayerStore(state => state.setPopuping);
   const { t } = useTranslation();
 
   const leftControls = () => {
@@ -29,12 +31,12 @@ function PlayerControl() {
             <ControlBtn
               tooltip={t("play.btn.autoPlay")}
               Icon={TbVinyl}
-              onClick={() => dispatch({ type: "auto_play" })}
+              onClick={() => setStatus("autoplaying")}
             />
             <ControlBtn
               tooltip={t("play.btn.practiceMode")}
               Icon={RiMusicLine}
-              onClick={() => dispatch({ type: "practice" })}
+              onClick={() => setStatus("practicing")}
             />
           </>
         );
@@ -42,27 +44,15 @@ function PlayerControl() {
         return (
           <>
             <ControlBtn
-              tooltip={t("play.btn.restart")}
-              Icon={TbRotate}
-              onClick={() => dispatch({ type: "reset" })}
+              tooltip={t("play.btn.autoPlay")}
+              Icon={TbVinyl}
+              onClick={() => setStatus("autoplaying")}
             />
-            <ControlBtn
-              tooltip={t("play.btn.pause")}
-              Icon={TbPlayerPause}
-              onClick={() => dispatch({ type: "pause" })}
-            />
-            <ControlHint hint={t("play.btn.hint.playing")} />
-          </>
-        );
-      case "paused":
-        return (
-          <>
             <ControlBtn
               tooltip={t("play.btn.restart")}
               Icon={TbRotate}
-              onClick={() => dispatch({ type: "reset" })}
+              onClick={() => setStatus("ready")}
             />
-            <ControlHint hint={t("play.btn.hint.paused")} />
           </>
         );
       case "done":
@@ -71,7 +61,7 @@ function PlayerControl() {
             <ControlBtn
               tooltip={t("play.btn.restart")}
               Icon={TbRotate}
-              onClick={() => dispatch({ type: "reset" })}
+              onClick={() => setStatus("ready")}
             />
             <ControlHint hint={t("play.btn.hint.endOfPlay")} />
           </>
@@ -82,7 +72,7 @@ function PlayerControl() {
             <ControlBtn
               tooltip={t("play.btn.stop")}
               Icon={TbPlayerStop}
-              onClick={() => dispatch({ type: "reset" })}
+              onClick={() => setStatus("ready")}
             />
             <ControlHint hint={t("play.btn.hint.autoPlaying")} />
           </>
@@ -93,9 +83,20 @@ function PlayerControl() {
             <ControlBtn
               tooltip={t("play.btn.stop")}
               Icon={TbPlayerStop}
-              onClick={() => dispatch({ type: "reset" })}
+              onClick={() => setStatus("ready")}
             />
             <ControlHint hint={t("play.btn.hint.practicing")} />
+          </>
+        );
+      case "justplaying":
+        return (
+          <>
+            <ControlBtn
+              tooltip={t("play.btn.stop")}
+              Icon={TbPlayerStop}
+              onClick={() => setStatus("ready")}
+            />
+            <ControlHint hint={t("play.btn.hint.justPlaying")} />
           </>
         );
       default:
@@ -109,21 +110,21 @@ function PlayerControl() {
         <ControlBtn
           tooltip={t("play.btn.adjust")}
           Icon={TbAdjustments}
-          onClick={() => dispatch({ type: "open_adjustments" })}
+          onClick={() => setPopuping("adjustments")}
         />
         {/* <ControlBtn
         tooltip="Record"
         Icon={RiRecordCircleLine}
-        onClick={() => dispatch({ type: "open_recorder" })} /> */}
+        onClick={() => setPopuping("record")} /> */}
         <ControlBtn
           tooltip={t("play.btn.settings")}
           Icon={RiSettings3Line}
-          onClick={() => dispatch({ type: "open_settings" })}
+          onClick={() => setPopuping("settings")}
         />
         <ControlBtn
-          tooltip={t("play.btn.zenMode")}
+          tooltip={t("play.btn.focusMode")}
           Icon={TbMaximize}
-          onClick={toggleZenMode}
+          onClick={toggleFocusMode}
         />
       </>
     );
@@ -137,14 +138,16 @@ function PlayerControl() {
       >
         <div className="flex-1 flex items-center gap-3">{leftControls()}</div>
 
-        <button
-          onClick={() => dispatch({ type: "open_chooser" })}
-          className="flex-1 flex-grow-[2] text-center px-2 py-1 rounded text-base
-          hover:bg-th-hover focus-visible:outline-2 focus-visible:outline 
-          focus-visible:outline-th-text focus-visible:outline-offset-2"
-        >
-          {score!.name}
-        </button>
+        {status != "justplaying" && (
+          <button
+            onClick={() => setPopuping("chooser")}
+            className="flex-1 flex-grow-[2] text-center px-2 py-1 rounded text-base
+              hover:bg-th-hover focus-visible:outline-2 focus-visible:outline 
+              focus-visible:outline-th-text focus-visible:outline-offset-2"
+          >
+            {score!.name}
+          </button>
+        )}
 
         <div className="flex-1 flex justify-end gap-3 items-center">
           {rightControls()}
@@ -193,7 +196,7 @@ function ControlHint({ hint }: { hint: string }) {
   return <div className="text-base leading-none text-th-hint">{hint}</div>;
 }
 
-function toggleZenMode() {
+function toggleFocusMode() {
   if (document.body.classList.contains("zen-mode")) {
     if (document.fullscreenElement) document.exitFullscreen();
     document.body.classList.remove("zen-mode");

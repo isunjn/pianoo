@@ -1,49 +1,93 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
+import { TbArrowRight } from "react-icons/tb";
+import usePlayerStore from "~/store/usePlayerStore";
 import Loading from "~/components/Loading";
 import Error from "~/components/Error";
 import parse, { type MusicScore } from "~/core/parser";
 import pianoo from "~/core/pianoo";
-import useExampleScores from "~/hooks/useExampleScores";
+import { useExampleScores } from "~/hooks/useExampleScore";
 import range from "~/utils/range";
 import panic from "~/utils/panic";
 
 function PopupChooser() {
-  const { score } = usePlayer();
-  const dispatch = usePlayerDispatch();
   const { t } = useTranslation();
-  const { exampleScores, isLoading, isError } = useExampleScores(range(1, 20));
+  const status = usePlayerStore(state => state.status);
+  const [tab, setTab] = useState<"ExampleScores" | "JustPlay">(
+    status == "justplaying" ? "JustPlay" : "ExampleScores"
+  );
 
-  function setScore(newScore: MusicScore) {
-    if (newScore.id != score!.id) {
+  return (
+    <div
+      className="absolute z-50 top-10 right-0 w-full h-full px-4
+        bg-th-hover text-th-text backdrop-blur-lg rounded shadow-lg"
+    >
+      <div className="h-[12.5%] flex items-center gap-4">
+        <TabBtn
+          isActive={tab == "ExampleScores"}
+          text={t("play.tab.exampleScores")}
+          onClick={() => setTab("ExampleScores")}
+        />
+        <TabBtn
+          isActive={tab == "JustPlay"}
+          text={t("play.tab.justPlay")}
+          onClick={() => setTab("JustPlay")}
+        />
+      </div>
+
+      <div className="h-[87.5%] overflow-y-auto pb-4">
+        {tab == "ExampleScores" && <TabExampleScores />}
+        {tab == "JustPlay" && <TabJustPlay />}
+      </div>
+    </div>
+  );
+}
+
+interface TabBtnProps {
+  isActive: boolean;
+  text: string;
+  onClick: () => void;
+}
+
+function TabBtn({ isActive, text, onClick }: TabBtnProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-4 py-1.5 flex-1 text-center rounded
+        ${isActive ? "bg-th-text text-th-bg" : "bg-th-hover"}`}
+    >
+      {text}
+    </button>
+  );
+}
+
+function TabExampleScores() {
+  const { scores, isLoading, isError } = useExampleScores(range(1, 20));
+  const currentScore = usePlayerStore(state => state.score);
+  const setScore = usePlayerStore(state => state.setScore);
+  const { t } = useTranslation();
+
+  function handleSetScore(newScore: MusicScore) {
+    if (newScore.id != currentScore!.id) {
       const [newParsedScore, syntaxErrors] = parse(newScore);
       if (syntaxErrors) panic("syntax error occurred");
       const sheetItems = pianoo.prepare(newParsedScore!);
-      dispatch({ type: "set_score", score: newParsedScore!, sheetItems });
+      setScore(newParsedScore!, sheetItems);
     }
   }
 
   return (
-    <div
-      className="absolute z-50 top-10 right-0 w-full h-full p-4 overflow-y-scroll
-      bg-th-hover text-th-text backdrop-blur-lg rounded shadow-lg"
-    >
-      {/* <div className="flex gap-4 mb-4">
-        <div className="px-4 py-1.5 bg-th-text text-th-bg flex-1 text-center rounded">{t("play.tab.exampleScores")}</div>
-        <div className="px-4 py-1.5 bg-th-hover flex-1 text-center rounded">{t("play.tab.recentlyPlayed")}</div>
-        <div className="px-4 py-1.5 bg-th-hover flex-1 text-center rounded">{t("play.tab.justPlay")}</div>
-        <div className="px-4 py-1.5 bg-th-hover flex-1 text-center rounded">{t("play.tab.fromFile")}</div>
-      </div> */}
+    <>
       {isLoading ? (
         <Loading />
       ) : isError ? (
         <Error msg={t("error.crash")} />
       ) : (
-        exampleScores!.map(score => (
+        scores!.map(score => (
           <div
             key={score.id}
             className="px-4 py-1.5 hover:bg-th-hover rounded cursor-pointer flex"
-            onClick={() => setScore(score)}
+            onClick={() => handleSetScore(score)}
           >
             <span className="flex-[5]">{score.name}</span>
             <span className="flex-1">{score.tonality}</span>
@@ -54,6 +98,29 @@ function PopupChooser() {
           </div>
         ))
       )}
+    </>
+  );
+}
+
+function TabJustPlay() {
+  const { t } = useTranslation();
+  const setStatus = usePlayerStore(state => state.setStatus);
+  const setPopuping = usePlayerStore(state => state.setPopuping);
+
+  function handleClick() {
+    setStatus("justplaying");
+    setPopuping("none");
+  }
+
+  return (
+    <div className="h-full flex flex-col items-center justify-center gap-4">
+      <div>{t("play.tab.hint.justPlay")}</div>
+      <button
+        onClick={handleClick}
+        className="px-8 py-2 rounded bg-th-hover text-th-text text-xl group"
+      >
+        <TbArrowRight className="group-hover:translate-x-0.5 transition-transform" />
+      </button>
     </div>
   );
 }

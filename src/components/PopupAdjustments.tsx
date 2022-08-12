@@ -1,30 +1,36 @@
 import { useTranslation } from "react-i18next";
-import { usePlayer, usePlayerDispatch } from "~/contexts/PlayerContext";
+import usePlayerStore from "~/store/usePlayerStore";
 import pianoo from "~/core/pianoo";
 import tonalities from "~/core/tonality";
 import type { TonalityKind } from "~/core/tonality";
 
 function PopupAdjustments() {
-  const { volume, tempo, tonality } = usePlayer();
-  const dispatch = usePlayerDispatch();
+  const status = usePlayerStore(state => state.status);
+  const volume = usePlayerStore(state => state.volume);
+  const setVolume = usePlayerStore(state => state.setVolume);
+  const tempo = usePlayerStore(state => state.tempo);
+  const setTempo = usePlayerStore(state => state.setTempo);
+  const tonality = usePlayerStore(state => state.tonality);
+  const setTonality = usePlayerStore(state => state.setTonality);
+
   const { t } = useTranslation();
 
   function handleVolumeChange(e: React.ChangeEvent<HTMLInputElement>) {
     const volume = parseInt(e.target.value);
     pianoo.setVolume(volume);
-    dispatch({ type: "set_volume", volume });
+    setVolume(volume);
   }
 
   function handleTempoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const tempo = parseInt(e.target.value);
     pianoo.setTempo(tempo);
-    dispatch({ type: "set_tempo", tempo });
+    setTempo(tempo);
   }
 
   function handleTonalityChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const tonality = e.target.value as TonalityKind;
     const sheetItems = pianoo.transpose(tonality);
-    dispatch({ type: "set_tonality", tonality, sheetItems });
+    setTonality(tonality, sheetItems);
   }
 
   // TODO: use custom component
@@ -51,23 +57,25 @@ function PopupAdjustments() {
         />
       </div>
 
-      <div>
-        <label
-          htmlFor="tempo"
-          className="w-full flex items-center justify-between"
-        >
-          {t("play.adjust.tempo")}: <div>{tempo} BPM</div>
-        </label>
-        <input
-          type="range"
-          id="tempo"
-          min="40"
-          max="220"
-          className="w-full"
-          value={tempo}
-          onChange={handleTempoChange}
-        />
-      </div>
+      {status != "justplaying" && (
+        <div>
+          <label
+            htmlFor="tempo"
+            className="w-full flex items-center justify-between"
+          >
+            {t("play.adjust.tempo")}: <div>{tempo} BPM</div>
+          </label>
+          <input
+            type="range"
+            id="tempo"
+            min="40"
+            max="220"
+            className="w-full"
+            value={tempo}
+            onChange={handleTempoChange}
+          />
+        </div>
+      )}
 
       <div>
         <label
@@ -79,7 +87,7 @@ function PopupAdjustments() {
             id="tonality"
             value={tonality}
             onChange={handleTonalityChange}
-            className="bg-th-hover rounded px-4 py-1.5"
+            className="bg-th-hover rounded px-4 py-1.5 outline-none"
           >
             {tonalities.kinds().map(kind => (
               <option key={kind} value={kind}>

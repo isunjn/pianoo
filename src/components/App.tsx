@@ -4,7 +4,6 @@ import Header from "~/components/Header";
 import Footer from "~/components/Footer";
 import Loading from "~/components/Loading";
 import pianoo from "~/core/pianoo";
-import { PlayerProvider } from "~/contexts/PlayerContext";
 
 type PianooStatus = "idle" | "ready" | "error";
 
@@ -30,9 +29,7 @@ function App() {
       >
         <Header />
         <main className="w-full">
-          <PlayerProvider>
-            <Outlet context={pianooStatus} />
-          </PlayerProvider>
+          <Outlet context={pianooStatus} />
         </main>
         <Footer />
       </div>
