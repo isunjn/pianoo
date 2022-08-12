@@ -100,7 +100,6 @@ const usePlayerStore = create<PlayerState>()(set => ({
   setTonality(tonality: TonalityKind, sheetItems: SheetItems) {
     set(state => ({
       status: state.status == "justplaying" ? "justplaying" : "ready",
-      popuping: "none",
       tonality,
       sheetItems,
     }));

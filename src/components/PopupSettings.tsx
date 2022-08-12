@@ -1,10 +1,17 @@
-import React, { useState } from "react";
-import { TbCircleCheck, TbCircle } from "react-icons/tb";
+import { useState } from "react";
+import {
+  TbCircleCheck,
+  TbCircle,
+  TbArrowBigUpLine,
+  TbArrowBigDownLine,
+} from "react-icons/tb";
 import { useTranslation } from "react-i18next";
 import usePlayerStore from "~/store/usePlayerStore";
+import KeymapView from "~/components/KeymapView";
 import pianoo from "~/core/pianoo";
+import tonalities, { type TonalityKind } from "~/core/tonality";
 import type { KeymapKind } from "~/config/keymap";
-import { InstrumentKind } from "~/config/instrument";
+import type { InstrumentKind } from "~/config/instrument";
 
 function PopupSettings() {
   const { t } = useTranslation();
@@ -66,8 +73,7 @@ function SelectBtn({ selected, text, onClick }: SelectBtnProps) {
     <button
       onClick={onClick}
       className={`flex-1 flex justify-center items-center gap-4 px-4 py-1
-        rounded border-2 bg-th-hover ${selected ? "border-th-text" :
-        "border-th-hover group"}`}
+        rounded bg-th-hover group`}
     >
       {selected ? (
         <TbCircleCheck className="text-xl" />
@@ -83,6 +89,9 @@ function TabKeymap() {
   const { t } = useTranslation();
   const keymap = usePlayerStore(state => state.keymap);
   const setKeymap = usePlayerStore(state => state.setKeymap);
+  const tonality = usePlayerStore(state => state.tonality);
+  const setTonality = usePlayerStore(state => state.setTonality);
+  const [shift, setShift] = useState(false);
 
   function changeKeymap(newKeymap: KeymapKind) {
     if (newKeymap != keymap) {
@@ -91,29 +100,56 @@ function TabKeymap() {
     }
   }
 
-  return (<>
-    <div className="flex justify-between py-4">
-      <div className="flex gap-4">
-        <SelectBtn
-          selected={keymap == "standard"}
-          text={t("play.keymap.standard")}
-          onClick={() => changeKeymap("standard")}
-        />
-        <SelectBtn
-          selected={keymap == "virtualpiano"}
-          text="Virtual Piano"
-          onClick={() => changeKeymap("virtualpiano")}
-        />
+  function changeTonality(newTonality: TonalityKind) {
+    if (newTonality != tonality) {
+      const sheetItems = pianoo.transpose(newTonality);
+      setTonality(newTonality, sheetItems);
+    }
+  }
+
+  return (
+    <>
+      <div className="flex justify-between pt-12 pb-6">
+        <div className="flex gap-4">
+          <SelectBtn
+            selected={keymap == "standard"}
+            text={t("play.keymap.standard")}
+            onClick={() => changeKeymap("standard")}
+          />
+          <SelectBtn
+            selected={keymap == "virtualpiano"}
+            text="Virtual Piano"
+            onClick={() => changeKeymap("virtualpiano")}
+          />
+        </div>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setShift(!shift)}
+            aria-label="Shift"
+            className="rounded bg-th-hover px-4 py-1.5 group"
+          >
+            {shift && <TbArrowBigDownLine className="text-xl" />}
+            {!shift && <TbArrowBigUpLine className="text-xl" />}
+          </button>
+          <select
+            id="tonality"
+            value={tonality}
+            onChange={e => changeTonality(e.target.value as TonalityKind)}
+            className="bg-th-hover rounded px-4 py-1.5 outline-none"
+          >
+            {tonalities.kinds().map(kind => (
+              <option key={kind} value={kind}>
+                {kind}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
       <div>
-        {/* TODO */}
-        tonality
+        <KeymapView shift={shift} />
       </div>
-    </div>
-    <div>
-      {/* TODO */}
-    </div>
-  </>);
+    </>
+  );
 }
 
 function TabInstrument() {

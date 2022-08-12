@@ -87,7 +87,7 @@ function PopupAdjustments() {
             id="tonality"
             value={tonality}
             onChange={handleTonalityChange}
-            className="bg-th-hover rounded px-4 py-1.5"
+            className="bg-th-hover rounded px-4 py-1.5 outline-none"
           >
             {tonalities.kinds().map(kind => (
               <option key={kind} value={kind}>
