@@ -49,7 +49,7 @@ function Footer() {
           focus-visible:outline-th-text focus-visible:outline-offset-2"
         >
           <TbGitMerge className="text-base" />
-          v0.1.0
+          v0.2.1
         </Link>
       </div>
     </footer>

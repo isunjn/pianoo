@@ -91,7 +91,8 @@
       "nameEmpty": "Score name can't be empty",
       "timesignEmpty": "Time signature can't be empty",
       "tempoEmpty": "Tempo can't be empty",
-      "contentEmpty": "Content can't be empty"
+      "contentEmpty": "Content can't be empty",
+      "noNoteOrChord": "Need at least one note or chord"
     }
   },
   "help": {

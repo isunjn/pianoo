@@ -80,6 +80,10 @@ function Compose() {
       syntaxErrors.map(syntaxErrToMsg).forEach(err => errors.push(err));
     }
 
+    if (parsedScore!.parsed.flat().every(item => item.kind == "rest")) {
+      errors.push(t("compose.error.noNoteOrChord"));
+    }
+
     if (errors.length > 0) {
       localStorage.setItem(K_COMPOSE_ERRORS, JSON.stringify(errors));
       setErrors(errors);
