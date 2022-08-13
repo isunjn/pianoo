@@ -91,7 +91,8 @@
       "nameEmpty": "乐谱名不能为空",
       "timesignEmpty": "节拍不能为空",
       "tempoEmpty": "速度不能为空",
-      "contentEmpty": "内容不能为空"
+      "contentEmpty": "内容不能为空",
+      "noNoteOrChord": "至少需要一个音符或和弦"
     }
   },
   "help": {
