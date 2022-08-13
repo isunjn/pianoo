@@ -61,7 +61,12 @@ const usePlayerStore = create<PlayerState>()(set => ({
 
   reset() {
     return set(state => ({
-      status: state.status == "idle" ? "idle" : "ready",
+      status:
+        state.status == "idle"
+          ? "idle"
+          : state.status == "loading"
+          ? "loading"
+          : "ready",
     }));
   },
 
