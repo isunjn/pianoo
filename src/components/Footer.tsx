@@ -31,7 +31,7 @@ function Footer() {
           Icon={TbBrandGithub}
         />
         <FooterLink
-          href="mailto:isunjn@gmail.com"
+          href="mailto:pianoo@duck.com"
           name={t("footer.contact")}
           Icon={TbMail}
         />
