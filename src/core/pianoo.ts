@@ -1,11 +1,11 @@
 type Tone = typeof import("tone");
 type Sampler = import("tone").Sampler;
-import { getKeymapKeys, type KeymapKind } from "~/config/keymap";
+import { type KeymapKind } from "~/config/keymap";
 import { getInstrumentUrls, type InstrumentKind } from "~/config/instrument";
 import Keymap from "~/core/keymap";
 import panic from "~/utils/panic";
-import type { TonalityKind } from "~/core/tonality";
-import type { ParsedMusicScore } from "~/core/parser";
+import { type TonalityKind } from "~/core/tonality";
+import { type ParsedMusicScore } from "~/core/parser";
 import {
   K_SCORE_ID,
   K_INSTRUMENT,
@@ -34,91 +34,73 @@ interface SheetItemRest {
   quarter: number;
 }
 
+let Tone: Tone | null = null; // the Tone.js module instance, dynamically imported
+
 class Pianoo {
-  private tone: Tone | null;
-  private inited: Promise<void> | null;
+  private score: ParsedMusicScore | null;
   private instrument: Sampler | null;
   private keymap: Keymap;
-  private score: ParsedMusicScore | null;
   private tempo: number;
   private sheetItems: SheetItems;
   private sequence: SheetItem[];
 
   constructor() {
-    const keymapKeys = getKeymapKeys(
-      (localStorage.getItem(K_KEYMAP) ?? "standard") as KeymapKind
-    );
-
-    this.tone = null;
-    this.inited = null;
-    this.instrument = null;
-    this.keymap = new Keymap(keymapKeys);
     this.score = null;
+    this.instrument = null;
+    this.keymap = Keymap.getInstance();
     this.tempo = 100;
     this.sheetItems = [];
     this.sequence = [];
   }
 
-  public init() {
-    if (this.inited != null) return this.inited;
-    const instrument =
-      (localStorage.getItem(K_INSTRUMENT) as InstrumentKind | null) ??
-      "piano-acoustic";
-    this.inited = import("tone")
-      .then(mod => (this.tone = mod))
-      .then(() => this.setInstrument(instrument));
-    return this.inited;
+  public async init() {
+    Tone = await import("tone");
+    this.setInstrument(
+      (localStorage.getItem(K_INSTRUMENT) ?? "piano-acoustic") as InstrumentKind
+    );
   }
 
   public async start() {
-    await this.tone!.start();
-    await this.tone!.loaded();
+    await Tone!.start();
+    await Tone!.loaded();
   }
 
-  public prepare(score: ParsedMusicScore) {
+  public prepare(score: ParsedMusicScore): SheetItems {
     if (score.id != 0) {
       localStorage.setItem(K_SCORE_ID, score.id.toString());
     }
     this.score = score;
-    this.keymap.transpose(score.tonality);
     this.tempo = score.tempo;
+    this.keymap.transpose(score.tonality);
     this.maintain();
     return this.sheetItems;
   }
 
-  public getNote(key: string) {
+  public getNote(key: string): string | undefined {
     return this.keymap.getNote(key);
   }
 
   public playNote(note: string | string[]) {
-    this.instrument!.triggerAttackRelease(
-      note,
-      0.75,
-      this.tone!.context.currentTime
-    );
+    this.instrument!.triggerAttackRelease(note, 0.75);
   }
 
-  public getSequence() {
+  public getSequence(): SheetItem[] {
     return this.sequence;
   }
 
-  public getTempo() {
+  public getTempo(): number {
     return this.tempo;
   }
 
-  public setInstrument(instrumentKind: InstrumentKind) {
-    localStorage.setItem(K_INSTRUMENT, instrumentKind);
-
+  public async setInstrument(instrumentKind: InstrumentKind) {
     return new Promise<void>(resolve => {
-      const instrument = new this.tone!.Sampler({
+      const instrument = new Tone!.Sampler({
         urls: getInstrumentUrls(instrumentKind),
         baseUrl: "samples/",
         onload: () => {
           this.instrument = instrument;
-          const volume = localStorage.getItem(K_VOLUME)
-            ? parseInt(localStorage.getItem(K_VOLUME)!)
-            : 50;
-          this.setVolume(volume);
+          localStorage.setItem(K_INSTRUMENT, instrumentKind);
+          this.setVolume(parseInt(localStorage.getItem(K_VOLUME) ?? "50"));
           resolve();
         },
       }).toDestination();
@@ -127,7 +109,7 @@ class Pianoo {
 
   public setKeymap(keymapKind: KeymapKind): SheetItems {
     localStorage.setItem(K_KEYMAP, keymapKind);
-    this.keymap = new Keymap(getKeymapKeys(keymapKind));
+    this.keymap = Keymap.getInstance(keymapKind);
     this.keymap.transpose(this.score!.tonality);
     this.maintain();
     return this.sheetItems;

@@ -156,12 +156,11 @@ function TabInstrument() {
   const setInstrument = usePlayerStore(state => state.setInstrument);
   const setStatus = usePlayerStore(state => state.setStatus);
 
-  function changeInstrumentTo(newInstrument: InstrumentKind) {
+  async function changeInstrumentTo(newInstrument: InstrumentKind) {
     if (newInstrument == instrument) return;
     setStatus("loading");
-    pianoo.setInstrument(newInstrument).then(() => {
-      setInstrument(newInstrument);
-    });
+    await pianoo.setInstrument(newInstrument);
+    setInstrument(newInstrument);
   }
 
   return (
