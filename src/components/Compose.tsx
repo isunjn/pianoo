@@ -2,7 +2,7 @@ import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { TbLink } from "react-icons/tb";
-import tonalities, { TonalityKind } from "~/core/tonality";
+import { tonalityList, type TonalityKind } from "~/core/tonality";
 import parse, { type MusicScore, type SyntaxErr } from "~/core/parser";
 import usePlayerStore from "~/store/usePlayerStore";
 import pianoo from "~/core/pianoo";
@@ -156,9 +156,9 @@ function Compose() {
             className="w-28 px-1 py-1 rounded
               bg-th-hover focus-visible:outline-none"
           >
-            {tonalities.kinds().map(kind => (
-              <option key={kind} value={kind}>
-                {kind}
+            {tonalityList.map(tonalityKind => (
+              <option key={tonalityKind} value={tonalityKind}>
+                {tonalityKind}
               </option>
             ))}
           </select>

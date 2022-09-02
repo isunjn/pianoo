@@ -1,21 +1,7 @@
 type Tone = typeof import("tone");
 type Sampler = import("tone").Sampler;
-import {
-  KEYMAP_STANDARD,
-  KEYMAP_VIRTUALPIANO,
-  type KeymapKind,
-} from "~/config/keymap";
-import {
-  INSTRUMENT_PIANO_ACOUSTIC,
-  INSTRUMENT_PIANO_UPRIGHT,
-  INSTRUMENT_GUITAR_ACOUSTIC,
-  INSTRUMENT_GUITAR_ELECTRIC,
-  INSTRUMENT_BASS_ELECTRIC,
-  INSTRUMENT_HARP,
-  INSTRUMENT_CELLO,
-  INSTRUMENT_VIOLIN,
-  type InstrumentKind,
-} from "~/config/instrument";
+import { getKeymapKeys, type KeymapKind } from "~/config/keymap";
+import { getInstrumentUrls, type InstrumentKind } from "~/config/instrument";
 import Keymap from "~/core/keymap";
 import panic from "~/utils/panic";
 import type { TonalityKind } from "~/core/tonality";
@@ -59,10 +45,9 @@ class Pianoo {
   private sequence: SheetItem[];
 
   constructor() {
-    const keymapKind =
-      (localStorage.getItem(K_KEYMAP) as KeymapKind | null) ?? "standard";
-    const keymapKeys =
-      keymapKind == "standard" ? KEYMAP_STANDARD : KEYMAP_VIRTUALPIANO;
+    const keymapKeys = getKeymapKeys(
+      (localStorage.getItem(K_KEYMAP) ?? "standard") as KeymapKind
+    );
 
     this.tone = null;
     this.inited = null;
@@ -123,28 +108,10 @@ class Pianoo {
 
   public setInstrument(instrumentKind: InstrumentKind) {
     localStorage.setItem(K_INSTRUMENT, instrumentKind);
-    const urls =
-      instrumentKind == "piano-acoustic"
-        ? INSTRUMENT_PIANO_ACOUSTIC
-        : instrumentKind == "piano-upright"
-        ? INSTRUMENT_PIANO_UPRIGHT
-        : instrumentKind == "guitar-acoustic"
-        ? INSTRUMENT_GUITAR_ACOUSTIC
-        : instrumentKind == "guitar-electric"
-        ? INSTRUMENT_GUITAR_ELECTRIC
-        : instrumentKind == "bass-electric"
-        ? INSTRUMENT_BASS_ELECTRIC
-        : instrumentKind == "harp"
-        ? INSTRUMENT_HARP
-        : instrumentKind == "cello"
-        ? INSTRUMENT_CELLO
-        : instrumentKind == "violin"
-        ? INSTRUMENT_VIOLIN
-        : undefined;
 
     return new Promise<void>(resolve => {
       const instrument = new this.tone!.Sampler({
-        urls: urls,
+        urls: getInstrumentUrls(instrumentKind),
         baseUrl: "samples/",
         onload: () => {
           this.instrument = instrument;
@@ -160,9 +127,7 @@ class Pianoo {
 
   public setKeymap(keymapKind: KeymapKind): SheetItems {
     localStorage.setItem(K_KEYMAP, keymapKind);
-    this.keymap = new Keymap(
-      keymapKind == "standard" ? KEYMAP_STANDARD : KEYMAP_VIRTUALPIANO
-    );
+    this.keymap = new Keymap(getKeymapKeys(keymapKind));
     this.keymap.transpose(this.score!.tonality);
     this.maintain();
     return this.sheetItems;

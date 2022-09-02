@@ -1,8 +1,7 @@
 import { useTranslation } from "react-i18next";
 import usePlayerStore from "~/store/usePlayerStore";
 import pianoo from "~/core/pianoo";
-import tonalities from "~/core/tonality";
-import type { TonalityKind } from "~/core/tonality";
+import { tonalityList, type TonalityKind } from "~/core/tonality";
 
 function PopupAdjustments() {
   const status = usePlayerStore(state => state.status);
@@ -89,9 +88,9 @@ function PopupAdjustments() {
             onChange={handleTonalityChange}
             className="bg-th-hover rounded px-4 py-1.5 outline-none"
           >
-            {tonalities.kinds().map(kind => (
-              <option key={kind} value={kind}>
-                {kind}
+            {tonalityList.map(tonalityKind => (
+              <option key={tonalityKind} value={tonalityKind}>
+                {tonalityKind}
               </option>
             ))}
           </select>

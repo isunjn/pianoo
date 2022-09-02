@@ -1,11 +1,10 @@
 import type { Octave, ParsedNote } from "~/core/parser";
 import type { TonalityKind, Tonality } from "~/core/tonality";
-import tonalities from "~/core/tonality";
+import { getTonality } from "~/core/tonality";
 
 type Key = string;
 type NoteName = string;
 export type KeymapKeys = Map<Octave, Key[]>;
-export type KeymapKind = "standard" | "virtualpiano";
 
 class Keymap {
   private tonality: Tonality | null;
@@ -47,7 +46,7 @@ class Keymap {
 
   // transpose() will be called before other methods
   public transpose(tonalityKind: TonalityKind) {
-    const tonality = tonalities.get(tonalityKind)!;
+    const tonality = getTonality(tonalityKind);
     this.tonality = tonality;
     this.keys = tonality.mode == "major" ? this.majorKeys : this.minorKeys;
     this.keyToNote.clear();

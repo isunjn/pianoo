@@ -13,8 +13,13 @@ import {
 } from "react-icons/tb";
 import type { IconBaseProps } from "react-icons";
 import type { ComponentType } from "react";
-import appTheme, { type ThemeKind } from "~/config/theme";
-import { langs, type LangKind } from "~/config/lang";
+import {
+  initialTheme,
+  themeList,
+  changeTheme,
+  type ThemeKind,
+} from "~/config/theme";
+import { langList, getLangName, type LangKind } from "~/config/lang";
 
 function Footer() {
   const { t } = useTranslation();
@@ -80,11 +85,10 @@ function LangBtn() {
   const { i18n } = useTranslation();
   const currentLang = i18n.resolvedLanguage as LangKind;
 
-  function changeLang(lang: LangKind) {
-    if (currentLang != lang) {
-      i18n.changeLanguage(lang);
-      setIsOpen(false);
-    }
+  function changeLangTo(lang: LangKind) {
+    if (currentLang == lang) return;
+    i18n.changeLanguage(lang);
+    setIsOpen(false);
   }
 
   return (
@@ -96,7 +100,7 @@ function LangBtn() {
           focus-visible:outline-th-text focus-visible:outline-offset-2"
       >
         <TbLanguageHiragana className="text-base" />
-        {langs.get(currentLang)}
+        {getLangName(currentLang)}
       </button>
       {isOpen && (
         <>
@@ -104,10 +108,10 @@ function LangBtn() {
             className="absolute bottom-10 min-w-max max-h-96 z-50 overflow-auto
           backdrop-blur bg-th-hover rounded shadow"
           >
-            {[...langs].map(([lang, name]) => (
+            {langList.map(([lang, name]) => (
               <div
                 key={lang}
-                onClick={() => changeLang(lang)}
+                onClick={() => changeLangTo(lang)}
                 className="px-4 py-2 hover:bg-th-hover cursor-pointer"
               >
                 {name}
@@ -125,15 +129,14 @@ function LangBtn() {
 }
 
 function ThemeBtn() {
-  const [theme, setThemeKind] = useState<ThemeKind>(appTheme.initial);
+  const [theme, setThemeKind] = useState<ThemeKind>(initialTheme);
   const [isOpen, setIsOpen] = useState(false);
 
   function changeThemeTo(newTheme: ThemeKind) {
-    if (newTheme != theme) {
-      appTheme.changeTheme(newTheme);
-      setThemeKind(newTheme);
-      setIsOpen(false);
-    }
+    if (newTheme == theme) return;
+    changeTheme(newTheme);
+    setThemeKind(newTheme);
+    setIsOpen(false);
   }
 
   return (
@@ -153,7 +156,7 @@ function ThemeBtn() {
             className="absolute bottom-10 min-w-max max-h-96 z-50 overflow-auto
           backdrop-blur bg-th-hover rounded shadow"
           >
-            {appTheme.list.map(th => (
+            {themeList.map(th => (
               <div
                 key={th}
                 onClick={() => changeThemeTo(th)}
