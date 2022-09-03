@@ -10,7 +10,7 @@ import Loading from "~/components/Loading";
 import Error from "~/components/Error";
 import { usePianooStatus } from "~/components/App";
 import pianoo from "~/core/pianoo";
-import parse from "~/core/parser";
+import { parse } from "~/core/parser";
 import { useExampleScore } from "~/hooks/useExampleScore";
 import usePlayerStore from "~/store/usePlayerStore";
 import { K_SCORE_ID } from "~/constants/storage-keys";
@@ -30,10 +30,11 @@ function Player() {
 
   useEffect(() => {
     if (status == "idle" && initialScore) {
-      const [parsedScore, syntaxErrors] = parse(initialScore);
-      if (syntaxErrors) panic("syntax error occurred");
-      const sheetItems = pianoo.prepare(parsedScore!);
-      setScore(parsedScore!, sheetItems);
+      const parseResult = parse(initialScore);
+      if (parseResult.type == "Err") throw panic("syntax error occurred");
+      const parsedScore = parseResult.value;
+      const sheetItems = pianoo.prepare(parsedScore);
+      setScore(parsedScore, sheetItems);
     }
   }, [status, initialScore, setScore]);
 

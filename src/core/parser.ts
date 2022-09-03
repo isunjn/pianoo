@@ -1,5 +1,5 @@
 import type { TonalityKind } from "~/core/tonality";
-import type { DistributiveOmit } from "~/utils/types";
+import type { Result, DistributiveOmit } from "~/utils/types";
 
 export interface MusicScore {
   id: number;
@@ -86,9 +86,9 @@ function isSyntaxErr(
 const REGEXP_NOTE = /^(#|b)??(\+{1,2}|-{1,2})??([1-7])$/;
 const REGEXP_QUARTER = /^(-{1,7}|_{1,2})??(\.{1,2})??$/;
 
-function parse(
+export function parse(
   score: MusicScore
-): [ParsedMusicScore, null] | [null, SyntaxErr[]] {
+): Result<ParsedMusicScore, SyntaxErr[]> {
   const itemsOrErrs = score.content.split("\n").map(
     row =>
       row
@@ -101,10 +101,12 @@ function parse(
     .flat()
     .filter(item => isSyntaxErr(item)) as SyntaxErr[];
 
-  if (syntaxErrs.length > 0) return [null, syntaxErrs];
+  if (syntaxErrs.length > 0) {
+    return { type: "Err", error: syntaxErrs };
+  }
 
   const parsed = itemsOrErrs as ParsedItems;
-  return [{ ...score, parsed }, null];
+  return { type: "Ok", value: { ...score, parsed } };
 }
 
 function parseItem(str: string): ParsedItem | SyntaxErr {
@@ -208,5 +210,3 @@ function parseOneQuarter(str: string, inParen: boolean): number {
   }
   return quarter;
 }
-
-export default parse;
