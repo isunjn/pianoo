@@ -2,8 +2,8 @@ import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { TbLink } from "react-icons/tb";
-import tonalities, { TonalityKind } from "~/core/tonality";
-import parse, { type MusicScore, type SyntaxErr } from "~/core/parser";
+import { tonalityList, type TonalityKind } from "~/core/tonality";
+import { parse, type MusicScore, type SyntaxErr } from "~/core/parser";
 import usePlayerStore from "~/store/usePlayerStore";
 import pianoo from "~/core/pianoo";
 import panic from "~/utils/panic";
@@ -75,27 +75,38 @@ function Compose() {
       tempo: tempo,
       content,
     };
-    const [parsedScore, syntaxErrors] = parse(score);
-    if (syntaxErrors) {
-      syntaxErrors.map(syntaxErrToMsg).forEach(err => errors.push(err));
+    const parseResult = parse(score);
+    switch (parseResult.type) {
+      case "Ok":
+        {
+          const parsedScore = parseResult.value;
+          if (parsedScore.parsed.flat().every(item => item.kind == "rest")) {
+            errors.push(t("compose.error.noNoteOrChord"));
+          }
+          if (errors.length == 0) {
+            localStorage.removeItem(K_COMPOSE_ERRORS);
+            const sheetItems = pianoo.prepare(parsedScore);
+            setScore(parsedScore, sheetItems);
+            navigate("/");
+            return;
+          }
+        }
+        break;
+      case "Err":
+        {
+          const syntaxErrors = parseResult.error;
+          syntaxErrors.map(syntaxErrToMsg).forEach(err => errors.push(err));
+        }
+        break;
+      default:
+        throw panic("unreachable");
     }
 
-    if (parsedScore!.parsed.flat().every(item => item.kind == "rest")) {
-      errors.push(t("compose.error.noNoteOrChord"));
-    }
-
-    if (errors.length > 0) {
-      localStorage.setItem(K_COMPOSE_ERRORS, JSON.stringify(errors));
-      setErrors(errors);
-    } else {
-      localStorage.removeItem(K_COMPOSE_ERRORS);
-      const sheetItems = pianoo.prepare(parsedScore!);
-      setScore(parsedScore!, sheetItems);
-      navigate("/");
-    }
+    localStorage.setItem(K_COMPOSE_ERRORS, JSON.stringify(errors));
+    setErrors(errors);
   }
 
-  function syntaxErrToMsg(err: SyntaxErr) {
+  function syntaxErrToMsg(err: SyntaxErr): string {
     switch (err.code) {
       case "E11":
         return `\`${err.item}\`: ${t("error.syntax.E11")}`;
@@ -156,9 +167,9 @@ function Compose() {
             className="w-28 px-1 py-1 rounded
               bg-th-hover focus-visible:outline-none"
           >
-            {tonalities.kinds().map(kind => (
-              <option key={kind} value={kind}>
-                {kind}
+            {tonalityList.map(tonalityKind => (
+              <option key={tonalityKind} value={tonalityKind}>
+                {tonalityKind}
               </option>
             ))}
           </select>

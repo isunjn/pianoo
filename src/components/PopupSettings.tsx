@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import usePlayerStore from "~/store/usePlayerStore";
 import KeymapView from "~/components/KeymapView";
 import pianoo from "~/core/pianoo";
-import tonalities, { type TonalityKind } from "~/core/tonality";
+import { tonalityList, type TonalityKind } from "~/core/tonality";
 import type { KeymapKind } from "~/config/keymap";
 import type { InstrumentKind } from "~/config/instrument";
 
@@ -93,18 +93,16 @@ function TabKeymap() {
   const setTonality = usePlayerStore(state => state.setTonality);
   const [shift, setShift] = useState(false);
 
-  function changeKeymap(newKeymap: KeymapKind) {
-    if (newKeymap != keymap) {
-      const sheetItems = pianoo.setKeymap(newKeymap);
-      setKeymap(newKeymap, sheetItems);
-    }
+  function changeKeymapTo(newKeymap: KeymapKind) {
+    if (newKeymap == keymap) return;
+    const sheetItems = pianoo.setKeymap(newKeymap);
+    setKeymap(newKeymap, sheetItems);
   }
 
-  function changeTonality(newTonality: TonalityKind) {
-    if (newTonality != tonality) {
-      const sheetItems = pianoo.transpose(newTonality);
-      setTonality(newTonality, sheetItems);
-    }
+  function changeTonalityTo(newTonality: TonalityKind) {
+    if (newTonality == tonality) return;
+    const sheetItems = pianoo.transpose(newTonality);
+    setTonality(newTonality, sheetItems);
   }
 
   return (
@@ -114,12 +112,12 @@ function TabKeymap() {
           <SelectBtn
             selected={keymap == "standard"}
             text={t("play.keymap.standard")}
-            onClick={() => changeKeymap("standard")}
+            onClick={() => changeKeymapTo("standard")}
           />
           <SelectBtn
             selected={keymap == "virtualpiano"}
             text="Virtual Piano"
-            onClick={() => changeKeymap("virtualpiano")}
+            onClick={() => changeKeymapTo("virtualpiano")}
           />
         </div>
         <div className="flex items-center gap-4">
@@ -134,12 +132,12 @@ function TabKeymap() {
           <select
             id="tonality"
             value={tonality}
-            onChange={e => changeTonality(e.target.value as TonalityKind)}
+            onChange={e => changeTonalityTo(e.target.value as TonalityKind)}
             className="bg-th-hover rounded px-4 py-1.5 outline-none"
           >
-            {tonalities.kinds().map(kind => (
-              <option key={kind} value={kind}>
-                {kind}
+            {tonalityList.map(tonalityKind => (
+              <option key={tonalityKind} value={tonalityKind}>
+                {tonalityKind}
               </option>
             ))}
           </select>
@@ -158,13 +156,11 @@ function TabInstrument() {
   const setInstrument = usePlayerStore(state => state.setInstrument);
   const setStatus = usePlayerStore(state => state.setStatus);
 
-  function changeInstrument(newInstrument: InstrumentKind) {
-    if (newInstrument != instrument) {
-      setStatus("loading");
-      pianoo.setInstrument(newInstrument).then(() => {
-        setInstrument(newInstrument);
-      });
-    }
+  async function changeInstrumentTo(newInstrument: InstrumentKind) {
+    if (newInstrument == instrument) return;
+    setStatus("loading");
+    await pianoo.setInstrument(newInstrument);
+    setInstrument(newInstrument);
   }
 
   return (
@@ -173,42 +169,42 @@ function TabInstrument() {
         <SelectBtn
           selected={instrument == "piano-acoustic"}
           text={t("play.instrument.acousticPiano")}
-          onClick={() => changeInstrument("piano-acoustic")}
+          onClick={() => changeInstrumentTo("piano-acoustic")}
         />
         <SelectBtn
           selected={instrument == "piano-upright"}
           text={t("play.instrument.uprightPiano")}
-          onClick={() => changeInstrument("piano-upright")}
+          onClick={() => changeInstrumentTo("piano-upright")}
         />
         <SelectBtn
           selected={instrument == "guitar-acoustic"}
           text={t("play.instrument.acousticGuitar")}
-          onClick={() => changeInstrument("guitar-acoustic")}
+          onClick={() => changeInstrumentTo("guitar-acoustic")}
         />
         <SelectBtn
           selected={instrument == "guitar-electric"}
           text={t("play.instrument.electricGuitar")}
-          onClick={() => changeInstrument("guitar-electric")}
+          onClick={() => changeInstrumentTo("guitar-electric")}
         />
         <SelectBtn
           selected={instrument == "bass-electric"}
           text={t("play.instrument.electricBass")}
-          onClick={() => changeInstrument("bass-electric")}
+          onClick={() => changeInstrumentTo("bass-electric")}
         />
         <SelectBtn
           selected={instrument == "harp"}
           text={t("play.instrument.harp")}
-          onClick={() => changeInstrument("harp")}
+          onClick={() => changeInstrumentTo("harp")}
         />
         <SelectBtn
           selected={instrument == "violin"}
           text={t("play.instrument.violin")}
-          onClick={() => changeInstrument("violin")}
+          onClick={() => changeInstrumentTo("violin")}
         />
         <SelectBtn
           selected={instrument == "cello"}
           text={t("play.instrument.cello")}
-          onClick={() => changeInstrument("cello")}
+          onClick={() => changeInstrumentTo("cello")}
         />
       </div>
     </div>

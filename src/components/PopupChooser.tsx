@@ -4,7 +4,7 @@ import { TbArrowRight } from "react-icons/tb";
 import usePlayerStore from "~/store/usePlayerStore";
 import Loading from "~/components/Loading";
 import Error from "~/components/Error";
-import parse, { type MusicScore } from "~/core/parser";
+import { parse, type MusicScore } from "~/core/parser";
 import pianoo from "~/core/pianoo";
 import { useExampleScores } from "~/hooks/useExampleScore";
 import range from "~/utils/range";
@@ -68,12 +68,12 @@ function TabExampleScores() {
   const { t } = useTranslation();
 
   function handleSetScore(newScore: MusicScore) {
-    if (newScore.id != currentScore!.id) {
-      const [newParsedScore, syntaxErrors] = parse(newScore);
-      if (syntaxErrors) panic("syntax error occurred");
-      const sheetItems = pianoo.prepare(newParsedScore!);
-      setScore(newParsedScore!, sheetItems);
-    }
+    if (newScore.id == currentScore!.id) return;
+    const parseResult = parse(newScore);
+    if (parseResult.type == "Err") throw panic("syntax error occurred");
+    const parsedScore = parseResult.value;
+    const sheetItems = pianoo.prepare(parsedScore);
+    setScore(parsedScore, sheetItems);
   }
 
   return (

@@ -101,47 +101,43 @@ class Tonality {
   }
 }
 
-const tonalityMap = new Map<TonalityKind, Tonality>()
-  .set("1 = C", new Tonality("major", "C"))
-  .set("1 = G", new Tonality("major", "G"))
-  .set("1 = D", new Tonality("major", "D"))
-  .set("1 = A", new Tonality("major", "A"))
-  .set("1 = E", new Tonality("major", "E"))
-  .set("1 = B", new Tonality("major", "B"))
-  .set("1 = #F", new Tonality("major", "F#"))
-  .set("1 = #C", new Tonality("major", "C#"))
-  .set("1 = F", new Tonality("major", "F"))
-  .set("1 = bB", new Tonality("major", "A#"))
-  .set("1 = bE", new Tonality("major", "D#"))
-  .set("1 = bA", new Tonality("major", "G#"))
-  .set("1 = bD", new Tonality("major", "C#"))
-  .set("1 = bG", new Tonality("major", "F#"))
-  .set("1 = bC", new Tonality("major", "B"))
-  .set("6 = A", new Tonality("minor", "A"))
-  .set("6 = E", new Tonality("minor", "E"))
-  .set("6 = B", new Tonality("minor", "B"))
-  .set("6 = #F", new Tonality("minor", "F#"))
-  .set("6 = #C", new Tonality("minor", "C#"))
-  .set("6 = #G", new Tonality("minor", "G#"))
-  .set("6 = #D", new Tonality("minor", "D#"))
-  .set("6 = #A", new Tonality("minor", "A#"))
-  .set("6 = D", new Tonality("minor", "D"))
-  .set("6 = G", new Tonality("minor", "G"))
-  .set("6 = C", new Tonality("minor", "C"))
-  .set("6 = F", new Tonality("minor", "F"))
-  .set("6 = bB", new Tonality("minor", "A#"))
-  .set("6 = bE", new Tonality("minor", "D#"))
-  .set("6 = bA", new Tonality("minor", "G#"));
-
-const tonalities = {
-  get(tonality: TonalityKind): Tonality {
-    return tonalityMap.get(tonality)!;
-  },
-  kinds(): TonalityKind[] {
-    return Array.from(tonalityMap.keys());
-  },
+const tonalities: Record<TonalityKind, Tonality> = {
+  "1 = C": new Tonality("major", "C"),
+  "1 = G": new Tonality("major", "G"),
+  "1 = D": new Tonality("major", "D"),
+  "1 = A": new Tonality("major", "A"),
+  "1 = E": new Tonality("major", "E"),
+  "1 = B": new Tonality("major", "B"),
+  "1 = #F": new Tonality("major", "F#"),
+  "1 = #C": new Tonality("major", "C#"),
+  "1 = F": new Tonality("major", "F"),
+  "1 = bB": new Tonality("major", "A#"),
+  "1 = bE": new Tonality("major", "D#"),
+  "1 = bA": new Tonality("major", "G#"),
+  "1 = bD": new Tonality("major", "C#"),
+  "1 = bG": new Tonality("major", "F#"),
+  "1 = bC": new Tonality("major", "B"),
+  "6 = A": new Tonality("minor", "A"),
+  "6 = E": new Tonality("minor", "E"),
+  "6 = B": new Tonality("minor", "B"),
+  "6 = #F": new Tonality("minor", "F#"),
+  "6 = #C": new Tonality("minor", "C#"),
+  "6 = #G": new Tonality("minor", "G#"),
+  "6 = #D": new Tonality("minor", "D#"),
+  "6 = #A": new Tonality("minor", "A#"),
+  "6 = D": new Tonality("minor", "D"),
+  "6 = G": new Tonality("minor", "G"),
+  "6 = C": new Tonality("minor", "C"),
+  "6 = F": new Tonality("minor", "F"),
+  "6 = bB": new Tonality("minor", "A#"),
+  "6 = bE": new Tonality("minor", "D#"),
+  "6 = bA": new Tonality("minor", "G#"),
 };
 
-export type { Tonality };
+export const tonalityList = Object.keys(tonalities) as readonly TonalityKind[];
 
-export default tonalities;
+export function getTonality(tonalityKind: TonalityKind): Tonality {
+  return tonalities[tonalityKind];
+}
+
+export type { Tonality };
